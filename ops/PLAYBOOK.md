@@ -6,8 +6,16 @@ Mi Amor Paris marketing automation works. Owner: Tannay.
 ## Accounts and IDs
 - Instagram: @miamorparisofficial — Instagram Business account ID `17841456732306636`
   (reached through the Zapier connector "Instagram for Business").
-- Shopify store: `gp14fu-k1.myshopify.com`, public site https://miamorparis.in, INR
-  (Zapier connector "Shopify").
+- Shopify store: `gp14fu-k1.myshopify.com`, public site https://miamorparis.in, INR.
+  Read it with Claude's **Shopify connector** (run-analytics-query for sales/sessions,
+  graphql_query for orders, products, prices, inventory).
+
+## Which tool does what
+- **Zapier: publishing Instagram posts ONLY.** Its task allowance is small, so never
+  use it for reports, price checks, stats or comments.
+- **Shopify connector:** all store data (sales, orders, traffic, prices, stock, images).
+- Instagram stats: Metricool connector when connected; until then, check Insights in
+  the app. Comments are replied to by Tannay in the app (ManyChat later).
 - Image hosting: this repo, `White-Venus-Brands/miamorparis-assets`. Instagram pulls
   images from commit-pinned raw URLs:
   `https://raw.githubusercontent.com/White-Venus-Brands/miamorparis-assets/<commit-sha>/<path>`
