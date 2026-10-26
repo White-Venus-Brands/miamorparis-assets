@@ -75,3 +75,21 @@ Graph API, send the permalink.
 
 ## Log
 Posts published are listed in `ops/post_log.md`.
+
+## Meta ads autopilot rules (set by Tannay, 26 Oct 2026)
+- Ad account: **SSMK-Mi Amor Paris** `1367716178225422` via the Adspirer connector.
+- **Hard cap: ₹500/day total** across all active ads. Never exceed it.
+- **Without asking:** pause losing ads/ad sets; raise a winner's budget by up to 20%
+  (max once every 3 days per ad set), staying under the cap.
+- **Needs Tannay's "yes":** new campaigns, new ads/creatives, resuming anything paused,
+  any increase above 20%, deleting anything.
+- Judge on **cost per WhatsApp chat** (lead) until Purchase events are confirmed
+  firing from the store; then switch to cost per purchase / ROAS.
+- Don't touch an ad set in its first 3 days (learning phase) unless it spent ₹300+ with 0 results.
+- **Cut:** spent ₹300+ with 0 results, or cost per result > 2× the account's 7-day
+  average after ₹500+ spend, or frequency > 4 with falling CTR (creative fatigue).
+- **Boost:** cost per result ≤ 0.8× the 7-day average for 3 straight days with 3+ results.
+- Same content rules as posts (no puja, live prices, no competitor names).
+- Three pixels are firing on the site (815729370798417, 1177078454558466,
+  1186013056949718): confirm which one the Shopify Facebook & Instagram app uses
+  before running sales campaigns.
