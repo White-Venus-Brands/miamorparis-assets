@@ -11,11 +11,15 @@ Mi Amor Paris marketing automation works. Owner: Tannay.
   graphql_query for orders, products, prices, inventory).
 
 ## Which tool does what
-- **Zapier: publishing Instagram posts ONLY.** Its task allowance is small, so never
-  use it for reports, price checks, stats or comments.
+- **Posting: Metricool** (brand "MI AMOR PARIS", blogId/brandId 7658526) via
+  createScheduledPost with commit-pinned GitHub raw image URLs. Zapier is a backup
+  for posting only (task allowance used up until upgraded).
 - **Shopify connector:** all store data (sales, orders, traffic, prices, stock, images).
-- Instagram stats: Metricool connector when connected; until then, check Insights in
-  the app. Comments are replied to by Tannay in the app (ManyChat later).
+- Instagram stats: Metricool connector (getAnalyticsDataByMetrics, brandId 7658526).
+- Keyword comments/DMs (SCENT, PRICE, QUIZ): ManyChat only. Other comments: Tannay in
+  the app. Never turn on auto-replies in Metricool (double replies).
+- Gmail (whitevenusbrands6@gmail.com) is connected; Meta ads via Adspirer
+  (SSMK-Mi Amor Paris account).
 - Image hosting: this repo, `White-Venus-Brands/miamorparis-assets`. Instagram pulls
   images from commit-pinned raw URLs:
   `https://raw.githubusercontent.com/White-Venus-Brands/miamorparis-assets/<commit-sha>/<path>`
