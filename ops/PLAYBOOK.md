@@ -26,8 +26,14 @@ Mi Amor Paris marketing automation works. Owner: Tannay.
 - Flagship store: O-17, Lajpat Nagar-II, New Delhi – 110024.
 
 ## Hard rules
-1. **Never publish an Instagram post without Tannay's explicit "yes"** in the chat,
-   unless a scheduled task says he already approved that exact post.
+1. **Posting autonomy (from 27 Oct 2026):** Tannay said "you can start posting
+   yourself" — create and publish posts without asking first, using his uploaded
+   product photos. After every post, send him the live link and log it in post_log.md.
+   All other hard rules still apply. Every post must look different: new background
+   and props each time (e.g. Diwali: different fireworks, different rangoli), never
+   a repeated scene. Carousels 1080x1350; Reels 1080x1920. Real product photos only,
+   whole bottle, never cropped or AI-redrawn. Mark AI-generated imagery as AI
+   (Metricool instagramData.isAiGenerated) when people/scenes are generated.
 2. **Every price in a post, caption, reply or email must match live Shopify** at
    the time it goes out. Check first. Never state a discount you have not verified.
 3. **Never link perfumes to puja, prayer or religious rituals** (they are
