@@ -18,3 +18,14 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 - `posts/2026-10-27-trailer/` — THE SCENT trailer (25s).
 - `posts/2026-10-26-shower/` — Shower Edit Reel. Tomorrow: swap one women's body wash for a men's (2 men + 2 women) before posting.
 - `posts/2026-10-24-couple/couple_bouquet_holdmi.jpg` — Bouquet + Hold Mi "Made to match", both for ₹2,998 (verify prices before use).
+
+## Stories — week 44 (scheduled 28 Oct, Metricool ids 408820506–408820634)
+| Date (IST) | Pair | Question |
+|---|---|---|
+| 2026-10-28 18:30 | Fresh & citrusy (Miss Aqua) vs Fruity & floral (Love Is In The Air) | Which one are you? |
+| 2026-10-29 11:00 | Light & breezy (Mr Aqua) vs Warm & woody (De Rossa Oudh) | Day scent or night scent? |
+| 2026-10-30 11:00 | Citrus & musky (Moksha) vs Fruity & floral (LIITA) | Which would you gift? |
+| 2026-10-31 11:00 | Citrus & musky (Moksha) vs Warm & woody (De Rossa) | Office or party? |
+| 2026-11-01 11:00 | Bright & green (Miss Aqua) vs Warm & woody (De Rossa) | Bright or bold? |
+| 2026-11-02 11:00 | Fruity & floral (LIITA) vs Light & breezy (Mr Aqua) | Sweet or breezy? |
+| 2026-11-03 11:00 | Citrus & musky (Moksha) vs Light & breezy (Mr Aqua) | Zesty or breezy? |

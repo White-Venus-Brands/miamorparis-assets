@@ -103,3 +103,12 @@ Posts published are listed in `ops/post_log.md`.
 ## Comment replies (from 28 Oct 2026)
 Tannay approved: Claude may reply publicly to comments on @miamorparisofficial posts as the Mi Amor Paris marketing team, aiming to drive sales, without asking each time. Rules: live Shopify prices only; no invented claims (lasting time, notes, skin); complaints/sensitive/spam -> no public reply, flag to Tannay; never link perfumes to puja; point to link in bio / Lajpat Nagar-II store. Send Tannay a summary after each check.
 BLOCKER (28 Oct): Zapier task limit reached for the billing period, so the Instagram Graph API route (Zapier 'Instagram for Business' raw request) is unavailable until Zapier is upgraded/renews. Metricool MCP has no comment tools.
+
+## Daily Stories (from 28 Oct 2026)
+Tannay: "start doing stories too" — one Instagram Story every day, posted via Metricool (instagramData.type STORY, no text, autoPublish true, 11:00 IST).
+- **Always compare two different scent MOODS, not product names** (e.g. "FRESH & CITRUSY" vs "FRUITY & FLORAL", "LIGHT & BREEZY" vs "WARM & WOODY") so people choose by feel. Product name + live price appear small under each mood.
+- Scent words come only from the Shopify listing's notes/family. Prices checked live before each batch.
+- Generator: `ops/stories/make.py` (+ `week1.py` as the example batch). Real bottle cutouts in `assets/cutouts/` (mraqua, missaqua, moksha, liita, derossa). No photo yet for Ombre, Bouquet, Flora 5, Miss Poem, Smuggler, Hold Mi, Marhaba perfumes: ask Tannay; never AI-draw a bottle.
+- Vary the pair, the question and the background every day; don't repeat the exact same pair two days running.
+- Instagram API can't add polls/quiz/link stickers to Stories; the Story asks people to "Reply 1 or 2" (replies arrive as DMs).
+- Weekly scheduled task builds and books the next 7 days every Sunday, logs them in `ops/post_log.md`, and messages Tannay the week's sheet.
