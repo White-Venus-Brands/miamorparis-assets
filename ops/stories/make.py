@@ -82,3 +82,30 @@ def story(out, left, right, question, footer_note=None):
     ctext(d, W / 2, 1683, "Reply 1 or 2  ·  we'll tell you more 💬" if False else "Reply 1 or 2 and we'll tell you more", pop(32, "Medium"), (250, 242, 228))
     ctext(d, W / 2, 1728, footer_note or "50% off this Diwali  ·  Mi Amor Paris  ·  link in bio", pop(24), (212, 170, 100))
     im.convert("RGB").save(out, quality=93)
+
+# ---------- "Today's star" single-product Story ----------
+def starpoly(cx, cy, r1, r2, n=5):
+    return [(cx + (r1 if k % 2 == 0 else r2) * math.sin(k * math.pi / n), cy - (r1 if k % 2 == 0 else r2) * math.cos(k * math.pi / n)) for k in range(2 * n)]
+def star(out, path, name, mood, lines, price, was, kind="Perfume", hgt=860):
+    top, bot, acc, mot = MOOD[mood]
+    im = grad(W, H, top, bot, 0.15); motif(im, mot, acc)
+    gl = Image.new("RGBA", (W, H)); ImageDraw.Draw(gl).ellipse((W / 2 - 420, 520, W / 2 + 420, 1340), fill=(255, 250, 235, 120)); im.alpha_composite(gl.filter(ImageFilter.GaussianBlur(90)))
+    d = ImageDraw.Draw(im)
+    hb = Image.new("RGBA", (W, H)); ImageDraw.Draw(hb).rounded_rectangle((W / 2 - 300, 262, W / 2 + 300, 372), radius=55, fill=(18, 14, 12, 225)); im.alpha_composite(hb); d = ImageDraw.Draw(im)
+    for sx in (W / 2 - 236, W / 2 + 236): d.polygon(starpoly(sx, 317, 24, 10), fill=(232, 190, 110))
+    ctext(d, W / 2, 318, "TODAY'S STAR", pop(40, "Bold"), (250, 240, 224))
+    p = Image.open(S + path).convert("RGBA"); p = p.crop(p.getbbox()); p = p.resize((int(p.width * hgt / p.height), hgt), Image.LANCZOS)
+    if p.width > 760: p = p.resize((760, int(p.height * 760 / p.width)), Image.LANCZOS)
+    base = 1330; sh = Image.new("RGBA", (W, H)); ImageDraw.Draw(sh).ellipse((W / 2 - p.width * .55, base - 26, W / 2 + p.width * .55, base + 26), fill=(0, 0, 0, 100))
+    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(16))); im.alpha_composite(p, (int(W / 2 - p.width / 2), base - p.height)); d = ImageDraw.Draw(im)
+    card = Image.new("RGBA", (W, H)); ImageDraw.Draw(card).rounded_rectangle((70, 1370, W - 70, 1745), radius=34, fill=(18, 14, 12, 228)); im.alpha_composite(card); d = ImageDraw.Draw(im)
+    ctext(d, W / 2, 1412, kind.upper(), pop(24, "Bold"), (212, 170, 100))
+    ctext(d, W / 2, 1478, name, lora(70), (250, 240, 224))
+    ctext(d, W / 2, 1556, lines[0], pop(34, "Bold"), (240, 212, 156))
+    ctext(d, W / 2, 1606, lines[1], pop(27), (225, 215, 200))
+    f = pop(40, "Bold"); pt = f"₹{price}"; wt = f"₹{was}"; g = pop(30)
+    tw = d.textlength(pt, font=f) + 24 + d.textlength(wt, font=g); x0 = (W - tw) / 2
+    d.text((x0, 1676), pt, font=f, fill=(250, 240, 224), anchor="lm"); x1 = x0 + d.textlength(pt, font=f) + 24
+    d.text((x1, 1678), wt, font=g, fill=(170, 160, 150), anchor="lm"); d.line((x1, 1680, x1 + d.textlength(wt, font=g), 1680), fill=(170, 160, 150), width=3)
+    ctext(d, W / 2, 1725, "50% off this Diwali  ·  link in bio  ·  Lajpat Nagar-II", pop(22), (212, 170, 100))
+    im.convert("RGB").save(out, quality=93)
