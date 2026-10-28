@@ -39,3 +39,5 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 | 2026-11-01 | Mr Aqua face & body cream | ₹749 (was ₹1,499) |
 | 2026-11-02 | Love Is In The Air perfume | ₹1,999 (was ₹3,999) |
 | 2026-11-03 | Moksha body wash | ₹999 (was ₹1,999) |
+
+| 2026-10-29 19:30 | Feed: zodiac candle gift guide, 14-slide carousel | Metricool 408837683 | scheduled |
