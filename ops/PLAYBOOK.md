@@ -99,3 +99,7 @@ Posts published are listed in `ops/post_log.md`.
 - Three pixels are firing on the site (815729370798417, 1177078454558466,
   1186013056949718): confirm which one the Shopify Facebook & Instagram app uses
   before running sales campaigns.
+
+## Comment replies (from 28 Oct 2026)
+Tannay approved: Claude may reply publicly to comments on @miamorparisofficial posts as the Mi Amor Paris marketing team, aiming to drive sales, without asking each time. Rules: live Shopify prices only; no invented claims (lasting time, notes, skin); complaints/sensitive/spam -> no public reply, flag to Tannay; never link perfumes to puja; point to link in bio / Lajpat Nagar-II store. Send Tannay a summary after each check.
+BLOCKER (28 Oct): Zapier task limit reached for the billing period, so the Instagram Graph API route (Zapier 'Instagram for Business' raw request) is unavailable until Zapier is upgraded/renews. Metricool MCP has no comment tools.
