@@ -32,7 +32,7 @@ Mi Amor Paris marketing automation works. Owner: Tannay.
    All other hard rules still apply. Every post must look different: new background
    and props each time (e.g. Diwali: different fireworks, different rangoli), never
    a repeated scene. Carousels 1080x1350; Reels 1080x1920. Real product photos only,
-   whole bottle, never cropped or AI-redrawn. Mark AI-generated imagery as AI
+   whole bottle, never cropped or AI-redrawn. From 28 Oct: STATIC CAROUSELS ONLY (1080x1350). No AI-generated people, no AI video/Reels; Tannay deleted the Diwali film for looking fake. Mark AI-generated imagery as AI
    (Metricool instagramData.isAiGenerated) when people/scenes are generated.
 2. **Every price in a post, caption, reply or email must match live Shopify** at
    the time it goes out. Check first. Never state a discount you have not verified.
