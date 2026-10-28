@@ -105,7 +105,9 @@ Tannay approved: Claude may reply publicly to comments on @miamorparisofficial p
 BLOCKER (28 Oct): Zapier task limit reached for the billing period, so the Instagram Graph API route (Zapier 'Instagram for Business' raw request) is unavailable until Zapier is upgraded/renews. Metricool MCP has no comment tools.
 
 ## Daily Stories (from 28 Oct 2026)
-Tannay: "start doing stories too" — one Instagram Story every day, posted via Metricool (instagramData.type STORY, no text, autoPublish true, 11:00 IST).
+Tannay: "start doing stories too", then (28 Oct) "2 stories everyday 12 hours apart". Posted via Metricool (instagramData.type STORY, no text, autoPublish true):
+- **11:00 IST: This or that** (two scent moods, rules below).
+- **23:00 IST: Today's Star** — one product highlighted (perfume, body wash, cream, candle…), name + mood/benefits from the listing + live price and was-price. `make.star()` in ops/stories/make.py, example batch `stars1.py`. Rotate categories; never the same product two nights running.
 - **Always compare two different scent MOODS, not product names** (e.g. "FRESH & CITRUSY" vs "FRUITY & FLORAL", "LIGHT & BREEZY" vs "WARM & WOODY") so people choose by feel. Product name + live price appear small under each mood.
 - Scent words come only from the Shopify listing's notes/family. Prices checked live before each batch.
 - Generator: `ops/stories/make.py` (+ `week1.py` as the example batch). Real bottle cutouts in `assets/cutouts/` (mraqua, missaqua, moksha, liita, derossa). No photo yet for Ombre, Bouquet, Flora 5, Miss Poem, Smuggler, Hold Mi, Marhaba perfumes: ask Tannay; never AI-draw a bottle.

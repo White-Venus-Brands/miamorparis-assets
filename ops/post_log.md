@@ -29,3 +29,13 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 | 2026-11-01 11:00 | Bright & green (Miss Aqua) vs Warm & woody (De Rossa) | Bright or bold? |
 | 2026-11-02 11:00 | Fruity & floral (LIITA) vs Light & breezy (Mr Aqua) | Sweet or breezy? |
 | 2026-11-03 11:00 | Citrus & musky (Moksha) vs Light & breezy (Mr Aqua) | Zesty or breezy? |
+
+## Stories — Today's Star (23:00 IST, Metricool ids 408829225–408829361)
+| Date | Product | Price |
+|---|---|---|
+| 2026-10-29 | Moksha perfume | ₹1,999 (was ₹3,999) |
+| 2026-10-30 | Hold Mi body wash | ₹749 (was ₹1,499) |
+| 2026-10-31 | De Rossa Oudh perfume | ₹1,999 (was ₹3,999) |
+| 2026-11-01 | Mr Aqua face & body cream | ₹749 (was ₹1,499) |
+| 2026-11-02 | Love Is In The Air perfume | ₹1,999 (was ₹3,999) |
+| 2026-11-03 | Moksha body wash | ₹999 (was ₹1,999) |
