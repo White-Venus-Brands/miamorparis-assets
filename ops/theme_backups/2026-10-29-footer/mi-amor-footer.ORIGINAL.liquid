@@ -1,0 +1,170 @@
+{% comment %}
+  MI AMOR PARIS — Footer.
+
+  Four-column layout following the pattern used by most established retail
+  brands: brand + social, two link columns, contact block, then a newsletter
+  strip and a legal bar.
+
+  Links are editable in the theme editor. Policy links point at Shopify's
+  NATIVE policy URLs (/policies/...), which are generated from
+  Settings → Policies — the legally correct place for them to live.
+{% endcomment %}
+
+<footer class="mi-footer">
+  <div class="mi-footer__grid">
+
+    {%- comment -%} Column 1 — brand {%- endcomment -%}
+    <div class="mi-footer__brand">
+      {%- if section.settings.logo != blank -%}
+        <img
+          src="{{ section.settings.logo | image_url: width: 320 }}"
+          alt="{{ shop.name }}"
+          class="mi-footer__logo"
+          width="180" height="60" loading="lazy"
+        >
+      {%- else -%}
+        <p class="mi-footer__wordmark">{{ shop.name }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.tagline != blank -%}
+        <p class="mi-footer__tagline">{{ section.settings.tagline }}</p>
+      {%- endif -%}
+
+      <ul class="mi-footer__social" role="list">
+        {%- if section.settings.facebook != blank -%}
+          <li><a href="{{ section.settings.facebook }}" aria-label="Facebook" rel="noopener" target="_blank">f</a></li>
+        {%- endif -%}
+        {%- if section.settings.instagram != blank -%}
+          <li><a href="{{ section.settings.instagram }}" aria-label="Instagram" rel="noopener" target="_blank">◎</a></li>
+        {%- endif -%}
+        {%- if section.settings.whatsapp != blank -%}
+          <li><a href="{{ section.settings.whatsapp }}" aria-label="WhatsApp" rel="noopener" target="_blank">✆</a></li>
+        {%- endif -%}
+      </ul>
+    </div>
+
+    {%- comment -%} Columns 2 & 3 — link lists {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'links' -%}
+        <nav class="mi-footer__col" {{ block.shopify_attributes }} aria-labelledby="MiFooterCol{{ forloop.index }}">
+          <h2 class="mi-footer__heading" id="MiFooterCol{{ forloop.index }}">{{ block.settings.heading }}</h2>
+          <ul class="mi-footer__links" role="list">
+            {%- if block.settings.menu != blank -%}
+              {%- for link in block.settings.menu.links -%}
+                <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+              {%- endfor -%}
+            {%- else -%}
+              {%- assign labels = block.settings.labels | split: '|' -%}
+              {%- assign urls = block.settings.urls | split: '|' -%}
+              {%- for label in labels -%}
+                <li><a href="{{ urls[forloop.index0] | default: '#' }}">{{ label }}</a></li>
+              {%- endfor -%}
+            {%- endif -%}
+          </ul>
+        </nav>
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment -%} Column 4 — contact {%- endcomment -%}
+    <div class="mi-footer__col mi-footer__contact">
+      <h2 class="mi-footer__heading">{{ section.settings.contact_heading }}</h2>
+
+      {%- if section.settings.address != blank -%}
+        <p><span class="mi-footer__label">Address:</span> {{ section.settings.address }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.phone != blank -%}
+        <p>
+          <span class="mi-footer__label">Phone:</span>
+          <a href="tel:{{ section.settings.phone | remove: ' ' | remove: '-' }}">{{ section.settings.phone }}</a>
+        </p>
+      {%- endif -%}
+
+      {%- if section.settings.email != blank -%}
+        <p>
+          <span class="mi-footer__label">Email:</span>
+          <a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a>
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- comment -%} Newsletter strip {%- endcomment -%}
+  {%- if section.settings.show_newsletter -%}
+    <div class="mi-footer__news">
+      <div class="mi-footer__news-copy">
+        <h2 class="mi-footer__heading">{{ section.settings.newsletter_heading }}</h2>
+        <p>{{ section.settings.newsletter_copy }}</p>
+      </div>
+      {%- form 'customer', class: 'mi-footer__news-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <label class="visually-hidden" for="MiFooterEmail">Email</label>
+        <input
+          type="email"
+          name="contact[email]"
+          id="MiFooterEmail"
+          placeholder="Your email address"
+          autocomplete="email"
+          required
+        >
+        <button type="submit">Subscribe</button>
+        {%- if form.posted_successfully? -%}
+          <p class="mi-footer__news-ok">Thank you — you're on the list.</p>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  {%- endif -%}
+
+  {%- comment -%} Legal bar {%- endcomment -%}
+  <div class="mi-footer__bar">
+    <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
+    <ul class="mi-footer__legal" role="list">
+      <li><a href="/policies/privacy-policy">Privacy</a></li>
+      <li><a href="/policies/terms-of-service">Terms</a></li>
+      <li><a href="/policies/refund-policy">Refunds</a></li>
+    </ul>
+  </div>
+</footer>
+
+{{ 'mi-footer.css' | asset_url | stylesheet_tag }}
+
+{% schema %}
+{
+  "name": "Mi Amor Footer",
+  "settings": [
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "text", "id": "tagline", "label": "Tagline", "default": "The art of fragrance, made in the spirit of Paris." },
+    { "type": "header", "content": "Social" },
+    { "type": "url", "id": "facebook", "label": "Facebook" },
+    { "type": "url", "id": "instagram", "label": "Instagram" },
+    { "type": "url", "id": "whatsapp", "label": "WhatsApp" },
+    { "type": "header", "content": "Contact" },
+    { "type": "text", "id": "contact_heading", "label": "Heading", "default": "Contact Us" },
+    { "type": "textarea", "id": "address", "label": "Address" },
+    { "type": "text", "id": "phone", "label": "Phone" },
+    { "type": "text", "id": "email", "label": "Email" },
+    { "type": "header", "content": "Newsletter" },
+    { "type": "checkbox", "id": "show_newsletter", "label": "Show newsletter", "default": true },
+    { "type": "text", "id": "newsletter_heading", "label": "Heading", "default": "Join the Mi Amor list" },
+    { "type": "text", "id": "newsletter_copy", "label": "Copy", "default": "New fragrances, private launches and the occasional very good offer." }
+  ],
+  "blocks": [
+    {
+      "type": "links",
+      "name": "Link column",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Quick Links" },
+        { "type": "link_list", "id": "menu", "label": "Menu", "info": "Optional. If set, this replaces the manual list below." },
+        { "type": "textarea", "id": "labels", "label": "Link labels", "info": "Separate with |", "default": "About Us|Contact Us|Product Categories|FAQs" },
+        { "type": "textarea", "id": "urls", "label": "Link URLs", "info": "Separate with |, same order as labels", "default": "/pages/about-us|/pages/contact|/collections/all|/pages/faqs" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mi Amor Footer",
+      "blocks": [{ "type": "links" }, { "type": "links" }]
+    }
+  ]
+}
+{% endschema %}
