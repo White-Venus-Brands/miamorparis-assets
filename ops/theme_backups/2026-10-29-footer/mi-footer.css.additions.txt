@@ -1,0 +1,15 @@
+/* ---- also available on (marketplaces) ---- */
+.mi-footer__shops {
+  max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem) 0; border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.mi-footer__shops-heading { font-family: "Cormorant Garamond", Georgia, serif; font-style: italic; font-size: 1.2rem; color: #d4af6e; margin: 0; }
+.mi-footer__shops-list { display: flex; flex-wrap: wrap; gap: 0.6rem; list-style: none; padding: 0; margin: 0; }
+.mi-footer__shops-list a {
+  display: inline-block; padding: 0.55rem 1.2rem; border: 1px solid rgba(212, 175, 110, 0.55); border-radius: 999px;
+  color: #f2efe9; text-decoration: none; font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+  transition: background 280ms ease, color 280ms ease, border-color 280ms ease;
+}
+.mi-footer__shops-list a:hover { background: #d4af6e; border-color: #d4af6e; color: #000; }
+.mi-footer__social svg { display: block; }
+@media screen and (max-width: 599px) { .mi-footer__shops { flex-direction: column; align-items: flex-start; } }
