@@ -5,3 +5,4 @@
 | 2026-10-26 | Aqua ritual | Miss Aqua / Mr Aqua perfume + body wash + cream |
 | 2026-10-28 | Only one gift (Reel) | perfume lineup flash |
 | 2026-10-29 | Gift by star sign | 12 one-wick zodiac candles (₹749) |
+| 2026-10-30 | Diwali guest-ready sink | 5 handwashes: Lemon & Green Tea, Melon, Orange Jasmine, Plums & Bergamot, Sea Breeze Lily (₹499) |

@@ -41,3 +41,4 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 | 2026-11-03 | Moksha body wash | ₹999 (was ₹1,999) |
 
 | 2026-10-29 19:30 | Feed: zodiac candle gift guide, 14-slide carousel | Metricool 408837683 | scheduled |
+| 2026-10-30 19:30 | Feed: Diwali guest-ready handwash edit, 7-slide carousel (IG + FB) | Metricool 409831126 | scheduled 29 Oct by daily task; ₹499 (was ₹999) verified live |
