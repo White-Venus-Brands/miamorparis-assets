@@ -46,3 +46,4 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 
 | 2026-10-30 19:30 | Reel: Love Is In The Air notes journey (Tannay's video), IG+FB | Metricool 411107909 | scheduled |
 | 2026-11-01 19:30 | Handwash carousel MOVED from 30 Oct to make room for the Reel | Metricool 411107923 | scheduled |
+| 2026-11-02 19:30 | Feed: "Six evenings to Diwali" Oudh three-wick candle edit (Aleud, Abyad, Al Sandali, Alkhuzama, Zeenat e Oudh), 7-slide carousel (IG + FB) | Metricool 412766569 | scheduled 1 Nov by daily task; ₹1,749 (was ₹3,499) verified live. 2 Nov Stories already booked 28 Oct (IG only): 408820612, 408829335; their prices re-checked live (LIITA ₹1,999, Mr Aqua ₹1,499) |
