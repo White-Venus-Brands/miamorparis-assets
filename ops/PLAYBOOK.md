@@ -138,3 +138,14 @@ Tannay: "1 post everyday for upcoming festivals … something new everyday, we h
 - **The hook is everything:** a witty, relatable line or situation in the first second that makes people stay to see "what's happening here" (e.g. "POV: the Diwali party is in 2 hours and you forgot the gift"; "Things that disappear by Bhai Dooj: kaju katli, sone papdi, your bonus. Things that don't…"; "Rate my Diwali gift"). Product + payoff by the end; 3-second view rate was only 22% on the first Reel, so open on motion + text, never a slow logo.
 - No ₹ prices (DM for prices), offer wording per the gift-box rules, *During office hours on any delivery promise. Reference builds: posts/2026-11-04-de-rossa-ramp-reel (3D set + real bottle), scratchpad-style gift reel (kinetic text + product flashes).
 - Log every Reel in ops/post_log.md and ops/feed_used.md like feed posts.
+
+### Reel hook bank (unused ones first; mark used in post_log)
+- USED 7 Nov: "POV: Diwali party in 2 hours. You forgot the gift." (countdown clock running all video)
+- "Things that disappear by Bhai Dooj: kaju katli, sone papdi, your bonus. Things that don't: this scent." (Bhai Dooj, 11 Nov)
+- "Rate my Diwali gift /10" then reveal box contents one by one, score climbs each item
+- "Guess the scent from 3 notes" mini-quiz, answer revealed at the end (keeps them to the last second)
+- "Your zodiac's Diwali gift" fast cuts, one sign per 0.8 s, "pause to find yours"
+- "Gifts that say 'I tried' vs gifts that say 'I tried less'" side-by-side
+- "Wedding season starter pack for guests who are always late" (post-Diwali)
+- "Red flags in a gift: it came with a price tag. Green flags: ..."
+Rules: hook text on screen in frame 1, something moving, a running device (clock, score, quiz) that only pays off at the end.
