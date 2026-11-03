@@ -1,7 +1,7 @@
 """3 Nov 2026 feed: "Marhaba, the Diwali-party scent for him" (perfume 100 ml, Oudh shower gel, 8 ml mini).
 Look: deep wine-to-black, gold dot-rangoli medallions in the corners and soft gold firework bursts
 (new vs. the emerald jaali of 2 Nov). Real Drive photos, shown whole inside gold-framed panels.
-Notes and benefit words come from the Shopify listings. Prices verified live 2 Nov."""
+Notes and benefit words come from the Shopify listings. Prices removed 3 Nov (Tannay): last slide says "DM for prices & Diwali deals"."""
 import math, random
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 W, H = 1080, 1350
@@ -76,8 +76,7 @@ c(d, 200, "Marhaba", lora(92, True), CHAMP)
 c(d, 280, "The Diwali-party scent for him", lora(40), IVORY)
 panel(im, "perfume_main.jpg", 190, 350, 700, 700); d = ImageDraw.Draw(im)
 c(d, 1105, "MARHABA PREMIUM PERFUME FOR MEN · 100 ML", pop(27, "Medium"), GOLD)
-price(d, 1170, P_PERF, W_PERF)
-c(d, 1250, "50% off this Diwali  ·  swipe  >>", pop(26), CHAMP); out.append(im)
+c(d, 1200, "Swipe for the full edit  >>", pop(28), CHAMP); out.append(im)
 
 # 2 notes journey (lifestyle photo with saffron & rose)
 im = base(7); d = ImageDraw.Draw(im)
@@ -94,7 +93,7 @@ c(d, 965, "wrapped in the embrace of rose.", lora(46, True), IVORY)
 d.line((440, 1040, 640, 1040), fill=GOLD, width=2)
 c(d, 1100, "Made for date nights, weddings and parties.", pop(30), CHAMP)
 c(d, 1160, "Diwali get-togethers included.", pop(30), CHAMP)
-c(d, 1250, "Marhaba 100 ml  ·  " + P_PERF, pop(30, "Bold"), GOLD); out.append(im)
+c(d, 1250, "Marhaba Premium Perfume  ·  100 ml", pop(30, "Bold"), GOLD); out.append(im)
 
 # 3 shower gel
 im = base(11); d = ImageDraw.Draw(im)
@@ -104,7 +103,6 @@ c(d, 880, "Marhaba Oudh Shower Gel · 500 ml", lora(46), IVORY)
 c(d, 950, "Glycerin, shea butter and sodium hyaluronate", pop(28), CHAMP)
 c(d, 995, "for rich foam and soft, hydrated skin.", pop(28), CHAMP)
 c(d, 1060, "SOAP-FREE  ·  SULPHATE-FREE  ·  PARABEN-FREE", pop(24, "Medium"), GOLD)
-price(d, 1150, P_GEL, W_GEL)
 c(d, 1240, "The same warm oriental mood as the perfume.", pop(26), MUTE); out.append(im)
 
 # 4 mini
@@ -114,7 +112,6 @@ panel(im, "mini_studio_11.jpg", 220, 175, 640, 640); d = ImageDraw.Draw(im)
 c(d, 890, "Marhaba Premium Perfume · 8 ml", lora(46), IVORY)
 c(d, 960, "Same saffron, rose and oudh, sized for", pop(28), CHAMP)
 c(d, 1005, "a long night out or a first try.", pop(28), CHAMP)
-price(d, 1100, P_MINI, W_MINI)
 c(d, 1200, "An easy add-on to any Diwali gift.", lora(36, True), MUTE); out.append(im)
 
 # 5 CTA: all three thumbnails
@@ -124,9 +121,9 @@ c(d, 360, "Pick one, or gift him all three.", pop(30), IVORY)
 for (ph, x) in [("perfume_main.jpg", 70), ("bodywash_64.jpg", 400), ("mini_studio_11.jpg", 730)]:
     panel(im, ph, x, 440, 280, 373)
 d = ImageDraw.Draw(im)
-for (t, p, x) in [("Perfume 100 ml", P_PERF, 210), ("Shower gel 500 ml", P_GEL, 540), ("Perfume 8 ml", P_MINI, 870)]:
-    d.text((x, 860), t, font=pop(25), fill=IVORY, anchor="mm"); d.text((x, 905), p, font=pop(34, "Bold"), fill=GOLD, anchor="mm")
-c(d, 975, "50% off this Diwali (gift boxes excluded)", pop(26), MUTE)
+for (t, x) in [("Perfume 100 ml", 210), ("Shower gel 500 ml", 540), ("Perfume 8 ml", 870)]:
+    d.text((x, 865), t, font=pop(27), fill=IVORY, anchor="mm")
+c(d, 960, "DM for prices & Diwali deals", pop(44, "Bold"), GOLD)
 d.line((390, 1035, 690, 1035), fill=GOLD, width=2)
 c(d, 1110, "Shop from the link in our bio", pop(34, "Medium"), IVORY)
 c(d, 1165, "or visit us at O-17, Lajpat Nagar-II, New Delhi", pop(27), CHAMP); out.append(im)
