@@ -96,18 +96,18 @@ for p, seed, head, sub, name, notes, mood in people:
     card(im, p, 124, 240, 820, 0, 6); d = ImageDraw.Draw(im)
     c(d, 1138, name + "  GIFT BOX", pop(30, "Bold"), GOLD); c(d, 1190, notes, pop(23), CHAMP); c(d, 1236, mood, lora(30, True), SOFT)
     out.append(im)
-# 8 what's inside (new Flora 5 box photo)
+# 8 what's inside (Love Is In The Air box, per Tannay)
 im = bg(7); frame(im); d = ImageDraw.Draw(im)
 c(d, 112, "The whole ritual,", lora(64, True), CHAMP); c(d, 186, "in one box.", lora(64, True), CHAMP)
-cx0, cy0, cx1, cy1 = 200, 300, 990, 1010; crop = FL.crop((cx0, cy0, cx1, cy1)); cw = 860; chh = int(cw * (cy1 - cy0) / (cx1 - cx0))
+f = 1100 / 576; cx0, cy0, cx1, cy1 = int(58 * f), int(108 * f), int(512 * f), int(472 * f); crop = LI.crop((cx0, cy0, cx1, cy1)); cw = 860; chh = int(cw * (cy1 - cy0) / (cx1 - cx0))
 q = crop.resize((cw, chh), Image.LANCZOS).convert("RGBA"); bx = Image.new("RGBA", (cw + 12, chh + 12), GOLD + (255,)); bx.alpha_composite(q, (6, 6))
 X, Y = (W - cw - 12) // 2, 250
 sh = Image.new("RGBA", (W, H)); sa = Image.new("RGBA", bx.size, (0, 0, 0, 150)); sh.alpha_composite(sa, (X + 12, Y + 26)); im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(18))); im.alpha_composite(bx, (X, Y))
 d = ImageDraw.Draw(im); k = cw / (cx1 - cx0); yb = Y + chh + 12
-for i, (sx, lab) in enumerate([(330, "BODY WASH"), (585, "EXTRAIT DE PARFUM"), (845, "MOISTURIZER")]):
+for i, (sx, lab) in enumerate([(137 * f, "BODY WASH"), (288 * f, "EXTRAIT DE PARFUM"), (431 * f, "MOISTURIZER")]):
     x = X + 6 + (sx - cx0) * k; d.line((x, yb + 8, x, yb + 34), fill=GOLD, width=2)
     c(d, yb + 58, f"0{i + 1}", lora(32, True), GOLD, x); c(d, yb + 94, lab, pop(19, "Bold"), CHAMP, x)
-c(d, 1252, "Black satin, gold foil, one scent from head to toe. Nothing to wrap.", pop(22), SOFT); out.append(im)
+c(d, yb + 170, "Black satin, gold foil, one scent from head to toe.", lora(34, True), CHAMP); c(d, yb + 218, "Nothing to wrap. Just hand it over.", lora(34, True), CHAMP); out.append(im)
 # 9 how to gift + CTA + for him teaser
 im = bg(8, BQ); frame(im); d = ImageDraw.Draw(im)
 c(d, 110, "Buy one perfume,", lora(58, True), CHAMP); c(d, 182, "get the whole Diwali set.", pop(42, "Bold"), (255, 226, 160))
