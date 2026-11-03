@@ -2,7 +2,7 @@
 Look: Tannay's real Flora 5 8 ml photoshoot set (ivory silk, ylang-ylang, jasmine, amber, marble podium),
 which matches the perfume's listed notes. The mini is digitally removed from the set (work/scene_clean.png)
 and each real product cut-out (white studio shots) is placed on the podium with contact shadow and a soft
-podium reflection. Slide 5 is the untouched 8 ml photo. Notes from the Shopify listing. Prices verified live 3 Nov."""
+podium reflection. Slide 5 is the untouched 8 ml photo. Notes from the Shopify listing. No prices on slides (Tannay, 3 Nov): last slide says "DM for prices & Diwali deals"."""
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
 W, H = 1080, 1350; K = 1350 / 1254; OX = -135
@@ -69,16 +69,16 @@ c(d, 306, "FLORA 5  ·  SHOWER  ·  CREAM  ·  SCENT", pop(26, "Medium"), GOLD);
 # 2 step 1 shower gel
 im = scene(mirror=True); place(im, "work/gel.png", 540, 900); d = ImageDraw.Draw(im)
 c(d, 70, "STEP 1  ·  SHOWER", pop(28, "Bold"), GOLD); c(d, 130, "Flora 5 Shower Gel", lora(56, True), DARK)
-c(d, 182, "500 ml  ·  shea butter & glycerin  ·  soft floral lather", pop(24), MUTE); price(d, 232, "₹749", "₹1,499"); out.append(im)
+c(d, 182, "500 ml  ·  shea butter & glycerin  ·  soft floral lather", pop(24), MUTE); out.append(im)
 # 3 step 2 cream
 im = scene(); place(im, "work/cream.png", 540, 880); d = ImageDraw.Draw(im)
 c(d, 70, "STEP 2  ·  MOISTURISE", pop(28, "Bold"), GOLD); c(d, 130, "Flora 5 Moisturizing Cream", lora(54, True), DARK)
-c(d, 182, "150 ml  ·  face, body & hands  ·  non-greasy", pop(24), MUTE); price(d, 232, "₹749", "₹1,499"); out.append(im)
+c(d, 182, "150 ml  ·  face, body & hands  ·  non-greasy", pop(24), MUTE); out.append(im)
 # 4 step 3 perfume
 im = scene(mirror=True); place(im, "work/perfume.png", 540, 640); d = ImageDraw.Draw(im)
 c(d, 70, "STEP 3  ·  SCENT", pop(28, "Bold"), GOLD); c(d, 130, "Flora 5 Perfume", lora(58, True), DARK)
 c(d, 186, "Aldehyde & ylang-ylang  ·  jasmine  ·  amber & musk", pop(25), MUTE)
-c(d, 228, "100 ml  ·  powdery floral", pop(24), MUTE); price(d, 282, "₹1,499", "₹2,999"); out.append(im)
+c(d, 228, "100 ml  ·  powdery floral", pop(24), MUTE); out.append(im)
 # 5 the real 8 ml photo (untouched) under a backdrop-coloured band + CTA
 ph = Image.open("source/mini_8ml_lifestyle.png").convert("RGB").resize((1080, 1080), Image.LANCZOS)
 top = np.array(ph)[:6].mean((0, 1)).astype(int)
@@ -91,9 +91,9 @@ v = Image.new("RGBA", (W, 170)); vd = ImageDraw.Draw(v)
 for y in range(170): vd.line((0, y, W, y), fill=(40, 24, 12, int(150 * y / 170)))
 im.alpha_composite(v, (0, H - 170)); d = ImageDraw.Draw(im)
 logo(im, 60, 34)
-c(d, 128, "TAKE IT WITH YOU", pop(28, "Bold"), GOLD); c(d, 188, "Flora 5 · 8 ml", lora(58, True), DARK); price(d, 250, "₹199", "₹399")
-c(d, 1252, "Gel + cream + perfume: ₹2,997", pop(32, "Bold"), (255, 250, 240))
-c(d, 1300, "DM SCENT  ·  link in bio  ·  Lajpat Nagar-II", pop(26), (255, 246, 230))
+c(d, 128, "TAKE IT WITH YOU", pop(28, "Bold"), GOLD); c(d, 188, "Flora 5 · 8 ml", lora(58, True), DARK)
+c(d, 1248, "DM for prices & Diwali deals", pop(36, "Bold"), (255, 250, 240))
+c(d, 1300, "link in bio  ·  O-17, Lajpat Nagar-II", pop(26), (255, 246, 230))
 out.append(im)
 for i, s in enumerate(out, 1): s.convert("RGB").save(f"slide_{i:02d}.jpg", quality=93)
 sheet = Image.new("RGB", (5 * 432 + 60, 540 + 20), (30, 22, 16))
