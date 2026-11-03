@@ -102,9 +102,9 @@ arch(im); d = ImageDraw.Draw(im)
 c(d, 150, "THEN THE CREAM", pop(24, "Bold"), GOLD); c(d, 212, "Marhaba Oudh Moisturizer", lora(54, True), CHAMP)
 c(d, 264, "150 ml  ·  shea butter & glycerin  ·  face & body", pop(22), MUTE); out.append(im)
 
-# 5 the family on the podium + CTA
+# 5 the family on the podium (moisturizer, shower gel from Drive Marhaba_B_2.jpg, 100 ml) + CTA
 im = scene(); backlight(im, 540, 680, 300, 300)
-place(im, "work/cream.png", 372, 560, BASE - 14); place(im, "work/mini.png", 716, 330, BASE - 8, glass=True); place(im, "work/perfume.png", 540, 430, BASE + 6, glass=True)
+place(im, "work/cream.png", 392, 560, BASE - 14); place(im, "work/gel.png", 700, 610, BASE - 12); place(im, "work/perfume.png", 540, 430, BASE + 6, glass=True)
 bottom_shade(im, 330, 235); arch(im); d = ImageDraw.Draw(im)
 c(d, 170, "Arabian nights,", lora(66, True), CHAMP); c(d, 245, "every night.", lora(66, True), CHAMP)
 c(d, 310, "PERFUME  ·  MOISTURIZER  ·  SHOWER GEL  ·  8 ML", pop(21, "Medium"), GOLD)
