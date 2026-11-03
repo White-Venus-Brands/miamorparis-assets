@@ -57,7 +57,7 @@ Warm, a little romantic, confident; a friend who knows fragrance. English
   `ops/price_backup_before_diwali.csv` for switching back.
 
 ## Gift boxes (Tannay, 3 Nov)
-- Body wash + extrait de parfum + moisturizer gift box, available in ANY of the 12 scents ("get the whole routine"). Not listed on Shopify yet: sell via DM / store, prices by DM.
+- Body wash + extrait de parfum + moisturizer gift box, available in 10 scents (all except Ombré and Miss Aqua) ("get the whole routine"). Not listed on Shopify yet: sell via DM / store, prices by DM.
 
 ## Best-sellers and what the ad data says
 - Best-sellers: Moksha, Hold Mi (men); Ombré, Bouquet (women).

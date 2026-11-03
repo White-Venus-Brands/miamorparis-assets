@@ -1,4 +1,4 @@
-"""Diwali gift-box push: gift box in ANY of the 12 scents (Tannay), shown in Miss Poem and Bouquet (body wash + extrait de parfum + moisturizer), Tannay's own
+"""Diwali gift-box push: gift box in any of 10 scents (not Ombre, not Miss Aqua) (Tannay), shown in Miss Poem and Bouquet (body wash + extrait de parfum + moisturizer), Tannay's own
 styled photos (3 Nov). No prices: last slide 'DM for prices & Diwali deals'. Notes from the Shopify listings / weekly plan."""
 import random, numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -67,7 +67,7 @@ c(d, 196, "Body wash  ·  Extrait de parfum  ·  Moisturizer", pop(24), (200, 22
 bg = BQ.resize((1350, 1350), Image.LANCZOS).crop((135, 0, 1215, 1350)).filter(ImageFilter.GaussianBlur(14))
 im = Image.blend(bg, Image.new("RGB", bg.size, DTEAL), 0.55).convert("RGBA"); bokeh(im, (0, 0, W, H), 50, 5)
 frame(im); d = ImageDraw.Draw(im); logo(im, 70, 300)
-c(d, 440, "Pick any of our 12 scents.", lora(60, True), CHAMP); c(d, 515, "Get the whole routine,", lora(60, True), CHAMP); c(d, 590, "ready to gift.", lora(60, True), CHAMP)
+c(d, 440, "Pick any of our 10 scents.", lora(60, True), CHAMP); c(d, 515, "Get the whole routine,", lora(60, True), CHAMP); c(d, 590, "ready to gift.", lora(60, True), CHAMP)
 d.line((440, 660, 640, 660), fill=GOLD, width=2)
 c(d, 740, "DM for prices", pop(56, "Bold"), CHAMP); c(d, 815, "& Diwali deals", pop(56, "Bold"), CHAMP)
 c(d, 905, "BODY WASH  ·  EXTRAIT DE PARFUM  ·  MOISTURIZER", pop(24, "Medium"), GOLD)
