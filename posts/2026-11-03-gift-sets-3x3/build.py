@@ -9,13 +9,13 @@ def lora(s, it=False): return ImageFont.truetype("/usr/share/fonts/truetype/goog
 def pop(s, w="Medium"): return ImageFont.truetype(f"/usr/share/fonts/truetype/google-fonts/Poppins-{w}.ttf", s)
 GOLD = (226, 186, 112); IVORY = (250, 240, 222); BLUSH = (236, 196, 190); WINE = (74, 14, 28); DEEP = (30, 6, 12)
 LOGO = Image.open("../../assets/cutouts/logo_gold.png").convert("RGBA")
-P = {n: Image.open(f"source/{n}_box.jpg").convert("RGB") for n in ("bouquet", "flora5", "misspoem", "derossa", "holdmi", "moksha")}
+P = {n: Image.open(f"source/{n}_box.jpg").convert("RGB") for n in ("bouquet", "flora5", "misspoem", "derossa", "holdmi", "mraqua")}
 HER = [("bouquet", "BOUQUET", "Apple blossom  ·  peony & pear  ·  peach", "Fresh, joyful, full of life.", "For the one who lights up every room"),
        ("flora5", "FLORA 5", "Aldehyde & ylang-ylang  ·  jasmine  ·  amber & musk", "Graceful, powdery, timeless.", "For Maa, who made every Diwali feel like home"),
        ("misspoem", "MISS POEM", "Narcissus  ·  mimosa & vanilla  ·  amber", "Soft, sweet, poetic.", "For your sister, your forever partner-in-crime")]
 HIM = [("derossa", "DE ROSSA OUDH", "Saffron  ·  rose & coffee  ·  sandalwood & amber", "Warm, bold, regal.", "For Papa, who never asked for anything"),
        ("holdmi", "HOLD MI", "Lemon & bergamot  ·  nutmeg & saffron  ·  vetiver", "Crisp, spicy, hard to forget.", "For your brother, your forever bodyguard"),
-       ("moksha", "MOKSHA", "White musk  ·  bergamot & grapefruit  ·  sandalwood", "Fresh, calm, effortlessly classy.", "For the man who has everything, except this")]
+       ("mraqua", "MR AQUA", "Lime & orange  ·  sea notes  ·  white musk & oakmoss", "Fresh, crisp, confident.", "For the man who has everything, except this")]
 
 def bg(seed):
     im = Image.new("RGBA", (W, H)); d = ImageDraw.Draw(im)
