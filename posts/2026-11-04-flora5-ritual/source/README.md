@@ -5,3 +5,9 @@ Photos supplied by Tannay on 3 Nov:
 - perfume_100ml_main.jpg (from Drive Perfume > Flora 5 > Main Image.jpg)
 Shower gel: Drive Body Wash > FLORA (IMG_0073–0078).
 Live prices 3 Nov: perfume 100 ml ₹1,499 (was ₹2,999); shower gel ₹749 (was ₹1,499); cream ₹749 (was ₹1,499); 8 ml ₹199 (was ₹399). Re-check before booking.
+
+## Status (3 Nov, built in chat with Tannay)
+- Tannay: the 8 ml image is from a real photoshoot, so do NOT mark it AI (isAiGenerated false).
+- Tannay: "make every pic have a nice background but make sure it looks real".
+- Slides built: ../slide_01.jpg … slide_05.jpg (build.py, work/make_scene.py). Every product stands on the real set from his 8 ml shoot.
+- Awaiting Tannay's OK on the look before booking for Wed 4 Nov 18:00 IST. The daily task should book THESE slides (re-check prices), not build a new set.
