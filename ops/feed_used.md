@@ -10,3 +10,4 @@
 | 2026-10-30 | Notes-journey Reel (Tannay) | Love Is In The Air perfume |
 | 2026-11-02 | Six evenings to Diwali (Oudh candles) | 5 Oudh three-wick candles: Aleud, Abyad, Al Sandali, Alkhuzama, Zeenat e Oudh (₹1,749) |
 | 2026-11-03 | Marhaba: Arabian nights, bottled (unisex) | Marhaba perfume 100 ml + box, Marhaba Oudh shower gel 500 ml, Marhaba Oudh moisturizer 150 ml, Marhaba 8 ml |
+| 2026-11-05 | Diwali, beautifully boxed | Miss Poem gift box + Bouquet gift box (body wash + extrait de parfum + moisturizer) |
