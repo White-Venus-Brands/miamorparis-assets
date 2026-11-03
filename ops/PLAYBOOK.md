@@ -56,6 +56,9 @@ Warm, a little romantic, confident; a friend who knows fragrance. English
 - Sale end date: not decided yet. Original (pre-sale) prices are in
   `ops/price_backup_before_diwali.csv` for switching back.
 
+## Gift boxes (Tannay, 3 Nov)
+- Body wash + extrait de parfum + moisturizer gift box, available in ANY of the 12 scents ("get the whole routine"). Not listed on Shopify yet: sell via DM / store, prices by DM.
+
 ## Best-sellers and what the ad data says
 - Best-sellers: Moksha, Hold Mi (men); Ombré, Bouquet (women).
 - Cheapest WhatsApp chats in past ads: women 18–34; WhatsApp Status and
