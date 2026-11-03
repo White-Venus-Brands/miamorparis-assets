@@ -132,3 +132,9 @@ Tannay: "1 post everyday for upcoming festivals … something new everyday, we h
 
 ## Automation
 - Scheduled task "Mi Amor Paris daily posts and Stories" (trig_01Efxt4X4UpSjwZ9kqXEpcov) runs daily 14:37 IST: books tomorrow's 11:00 This-or-that Story, 23:00 Today's Star Story and 19:30 feed carousel, skipping anything already booked, then messages Tannay. Approved by Tannay 28 Oct.
+
+## Reels (Tannay, 3 Nov): every WEDNESDAY and SATURDAY evening, 20:00 IST
+- On top of the daily feed post. Built by Claude from real product photos (no AI people, no AI-drawn products), 1080x1920, 12–25 s, original music/SFX.
+- **The hook is everything:** a witty, relatable line or situation in the first second that makes people stay to see "what's happening here" (e.g. "POV: the Diwali party is in 2 hours and you forgot the gift"; "Things that disappear by Bhai Dooj: kaju katli, sone papdi, your bonus. Things that don't…"; "Rate my Diwali gift"). Product + payoff by the end; 3-second view rate was only 22% on the first Reel, so open on motion + text, never a slow logo.
+- No ₹ prices (DM for prices), offer wording per the gift-box rules, *During office hours on any delivery promise. Reference builds: posts/2026-11-04-de-rossa-ramp-reel (3D set + real bottle), scratchpad-style gift reel (kinetic text + product flashes).
+- Log every Reel in ops/post_log.md and ops/feed_used.md like feed posts.
