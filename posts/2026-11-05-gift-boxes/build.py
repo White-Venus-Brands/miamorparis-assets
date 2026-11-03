@@ -1,4 +1,4 @@
-"""Diwali gift-box push: Miss Poem and Bouquet gift boxes (body wash + extrait de parfum + moisturizer), Tannay's own
+"""Diwali gift-box push: gift box in ANY of the 12 scents (Tannay), shown in Miss Poem and Bouquet (body wash + extrait de parfum + moisturizer), Tannay's own
 styled photos (3 Nov). No prices: last slide 'DM for prices & Diwali deals'. Notes from the Shopify listings / weekly plan."""
 import random, numpy as np
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
@@ -50,27 +50,27 @@ out = []
 im = teal_bg(1); card(im, MP, 372, 720, 560, 7); card(im, BQ, 712, 790, 560, -6)
 frame(im); d = ImageDraw.Draw(im); logo(im, 60, 56)
 c(d, 180, "Diwali,", lora(84, True), CHAMP); c(d, 268, "beautifully boxed.", lora(84, True), CHAMP)
-c(d, 345, "THE MI AMOR PARIS GIFT BOXES", pop(26, "Medium"), GOLD)
+c(d, 345, "ANY SCENT  ·  THE WHOLE ROUTINE  ·  ONE BOX", pop(26, "Medium"), GOLD)
 c(d, 1250, "swipe  >>", pop(24), GOLD); out.append(im)
 # 2 Miss Poem (soft ivory light behind the text so it reads over the lid)
 im = extend(MP); g = Image.new("RGBA", (W, 330)); gd = ImageDraw.Draw(g)
 for y in range(330): gd.line((0, y, W, y), fill=(252, 238, 226, int(215 * min(1, (330 - y) / 120))))
 im.alpha_composite(g); bokeh(im, (60, 30, 1020, 240), 12, 2, (255, 215, 170)); frame(im, (176, 120, 70)); d = ImageDraw.Draw(im)
-c(d, 70, "MISS POEM GIFT BOX", pop(28, "Bold"), (150, 92, 60), None); c(d, 135, "Narcissus, mimosa, vanilla & amber", lora(46, True), (70, 38, 30), None)
+c(d, 70, "SHOWN IN MISS POEM", pop(28, "Bold"), (150, 92, 60), None); c(d, 135, "Narcissus, mimosa, vanilla & amber", lora(46, True), (70, 38, 30), None)
 c(d, 196, "Body wash  ·  Extrait de parfum  ·  Moisturizer", pop(24), (110, 72, 58), None)
 c(d, 238, "Soft, sweet and romantic.", pop(22), (130, 90, 74), None); out.append(im)
 # 3 Bouquet
 im = extend(BQ); bokeh(im, (60, 30, 1020, 240), 14, 3, (190, 240, 220)); frame(im); d = ImageDraw.Draw(im)
-c(d, 70, "BOUQUET GIFT BOX", pop(28, "Bold"), GOLD); c(d, 135, "Apple blossom, peony, pear & peach", lora(46, True), CHAMP)
+c(d, 70, "SHOWN IN BOUQUET", pop(28, "Bold"), GOLD); c(d, 135, "Apple blossom, peony, pear & peach", lora(46, True), CHAMP)
 c(d, 196, "Body wash  ·  Extrait de parfum  ·  Moisturizer", pop(24), (200, 220, 210)); c(d, 238, "Fresh, fruity and floral.", pop(22), (190, 210, 200)); out.append(im)
 # 4 CTA over the Bouquet set, softly blurred and darkened
 bg = BQ.resize((1350, 1350), Image.LANCZOS).crop((135, 0, 1215, 1350)).filter(ImageFilter.GaussianBlur(14))
 im = Image.blend(bg, Image.new("RGB", bg.size, DTEAL), 0.55).convert("RGBA"); bokeh(im, (0, 0, W, H), 50, 5)
 frame(im); d = ImageDraw.Draw(im); logo(im, 70, 300)
-c(d, 470, "One scent. Three steps.", lora(64, True), CHAMP); c(d, 550, "Ready to gift.", lora(64, True), CHAMP)
-d.line((440, 640, 640, 640), fill=GOLD, width=2)
+c(d, 440, "Pick any of our 12 scents.", lora(60, True), CHAMP); c(d, 515, "Get the whole routine,", lora(60, True), CHAMP); c(d, 590, "ready to gift.", lora(60, True), CHAMP)
+d.line((440, 660, 640, 660), fill=GOLD, width=2)
 c(d, 740, "DM for prices", pop(56, "Bold"), CHAMP); c(d, 815, "& Diwali deals", pop(56, "Bold"), CHAMP)
-c(d, 905, "MISS POEM  ·  BOUQUET", pop(26, "Medium"), GOLD)
+c(d, 905, "BODY WASH  ·  EXTRAIT DE PARFUM  ·  MOISTURIZER", pop(24, "Medium"), GOLD)
 c(d, 1000, "or visit us at O-17, Lajpat Nagar-II, New Delhi", pop(26), (205, 225, 215)); out.append(im)
 for i, s in enumerate(out, 1): s.convert("RGB").save(f"slide_{i:02d}.jpg", quality=93)
 sheet = Image.new("RGB", (4 * 432 + 50, 560), (10, 20, 22))
