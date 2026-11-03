@@ -150,3 +150,4 @@ Tannay: "1 post everyday for upcoming festivals … something new everyday, we h
 - "Red flags in a gift: it came with a price tag. Green flags: ..."
 Rules: hook text on screen in frame 1, something moving, a running device (clock, score, quiz) that only pays off at the end.
 - Pacing (Tannay 3 Nov): hold every on-screen line long enough to read it, about 1 s per short line, before the next beat. Fast cuts are fine for photos, not for text.
+- Music: Metricool can attach Instagram library audio to Reels (instagramData.audioConfiguration, numeric audioId; search terms return candidates). The business account only gets the commercially licensed library, not chart hits. Use an upbeat library track at audioVolume 85 / videoVolume 25 so our SFX still land. Facebook gets our own soundtrack.
