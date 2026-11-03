@@ -11,3 +11,4 @@
 | 2026-11-02 | Six evenings to Diwali (Oudh candles) | 5 Oudh three-wick candles: Aleud, Abyad, Al Sandali, Alkhuzama, Zeenat e Oudh (₹1,749) |
 | 2026-11-03 | Marhaba: Arabian nights, bottled (unisex) | Marhaba perfume 100 ml + box, Marhaba Oudh shower gel 500 ml, Marhaba Oudh moisturizer 150 ml, Marhaba 8 ml |
 | 2026-11-05 | Diwali, beautifully boxed | Miss Poem gift box + Bouquet gift box (body wash + extrait de parfum + moisturizer) |
+| 2026-11-04 | Diwali-ready in three steps (Flora 5) | Flora 5 shower gel 500 ml + moisturizing cream 150 ml + perfume 100 ml + 8 ml |

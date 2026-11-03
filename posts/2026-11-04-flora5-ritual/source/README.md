@@ -10,4 +10,4 @@ Live prices 3 Nov: perfume 100 ml ₹1,499 (was ₹2,999); shower gel ₹749 (wa
 - Tannay: the 8 ml image is from a real photoshoot, so do NOT mark it AI (isAiGenerated false).
 - Tannay: "make every pic have a nice background but make sure it looks real".
 - Slides built (no prices, per Tannay 3 Nov; last slide "DM for prices & Diwali deals"): ../slide_01.jpg … slide_05.jpg (build.py, work/make_scene.py).
-- Awaiting Tannay's OK on the look before booking for Wed 4 Nov 18:00 IST. The daily task should book THESE slides (re-check prices), not build a new set.
+- BOOKED by daily task 3 Nov: Metricool 414998506, Wed 4 Nov 18:00 IST (IG + FB).
