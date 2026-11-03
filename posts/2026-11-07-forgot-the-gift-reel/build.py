@@ -9,7 +9,20 @@ D = os.path.dirname(os.path.abspath(__file__)) + "/"
 SRC = D + "../2026-11-03-gift-sets-3x3/source/"
 LOGO = Image.open(D + "../../assets/cutouts/logo_gold.png").convert("RGBA")
 OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp/fg_frames/"
-W, H, FPS, DUR = 1080, 1920, 30, 17.0
+W, H, FPS = 1080, 1920, 30
+# Time warp (Tannay 3 Nov: first half too fast to read). Scenes are written in "story" time;
+# real time is stretched over the hook + options so every line gets ~1 s to be read.
+KN = [(0.0, 0.0), (1.5, 0.75), (2.6, 1.35), (3.4, 1.85), (4.5, 1.95), (6.1, 2.75), (7.7, 3.55), (9.0, 4.45), (9.7, 5.0)]
+SHIFT = KN[-1][0] - KN[-1][1]
+def ST(r):  # real -> story
+    if r >= KN[-1][0]: return r - SHIFT
+    for (r0, s0), (r1, s1) in zip(KN, KN[1:]):
+        if r < r1: return s0 + (s1 - s0) * (r - r0) / (r1 - r0)
+def RT(s):  # story -> real
+    if s >= KN[-1][1]: return s + SHIFT
+    for (r0, s0), (r1, s1) in zip(KN, KN[1:]):
+        if s < s1: return r0 + (r1 - r0) * (s - s0) / (s1 - s0)
+DUR = 17.0 + SHIFT
 GOLD, IVORY, WINE, RED = (226, 186, 112), (250, 240, 226), (58, 10, 22), (235, 72, 72)
 
 def inter(s, w="Black"): return ImageFont.truetype(f"/usr/share/fonts/opentype/inter/InterDisplay-{w}.otf", s)
@@ -118,7 +131,7 @@ def scene_options(im, t):
         if st > 0:
             d.line((x0 - 20, y + 48, x0 - 20 + (tw + 40) * st, y + 44), fill=RED + (255,), width=12)
         if t - ts > 0.22:
-            ctext(d, y + 108, ["(it's been gifted 3 times already)", "(they have 40)", "(they WILL know)"][i], pop(36, "Medium"), (255, 160, 150, int(255 * ss((t - ts - 0.22) / 0.2))))
+            ctext(d, y + 108, ["(it's been gifted 3 times already)", "(they have 40)", "(they WILL know)"][i], pop(44, "Bold"), (255, 175, 165, int(255 * ss((t - ts - 0.22) / 0.2))))
     if t > 4.45:
         u = t - 4.45; lay, x = scaled_text_layer([("OR...", inter(150), GOLD)], 1.4 - 0.4 * back(u / 0.25), ss(u / 0.1), 0)
         im2 = Image.new("RGBA", im.size, (20, 4, 8, int(200 * ss(u / 0.15)))); im.alpha_composite(im2)
@@ -179,13 +192,14 @@ def scene_end(im, t):
             im.alpha_composite(c, (int(W / 2 - 3 * 168 + k * 168 + 6), 1200))
     ctext(d, 1700, "*Delhi NCR 2-3 hr delivery during office hours", pop(28, "Medium"), (220, 200, 180, int(200 * ss((u - 1.3) / 0.5))))
 
-def frame(t):
-    if t < 1.85: im = background(t); scene_hook(im, t)
-    elif t < 5.0: im = background(t); scene_options(im, t)
-    elif t < 10.4: im = background(t, 0.85); scene_boxes(im, t)
-    elif t < 13.6: im = background(t); scene_payoff(im, t)
-    else: im = background(t); scene_end(im, t)
-    if t < 13.6: countdown(im, t, calm=t >= 10.4)
+def frame(tr):
+    t = ST(tr)
+    if t < 1.85: im = background(tr); scene_hook(im, t)
+    elif t < 5.0: im = background(tr); scene_options(im, t)
+    elif t < 10.4: im = background(tr, 0.85); scene_boxes(im, t)
+    elif t < 13.6: im = background(tr); scene_payoff(im, t)
+    else: im = background(tr); scene_end(im, t)
+    if t < 13.6: countdown(im, tr, calm=t >= 10.4)
     # quick white flash on cuts
     for tc in (1.85, 5.0, 10.4, 13.6):
         if 0 <= t - tc < 0.08: im = Image.blend(im, Image.new("RGBA", im.size, (255, 245, 230, 255)), 0.5 * (1 - (t - tc) / 0.08))
@@ -197,23 +211,25 @@ def frame(t):
 SR = 44100
 def audio(path):
     n = int(SR * DUR); out = np.zeros(n, np.float32); tt = np.arange(n) / SR
-    def add(sig, at, g=1.0):
+    def addr(sig, at, g=1.0):
         i = int(at * SR); j = min(n, i + len(sig)); out[i:j] += sig[: j - i] * g
+    def add(sig, at, g=1.0):   # at in story time
+        i = int(RT(at) * SR); j = min(n, i + len(sig)); out[i:j] += sig[: j - i] * g
     def env(L, a=0.005, r=0.2):
         x = np.arange(int(L * SR)) / SR; return np.minimum(1, x / a) * np.exp(-x / r)
     kick = lambda: np.sin(2 * np.pi * (50 + 120 * np.exp(-np.arange(int(.35 * SR)) / SR / .04)) * np.arange(int(.35 * SR)) / SR) * env(.35, .002, .12)
     hat = lambda: lfilter([1, -1], [1, -0.6], np.random.default_rng(1).normal(0, 1, int(.06 * SR))) * env(.06, .001, .015) * 0.25
     tick = lambda f=2400: np.sin(2 * np.pi * f * np.arange(int(.04 * SR)) / SR) * env(.04, .001, .008)
     beat = 60 / 128
-    for k in range(int(13.6 / beat)):   # driving beat until end card
-        b = k * beat; add(kick(), b, 0.8 if b > 0.7 else 0.0); add(hat(), b + beat / 2, 1.0)
-    for k in range(int(10.4 * 2)):      # clock tick-tock
-        add(tick(2600 if k % 2 == 0 else 1900), k * 0.5, 0.18)
+    for k in range(int(RT(13.6) / beat)):   # driving beat until end card (real time)
+        b = k * beat; addr(kick(), b, 0.8 if b > 1.2 else 0.0); addr(hat(), b + beat / 2, 1.0)
+    for k in range(int(RT(10.4) * 2)):      # clock tick-tock
+        addr(tick(2600 if k % 2 == 0 else 1900), k * 0.5, 0.18)
     # bass line (minor, urgent) then major at payoff
     def tone(f, L, g, a=.01, r=.3, harm=(1, .5, .25)):
         x = np.arange(int(L * SR)) / SR; s = sum(h * np.sin(2 * np.pi * f * (i + 1) * x) for i, h in enumerate(harm)); return s * env(L, a, r) * g
     seq = [55, 55, 65.4, 61.7]
-    for k in range(int(10.4 / (beat * 2))): add(tone(seq[k % 4], beat * 2, 0.32, r=.25), k * beat * 2)
+    for k in range(int(RT(10.4) / (beat * 2))): addr(tone(seq[k % 4], beat * 2, 0.32, r=.25), k * beat * 2)
     for k in range(int((13.6 - 10.4) / (beat * 2)) + 1): add(tone([65.4, 73.4, 82.4, 98][k % 4], beat * 2, 0.32, r=.3), 10.4 + k * beat * 2)
     # slams
     for at in (0.0, 0.75): add(kick(), at, 1.3); add(lfilter([1], [1, -0.97], np.random.default_rng(2).normal(0, 1, int(.4 * SR))) * env(.4, .002, .1) * 0.02, at)
@@ -223,7 +239,7 @@ def audio(path):
         add(tone(180, .25, .25, r=.1, harm=(1, .7, .5, .3)), ts + 0.2)   # "nope" buzz
     # whooshes on cuts
     for at in (1.8, 4.4, 4.95, 10.35, 13.55):
-        nz = np.random.default_rng(int(at * 10)).normal(0, 1, int(.5 * SR)); w = lfilter([1], [1, -0.92], nz) * np.hanning(len(nz)) * 0.05; add(w, at - 0.2)
+        nz = np.random.default_rng(int(at * 10)).normal(0, 1, int(.5 * SR)); w = lfilter([1], [1, -0.92], nz) * np.hanning(len(nz)) * 0.05; addr(w, RT(at) - 0.2)
     for k in range(6): add(tick(3800), 5.0 + k * 0.9, 0.25); add(kick(), 5.0 + k * 0.9, 0.5)
     # payoff ding + end chord
     for f in (880, 1108.7, 1318.5): add(tone(f, 2.5, .09, r=.8, harm=(1, .3)), 10.55)
