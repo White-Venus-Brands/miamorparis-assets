@@ -14,3 +14,4 @@
 | 2026-11-04 | Diwali-ready in three steps (Flora 5) | Flora 5 shower gel 500 ml + moisturizing cream 150 ml + perfume 100 ml + 8 ml |
 | 2026-11-03 | Gift Box For Him | De Rossa Oudh, Smuggler, Hold Mi, Marhaba, Moksha, Mr Aqua gift boxes |
 | 2026-11-03 | Gift Box For Her | Flora 5, Love Is In The Air, Miss Poem, Bouquet gift boxes |
+| 2026-11-04 | Diwali gift sets 3x3 (boost) | Bouquet, Flora 5, Miss Poem, De Rossa Oudh, Hold Mi, Mr Aqua gift boxes |
