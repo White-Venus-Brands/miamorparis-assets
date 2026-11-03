@@ -57,6 +57,8 @@ Warm, a little romantic, confident; a friend who knows fragrance. English
   `ops/price_backup_before_diwali.csv` for switching back.
 
 ## Gift boxes (Tannay, 3 Nov)
+- Offer wording: "Buy one perfume, get the whole Diwali set" (do NOT say 50% off on gift-box creative). Delhi NCR delivery within 2-3 hours* with "*During office hours".
+- Gift Box For Her = Flora 5, Love Is In The Air, Miss Poem, Bouquet. For Him boxes: coming soon (Tannay will send photos).
 - Body wash + extrait de parfum + moisturizer gift box, available in 10 scents (all except Ombré and Miss Aqua) ("get the whole routine"). Not listed on Shopify yet: sell via DM / store, prices by DM.
 
 ## Best-sellers and what the ad data says
