@@ -1,134 +1,117 @@
-"""3 Nov 2026 feed: "Marhaba, the Diwali-party scent for him" (perfume 100 ml, Oudh shower gel, 8 ml mini).
-Look: deep wine-to-black, gold dot-rangoli medallions in the corners and soft gold firework bursts
-(new vs. the emerald jaali of 2 Nov). Real Drive photos, shown whole inside gold-framed panels.
-Notes and benefit words come from the Shopify listings. Prices removed 3 Nov (Tannay): last slide says "DM for prices & Diwali deals"."""
-import math, random
-from PIL import Image, ImageDraw, ImageFont, ImageFilter
-W, H = 1080, 1350
+"""3 Nov 2026 feed (rebuilt per Tannay): "Marhaba · Arabian nights, bottled". Unisex, Arabian-nights mood, no prices,
+no white-background shots. Set = the real Marhaba photoshoot (rose, saffron, labdanum resin, agarwood, patchouli leaf,
+engraved brass podium; mini_life_1.jpg). The 8 ml is taken off the podium (work/make_scene.py) and the real 100 ml bottle,
+box, Oudh cream and 8 ml are cut from their studio shots (work/cutout.py) and stood on it with backlight, contact shadow
+and brass reflection. Shower gel uses its own real dark lifestyle photo. Last slide: DM for prices & Diwali deals."""
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageOps
+W, H = 1080, 1350; BASE = 966
 def lora(s, it=False): return ImageFont.truetype("/usr/share/fonts/truetype/google-fonts/Lora-" + ("Italic-Variable" if it else "Variable") + ".ttf", s)
 def pop(s, w="Medium"): return ImageFont.truetype(f"/usr/share/fonts/truetype/google-fonts/Poppins-{w}.ttf", s)
-WINE = (74, 14, 24); BLK = (14, 4, 7); GOLD = (206, 170, 102); CHAMP = (240, 220, 178); IVORY = (250, 246, 238); MUTE = (196, 160, 150)
+GOLD = (214, 172, 96); CHAMP = (242, 224, 186); MUTE = (205, 170, 140)
 LOGO = Image.open("../../assets/cutouts/logo_gold.png").convert("RGBA")
-P_PERF, W_PERF = "₹1,499", "₹2,999"
-P_GEL, W_GEL = "₹749", "₹1,499"
-P_MINI, W_MINI = "₹199", "₹399"
 
-def c(d, y, s, f, col): d.text((W / 2, y), s, font=f, fill=col, anchor="mm")
+def scene(mirror=False):
+    s = Image.open("work/scene_clean.png").convert("RGB")
+    if mirror: s = ImageOps.mirror(s)
+    return s.resize((1350, 1350), Image.LANCZOS).crop((135, 0, 1215, 1350)).convert("RGBA")
 
-def logo(im, w, y, col=GOLD):
-    l = LOGO.resize((w, int(LOGO.height * w / LOGO.width)), Image.LANCZOS)
-    a = l.split()[3].point(lambda v: 0 if v < 90 else min(255, int((v - 90) * 2.2))); s = Image.new("RGBA", l.size, col + (0,)); s.putalpha(a)
+def backlight(im, cx, cy, rx, ry, a=150):
+    g = Image.new("RGBA", (W, H)); d = ImageDraw.Draw(g)
+    d.ellipse((cx - rx, cy - ry, cx + rx, cy + ry), fill=(255, 150, 60, a))
+    im.alpha_composite(g.filter(ImageFilter.GaussianBlur(rx * 0.55)))
+
+def prep(path, h, glass):
+    p = Image.open(path).convert("RGBA"); w = int(p.width * h / p.height); p = p.resize((w, h), Image.LANCZOS)
+    a = np.array(p).astype(np.float32); a[..., :3] *= 0.86; a[..., 0] *= 1.06; a[..., 2] *= 0.86   # warm, dimmer set light
+    from scipy import ndimage
+    a[..., 3] = ndimage.grey_erosion(a[..., 3], size=(3, 3)); a[h - 3:, :, 3] = 0
+    if glass:  # smooth the glass silhouette (studio JPEG edges are ragged)
+        import cv2
+        m = cv2.GaussianBlur((a[..., 3] > 128).astype(np.float32), (0, 0), 3.5) > 0.5
+        m = ndimage.binary_erosion(m, iterations=2); a[..., 3] = cv2.GaussianBlur(m.astype(np.float32), (0, 0), 1.0) * 255
+    return a, w, glass
+
+def place(im, path, cx, h, base=BASE, glass=False):
+    a, w, glass = prep(path, h, glass); x, y = int(cx - w / 2), base - h
+    sh = Image.new("RGBA", (W, H)); d = ImageDraw.Draw(sh)
+    d.ellipse((x - 6, base - 12, x + w + 6, base + 10), fill=(0, 0, 0, 170)); d.ellipse((x - 30, base - 22, x + w + 30, base + 18), fill=(0, 0, 0, 70))
+    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(8)))
+    r = a[::-1][:40].copy(); r[..., 3] *= np.linspace(0.18, 0, 40)[:, None]   # faint reflection on the polished brass top
+    im.alpha_composite(Image.fromarray(r.astype(np.uint8), "RGBA").filter(ImageFilter.GaussianBlur(1.5)), (x, base))
+    if glass:   # clear glass: multiply the near-white glass with the set behind it
+        import cv2
+        bg = np.array(im.crop((x, y, x + w, y + h))).astype(np.float32); g = cv2.GaussianBlur(a[..., :3] / 255, (0, 0), 2.5)
+        bg[..., :3] = cv2.GaussianBlur(bg[..., :3], (0, 0), 3)
+        sat = g.max(2) - g.min(2); wgt = (np.clip((g.mean(2) - 0.50) / 0.25, 0, 1) * np.clip((0.24 - sat) / 0.10, 0, 1))[..., None]
+        a[..., :3] = a[..., :3] * (1 - wgt) + bg[..., :3] * np.clip(g * 1.25, 0, 1.15) * wgt
+    im.alpha_composite(Image.fromarray(np.clip(a, 0, 255).astype(np.uint8), "RGBA"), (x, y))
+
+def arch(im, inset=34):
+    """thin double gold pointed (two-centred) arch frame, Arabian architecture, on every slide"""
+    import math
+    o = Image.new("RGBA", (W, H)); d = ImageDraw.Draw(o)
+    for k, al in [(0, 175), (12, 95)]:
+        l, r, b = inset + k, W - inset - k, H - inset - k; w = r - l; R = 0.6 * w; spring = 640 + k
+        h = math.sqrt(R * R - (R - w / 2) ** 2); ang = math.degrees(math.atan2(-h, -(R - w / 2))) % 360
+        d.arc((l, spring - R, l + 2 * R, spring + R), 180, ang, fill=GOLD + (al,), width=2)
+        d.arc((r - 2 * R, spring - R, r, spring + R), 540 - ang, 360, fill=GOLD + (al,), width=2)
+        d.line((l, spring, l, b, r, b, r, spring), fill=GOLD + (al,), width=2)
+    im.alpha_composite(o)
+
+def c(d, y, s, f, col, x=W / 2, anchor="mm"):
+    d.text((x + 2, y + 2), s, font=f, fill=(0, 0, 0, 160), anchor=anchor); d.text((x, y), s, font=f, fill=col, anchor=anchor)
+def logo(im, w, y):
+    l = LOGO.resize((w, int(LOGO.height * w / LOGO.width)), Image.LANCZOS); s = Image.new("RGBA", l.size, GOLD + (0,)); s.putalpha(l.split()[3])
     im.alpha_composite(s, ((W - w) // 2, y))
-
-def rangoli(d, cx, cy, r, a):
-    for ring, n, dot in [(r, 24, 5), (r * 0.72, 16, 4), (r * 0.45, 8, 6)]:
-        for k in range(n):
-            t = 2 * math.pi * k / n; x, y = cx + ring * math.cos(t), cy + ring * math.sin(t)
-            d.ellipse((x - dot, y - dot, x + dot, y + dot), fill=GOLD + (a,))
-    for k in range(8):  # petals
-        t = 2 * math.pi * k / 8; x, y = cx + r * 0.6 * math.cos(t), cy + r * 0.6 * math.sin(t)
-        d.ellipse((x - r * 0.16, y - r * 0.16, x + r * 0.16, y + r * 0.16), outline=GOLD + (a,), width=2)
-    d.ellipse((cx - 10, cy - 10, cx + 10, cy + 10), fill=GOLD + (a,))
-
-def burst(d, cx, cy, r, a, rnd):
-    for k in range(28):
-        t = 2 * math.pi * k / 28 + rnd.random() * 0.1; r0 = r * 0.25; r1 = r * (0.7 + rnd.random() * 0.3)
-        d.line((cx + r0 * math.cos(t), cy + r0 * math.sin(t), cx + r1 * math.cos(t), cy + r1 * math.sin(t)), fill=(255, 210, 140, a), width=2)
-        d.ellipse((cx + r1 * math.cos(t) - 3, cy + r1 * math.sin(t) - 3, cx + r1 * math.cos(t) + 3, cy + r1 * math.sin(t) + 3), fill=(255, 225, 170, a + 30))
-
-def base(seed):
-    im = Image.new("RGBA", (W, H)); d = ImageDraw.Draw(im)
-    for y in range(H):
-        for_t = y / H
-        d.line((0, y, W, y), fill=tuple(int(WINE[i] * (1 - for_t) + BLK[i] * for_t) for i in range(3)) + (255,))
-    rnd = random.Random(seed); fx = Image.new("RGBA", (W, H)); fd = ImageDraw.Draw(fx)
-    for cx, cy in [(0, 0), (W, H)]: rangoli(fd, cx, cy, 190, 70)
-    for _ in range(3): burst(fd, rnd.randint(120, W - 120), rnd.randint(80, 300), rnd.randint(60, 110), 40, rnd)
-    im.alpha_composite(fx.filter(ImageFilter.GaussianBlur(0.6)))
-    glow = Image.new("RGBA", (W, H)); gd = ImageDraw.Draw(glow)
-    for _ in range(16):
-        x, y, r = rnd.randint(0, W), rnd.randint(0, H), rnd.randint(8, 24)
-        gd.ellipse((x - r, y - r, x + r, y + r), fill=(255, 190, 110, rnd.randint(25, 60)))
-    im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(10)))
-    d = ImageDraw.Draw(im); d.rectangle((26, 26, W - 27, H - 27), outline=GOLD + (160,), width=2)
-    return im
-
-def panel(im, photo, x, y, w, h, bg=None):
-    """whole photo fitted (contain) into a rounded gold-framed panel; empty space takes the photo's own corner colour."""
-    sh = Image.new("RGBA", (W, H)); ImageDraw.Draw(sh).rounded_rectangle((x + 8, y + 22, x + w + 8, y + h + 22), 30, fill=(0, 0, 0, 140))
-    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(16)))
-    p = Image.open(photo).convert("RGB"); s = min(w / p.width, h / p.height); p = p.resize((int(p.width * s), int(p.height * s)), Image.LANCZOS)
-    fill = bg or p.getpixel((4, 4)); pn = Image.new("RGB", (w, h), fill); pn.paste(p, ((w - p.width) // 2, (h - p.height) // 2))
-    m = Image.new("L", (w, h), 0); ImageDraw.Draw(m).rounded_rectangle((0, 0, w - 1, h - 1), 28, fill=255)
-    im.paste(pn, (x, y), m); d = ImageDraw.Draw(im)
-    d.rounded_rectangle((x - 2, y - 2, x + w + 1, y + h + 1), 30, outline=GOLD, width=3)
-    d.rounded_rectangle((x - 12, y - 12, x + w + 11, y + h + 11), 38, outline=GOLD + (110,), width=1)
-
-def price(d, y, now, was):
-    f1, f2 = pop(44, "Bold"), pop(30); a = d.textlength(now, font=f1); b = d.textlength(f"was {was}", font=f2); x = (W - a - 24 - b) / 2
-    d.text((x, y), now, font=f1, fill=GOLD, anchor="lm"); d.text((x + a + 24, y + 4), f"was {was}", font=f2, fill=MUTE, anchor="lm")
-    d.line((x + a + 24 + d.textlength("was ", font=f2), y + 6, x + a + 24 + b, y + 6), fill=MUTE, width=2)
+def bottom_shade(im, hgt=260, a=200):
+    v = Image.new("RGBA", (W, hgt)); vd = ImageDraw.Draw(v)
+    for y in range(hgt): vd.line((0, y, W, y), fill=(8, 3, 2, int(a * (y / hgt) ** 1.4)))
+    im.alpha_composite(v, (0, H - hgt))
 
 out = []
-# 1 cover: perfume + box, whole
-im = base(3); logo(im, 92, 62); d = ImageDraw.Draw(im)
-c(d, 200, "Marhaba", lora(92, True), CHAMP)
-c(d, 280, "The Diwali-party scent for him", lora(40), IVORY)
-panel(im, "perfume_main.jpg", 190, 350, 700, 700); d = ImageDraw.Draw(im)
-c(d, 1105, "MARHABA PREMIUM PERFUME FOR MEN · 100 ML", pop(27, "Medium"), GOLD)
-c(d, 1200, "Swipe for the full edit  >>", pop(28), CHAMP); out.append(im)
+# 1 cover: 100 ml bottle in front of its box on the brass podium
+im = scene(); backlight(im, 540, 640, 260, 330)
+place(im, "work/box.png", 652, 500, BASE - 10); place(im, "work/perfume.png", 468, 470, BASE + 4, glass=True)
+arch(im); d = ImageDraw.Draw(im); logo(im, 64, 70)
+c(d, 225, "Marhaba", lora(118, True), CHAMP); c(d, 310, "Arabian nights, bottled", lora(42), CHAMP)
+c(d, 368, "UNISEX  ·  OUDH  ·  EXTRAIT DE PARFUM", pop(24, "Medium"), GOLD); out.append(im)
 
-# 2 notes journey (lifestyle photo with saffron & rose)
-im = base(7); d = ImageDraw.Draw(im)
-d.text((70, 70), "THE NOTES", font=pop(24), fill=GOLD); d.text((W - 70, 70), "Warm spicy  ·  Oudh", font=pop(24), fill=MUTE, anchor="ra")
-panel(im, "mini_life_1.jpg", 80, 140, 450, 600); d = ImageDraw.Draw(im)
-tx = 590
-for i, (lab, notes) in enumerate([("IT OPENS WITH", "Saffron &\nlabdanum"), ("THEN BLOOMS INTO", "Rose &\nagarwood"), ("AND SETTLES ON", "Earthy\npatchouli")]):
-    y = 175 + i * 195
-    d.text((tx, y), lab, font=pop(22, "Medium"), fill=GOLD)
-    d.multiline_text((tx, y + 36), notes, font=lora(44, True), fill=CHAMP, spacing=6)
-c(d, 845, "Where the warmth of saffron", lora(46, True), IVORY)
-c(d, 905, "meets the depth of oud,", lora(46, True), IVORY)
-c(d, 965, "wrapped in the embrace of rose.", lora(46, True), IVORY)
-d.line((440, 1040, 640, 1040), fill=GOLD, width=2)
-c(d, 1100, "Made for date nights, weddings and parties.", pop(30), CHAMP)
-c(d, 1160, "Diwali get-togethers included.", pop(30), CHAMP)
-c(d, 1250, "Marhaba Premium Perfume  ·  100 ml", pop(30, "Bold"), GOLD); out.append(im)
+# 2 the notes, on the untouched photoshoot frame (8 ml)
+im = Image.open("mini_life_1.jpg").convert("RGB").resize((1350, 1350), Image.LANCZOS).crop((135, 0, 1215, 1350)).convert("RGBA")
+arch(im); d = ImageDraw.Draw(im)
+c(d, 150, "THE NOTES", pop(24, "Bold"), GOLD, 215, "lm")
+for i, (lab, n) in enumerate([("IT OPENS WITH", "Saffron &\nlabdanum"), ("THEN BLOOMS INTO", "Rose &\nagarwood"), ("AND SETTLES ON", "Earthy\npatchouli")]):
+    y = 215 + i * 170; c(d, y, lab, pop(20, "Medium"), GOLD, 200 - 40 * i, "lm")
+    d.multiline_text((202 - 40 * i, y + 22), n, font=lora(42, True), fill=(0, 0, 0, 150), spacing=4); d.multiline_text((200 - 40 * i, y + 20), n, font=lora(42, True), fill=CHAMP, spacing=4)
+c(d, 215, "Also in 8 ml", pop(22, "Medium"), GOLD, W - 190, "rm"); c(d, 255, "for the pocket,", lora(36, True), CHAMP, W - 190, "rm"); c(d, 297, "the clutch, the", lora(36, True), CHAMP, W - 190, "rm"); c(d, 339, "first try.", lora(36, True), CHAMP, W - 190, "rm")
+out.append(im)
 
-# 3 shower gel
-im = base(11); d = ImageDraw.Draw(im)
-c(d, 105, "Start the evening in the shower", lora(50, True), CHAMP)
-panel(im, "bodywash_64.jpg", 300, 170, 480, 640); d = ImageDraw.Draw(im)
-c(d, 880, "Marhaba Oudh Shower Gel · 500 ml", lora(46), IVORY)
-c(d, 950, "Glycerin, shea butter and sodium hyaluronate", pop(28), CHAMP)
-c(d, 995, "for rich foam and soft, hydrated skin.", pop(28), CHAMP)
-c(d, 1060, "SOAP-FREE  ·  SULPHATE-FREE  ·  PARABEN-FREE", pop(24, "Medium"), GOLD)
-c(d, 1240, "The same warm oriental mood as the perfume.", pop(26), MUTE); out.append(im)
+# 3 shower gel: its own real dark lifestyle photo, on a blurred extension of itself (no flat panel)
+ph = Image.open("bodywash_64.jpg").convert("RGB")
+bg = ph.resize((1080, 1440)).crop((0, 45, 1080, 1395)).filter(ImageFilter.GaussianBlur(30)); bg = Image.blend(bg, Image.new("RGB", bg.size, (10, 3, 3)), 0.45).convert("RGBA")
+fg = ph.resize((int(1080 * 0.80), int(1440 * 0.80)), Image.LANCZOS).convert("RGBA")
+m = Image.new("L", fg.size, 0); ImageDraw.Draw(m).rectangle((40, 40, fg.width - 40, fg.height - 40), fill=255); fg.putalpha(m.filter(ImageFilter.GaussianBlur(30)))
+bg.alpha_composite(fg, ((W - fg.width) // 2, H - fg.height + 30)); im = bg; arch(im); d = ImageDraw.Draw(im)
+c(d, 120, "BEGIN IN THE SHOWER", pop(24, "Bold"), GOLD); c(d, 180, "Marhaba Oudh Shower Gel", lora(54, True), CHAMP)
+c(d, 232, "500 ml  ·  glycerin, shea butter & sodium hyaluronate", pop(22), MUTE); out.append(im)
 
-# 4 mini
-im = base(17); d = ImageDraw.Draw(im)
-c(d, 105, "One for his pocket", lora(56, True), CHAMP)
-panel(im, "mini_studio_11.jpg", 220, 175, 640, 640); d = ImageDraw.Draw(im)
-c(d, 890, "Marhaba Premium Perfume · 8 ml", lora(46), IVORY)
-c(d, 960, "Same saffron, rose and oudh, sized for", pop(28), CHAMP)
-c(d, 1005, "a long night out or a first try.", pop(28), CHAMP)
-c(d, 1200, "An easy add-on to any Diwali gift.", lora(36, True), MUTE); out.append(im)
+# 4 Oudh moisturizing cream on the (mirrored) set
+im = scene(mirror=True); backlight(im, 545, 640, 230, 330); place(im, "work/cream.png", 543, 650)
+arch(im); d = ImageDraw.Draw(im)
+c(d, 150, "THEN THE CREAM", pop(24, "Bold"), GOLD); c(d, 212, "Marhaba Oudh Moisturizer", lora(54, True), CHAMP)
+c(d, 264, "150 ml  ·  shea butter & glycerin  ·  face & body", pop(22), MUTE); out.append(im)
 
-# 5 CTA: all three thumbnails
-im = base(23); logo(im, 120, 80); d = ImageDraw.Draw(im)
-c(d, 290, "The Marhaba edit", lora(70, True), CHAMP)
-c(d, 360, "Pick one, or gift him all three.", pop(30), IVORY)
-for (ph, x) in [("perfume_main.jpg", 70), ("bodywash_64.jpg", 400), ("mini_studio_11.jpg", 730)]:
-    panel(im, ph, x, 440, 280, 373)
-d = ImageDraw.Draw(im)
-for (t, x) in [("Perfume 100 ml", 210), ("Shower gel 500 ml", 540), ("Perfume 8 ml", 870)]:
-    d.text((x, 865), t, font=pop(27), fill=IVORY, anchor="mm")
-c(d, 960, "DM for prices & Diwali deals", pop(44, "Bold"), GOLD)
-d.line((390, 1035, 690, 1035), fill=GOLD, width=2)
-c(d, 1110, "Shop from the link in our bio", pop(34, "Medium"), IVORY)
-c(d, 1165, "or visit us at O-17, Lajpat Nagar-II, New Delhi", pop(27), CHAMP); out.append(im)
+# 5 the family on the podium + CTA
+im = scene(); backlight(im, 540, 680, 300, 300)
+place(im, "work/cream.png", 372, 560, BASE - 14); place(im, "work/mini.png", 716, 330, BASE - 8, glass=True); place(im, "work/perfume.png", 540, 430, BASE + 6, glass=True)
+bottom_shade(im, 330, 235); arch(im); d = ImageDraw.Draw(im)
+c(d, 170, "Arabian nights,", lora(66, True), CHAMP); c(d, 245, "every night.", lora(66, True), CHAMP)
+c(d, 310, "PERFUME  ·  MOISTURIZER  ·  SHOWER GEL  ·  8 ML", pop(21, "Medium"), GOLD)
+c(d, 1196, "DM for prices & Diwali deals", pop(40, "Bold"), CHAMP)
+c(d, 1250, "link in bio  ·  O-17, Lajpat Nagar-II, New Delhi", pop(24), MUTE); out.append(im)
 
-for n, im in enumerate(out): im.convert("RGB").save(f"slide_{n + 1:02d}.jpg", quality=93)
-sh = Image.new("RGB", (5 * 300, 375), "white")
-for n, im in enumerate(out): sh.paste(im.convert("RGB").resize((300, 375)), (n * 300, 0))
-sh.save("csheet.jpg"); print(len(out))
+for i, s in enumerate(out, 1): s.convert("RGB").save(f"slide_{i:02d}.jpg", quality=93)
+sheet = Image.new("RGB", (5 * 432 + 60, 560), (20, 10, 8))
+for i, s in enumerate(out): sheet.paste(s.convert("RGB").resize((432, 540)), (10 + i * 442, 10))
+sheet.save("csheet.jpg", quality=88); print("ok")

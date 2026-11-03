@@ -9,4 +9,4 @@
 | 2026-10-31 | Diwali diffuser burner edit | Wooden aroma oil burners Gold / Rose Gold / Silver (₹799); mentions diffuser oils, Oudh fragrance oils, Premium Combo (no photos) |
 | 2026-10-30 | Notes-journey Reel (Tannay) | Love Is In The Air perfume |
 | 2026-11-02 | Six evenings to Diwali (Oudh candles) | 5 Oudh three-wick candles: Aleud, Abyad, Al Sandali, Alkhuzama, Zeenat e Oudh (₹1,749) |
-| 2026-11-03 | Marhaba edit for him (Diwali parties) | Marhaba perfume 100 ml + Marhaba Oudh shower gel 500 ml + Marhaba 8 ml mini |
+| 2026-11-03 | Marhaba: Arabian nights, bottled (unisex) | Marhaba perfume 100 ml + box, Marhaba Oudh shower gel 500 ml, Marhaba Oudh moisturizer 150 ml, Marhaba 8 ml |
