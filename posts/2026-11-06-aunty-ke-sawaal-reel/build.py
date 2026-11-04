@@ -7,7 +7,7 @@ from scipy.signal import lfilter
 
 D = os.path.dirname(os.path.abspath(__file__)) + "/"; R = D + "../../"
 OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp/ak_frames/"
-W, H, FPS, DUR = 1080, 1920, 30, 30.4
+W, H, FPS, DUR = 1080, 1920, 30, 30.3
 GOLD, IVORY, WINE, GREEN = (226, 186, 112), (250, 242, 230), (110, 18, 36), (22, 84, 52)
 LOGO = Image.open(R + "assets/cutouts/logo_gold.png").convert("RGBA")
 BOX = R + "posts/2026-11-03-gift-sets-3x3/source/bouquet_box.jpg"
@@ -24,17 +24,17 @@ VO = 2.0   # ElevenLabs dialogue (Creative Claw) starts here; shot cuts follow i
 SHOTS = [
     (0.0, "01", None, None, (1.00, 1.10, 0, -0.02)),
     (VO + 0.00, "02", "AUNTY", "Beta, shaadi kab kar rahi ho?", (1.05, 1.14, 0, 0)),
-    (VO + 2.96, "07", "HER", "Arre aunty...", (1.10, 1.02, 0, 0)),
-    (VO + 5.20, "11", "AUNTY", "Accha, aur salary kitni hai aajkal?", (1.02, 1.12, 0.02, 0)),
-    (VO + 8.64, "10", "HER", "Enough, aunty.", (1.08, 1.0, 0, 0)),
-    (VO + 9.96, "06", "AUNTY", "Haye! Itna mehenga perfume? Kisne dilaya?", (1.0, 1.12, 0, -0.02)),
-    (VO + 14.16, "05", "HER", "Khud ke paise se, aunty.", (1.06, 1.14, 0, 0)),
-    (VO + 15.53, "08", "AUNTY", "Accha... suno na... kaunsa perfume hai?", (1.12, 1.02, -0.02, 0)),
-    (VO + 18.84, "12", "HER", "Bouquet by Mi Amor Paris.", (1.0, 1.1, 0.02, 0)),
-    (VO + 21.60, "03", "AUNTY", "Ab toh mujhe bhi chahiye!", (1.04, 1.12, 0, 0)),
-    (VO + 24.40, "04", None, None, (1.0, 1.08, 0, -0.03)),
+    (VO + 3.04, "07", "HER", "Arre aunty...", (1.10, 1.02, 0, 0)),
+    (VO + 4.96, "11", "AUNTY", "Accha, aur salary kitni hai aajkal?", (1.02, 1.12, 0.02, 0)),
+    (VO + 8.40, "10", "HER", "Enough, aunty.", (1.08, 1.0, 0, 0)),
+    (VO + 9.68, "06", "AUNTY", "Haye! Itna mehenga perfume? Kisne dilaya?", (1.0, 1.12, 0, -0.02)),
+    (VO + 14.00, "05", "HER", "Khud ke paise se, aunty.", (1.06, 1.14, 0, 0)),
+    (VO + 15.45, "08", "AUNTY", "Accha... suno na... kaunsa perfume hai?", (1.12, 1.02, -0.02, 0)),
+    (VO + 18.65, "12", "HER", "Bouquet by Mi Amor Paris.", (1.0, 1.1, 0.02, 0)),
+    (VO + 21.48, "03", "AUNTY", "Ab toh mujhe bhi chahiye!", (1.04, 1.12, 0, 0)),
+    (VO + 24.25, "04", None, None, (1.0, 1.08, 0, -0.03)),
 ]
-END_T = VO + 24.40
+END_T = VO + 24.25
 
 SRC = {}
 def src(name):
@@ -131,7 +131,7 @@ def frame(t):
     im = kenburns(name, (t - t0) / (t1 - t0), kb)
     if i == 0: hook(im, t)
     elif line and t < END_T: caption(im, t - t0 - 0.1, spk, line)
-    if VO + 21.8 <= t < END_T: giftcard(im, t - (VO + 21.8))
+    if VO + 21.7 <= t < END_T: giftcard(im, t - (VO + 21.7))
     if t >= END_T: endcard(im, t)
     if i in (6, 8) and 0 <= t - t0 < 0.1: im = Image.blend(im, Image.new("RGBA", im.size, (255, 240, 210, 255)), 0.35 * (1 - (t - t0) / 0.1))
     return im.convert("RGB")
@@ -146,7 +146,7 @@ def audio(path):
         x = np.arange(int(L * SR)) / SR; return sum(h * np.sin(2 * np.pi * f * (i + 1) * x) for i, h in enumerate(harm)) * env(L, a, r) * g
     for k, s in enumerate(SHOTS):
         if k: nz = np.random.default_rng(k).normal(0, 1, int(.3 * SR)); add(lfilter([1], [1, -.9], nz) * np.hanning(len(nz)) * .035, s[0] - .15)
-    for f in (1568, 2093, 2637, 3136): add(tone(f, 1.4, .04, r=.5, harm=(1,)), VO + 19.1)   # Mi Amor Paris sparkle
+    for f in (1568, 2093, 2637, 3136): add(tone(f, 1.4, .04, r=.5, harm=(1,)), VO + 18.75)   # Mi Amor Paris sparkle
     for f in (261.6, 329.6, 392, 523.3): add(tone(f, 4.0, .06, a=.3, r=1.6, harm=(1, .3)), END_T)
     out = np.tanh(out * 1.2) * .8; fade = np.ones(n); fade[-int(.6 * SR):] = np.linspace(1, 0, int(.6 * SR)); out *= fade
     import scipy.io.wavfile as wf; wf.write(path, SR, (np.stack([out, np.roll(out, 80)], 1) * 32767).astype(np.int16))
