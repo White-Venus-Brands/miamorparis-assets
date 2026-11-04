@@ -19,14 +19,16 @@ def lora(s, it=True): return ImageFont.truetype("/usr/share/fonts/truetype/googl
 def pop(s, w="Medium"): return ImageFont.truetype(f"/usr/share/fonts/truetype/google-fonts/Poppins-{w}.ttf", s)
 
 # ---- content banks (verified, general-knowledge facts; keep wording simple) ----
-FACTS = [
-    ("'Diwali' comes from Deepavali.", "Deep means lamp, avali means row.\nLiterally: a row of lights.", "Light up someone's Diwali this year."),
-    ("It falls on the darkest night of the year's calendar.", "Diwali is on Amavasya, the new-moon night of Kartik.\nNo moon, so every home brings the light.", "Bring some glow to the people you love."),
-    ("Diwali isn't one day. It's five.", "Dhanteras, Choti Diwali, Diwali,\nGovardhan Puja and Bhai Dooj.", "Five days. Plenty of people to gift."),
-    ("Many faiths, one festival of lights.", "Rama's return to Ayodhya, Bandi Chhor Divas for Sikhs,\nand Mahavira's nirvana for Jains.", "However you celebrate, gift something that lasts."),
-    ("Why do we exchange gifts?", "Sharing sweets and gifts at Diwali is about\nsharing good fortune with the people around you.", "Share the good fortune. Gift a scent."),
-    ("Rangoli is a welcome mat.", "The colours at the doorstep welcome\nguests and good luck into the home.", "Walk in with a gift worth the welcome."),
-    ("Bhai Dooj closes the five days.", "The last day celebrates the bond\nbetween brothers and sisters.", "Sorted the sibling gift yet?"),
+FACTS = [  # (headline, detail, gifting line). Every fact verified by web search on 4 Nov 2026; sources in ops/stories/diwali_sources.md.
+    ("Diwali is now world heritage.", "In December 2025 UNESCO added Deepavali to its list of the Intangible Cultural Heritage of Humanity. Announced at the Red Fort, New Delhi.", "A festival the whole world celebrates deserves a gift to match."),
+    ("'Diwali' literally means a row of lights.", "It comes from the Sanskrit Deepavali: deep means lamp, avali means row.", "Light up someone's Diwali this year."),
+    ("26,17,215 diyas. One night.", "Ayodhya's Deepotsav set a Guinness World Record in October 2025, counted by drones.", "Your gift doesn't need a record. Just the right scent."),
+    ("Diwali shuts schools in New York City.", "On 1 November 2024, every NYC public school closed for Diwali for the first time ever.", "Diwali is going global. So is good taste."),
+    ("Diwali has its own US postage stamp.", "The US Postal Service issued a Diwali Forever stamp on 5 October 2016, with lit diyas on it.", "Some things are made to be sent. Like a Diwali gift."),
+    ("It's a public holiday far beyond India.", "Nepal, Malaysia, Singapore, Mauritius and Fiji all celebrate it as a public holiday.", "Wherever your people are, send the glow."),
+    ("Diwali isn't one day. It's five.", "Dhanteras, Choti Diwali, Diwali, Govardhan Puja and Bhai Dooj.", "Five days. Plenty of people to gift."),
+    ("It lights up the darkest night of the month.", "Diwali falls on Amavasya, the new-moon night, which is why every home brings the light.", "Bring some glow to the people you love."),
+    ("Rangoli is a welcome at the door.", "The colours at the doorstep welcome guests and good luck into the home.", "Walk in with a gift worth the welcome."),
 ]
 GIFTS = [  # (box photo, who it's for, set name, line)
     ("bouquet", "For the sister who 'borrows' your perfume", "Bouquet Diwali set", "fresh, fruity, floral"),
@@ -82,7 +84,9 @@ def rounded(img, size, rad=32, border=GOLD):
 
 def countdown_label(days):
     if days is None: return None
-    return "DIWALI IS TODAY" if days == 0 else ("1 DAY TO DIWALI" if days == 1 else f"{days} DAYS TO DIWALI")
+    if days == 0: return "HAPPY DIWALI"
+    if days == 1: return "DIWALI TOMORROW"
+    return f"DIWALI IN {days} DAYS"
 
 def fact(n, out, days=None):
     title, body, tie = FACTS[(n - 1) % len(FACTS)]
@@ -91,10 +95,13 @@ def fact(n, out, days=None):
 def _fact_final(n, out, days, title, body, tie, box):
     im = background(100 + n); d = ImageDraw.Draw(im)
     lab = countdown_label(days)
-    if lab: d.text((W / 2, 205), lab, font=pop(30, "Bold"), fill=(255, 210, 150), anchor="ma")
-    pill(im, 260, f"DIWALI FUN FACT  #{n}", inter(40, "Black"))
-    y = wrap_center(d, 420, title, inter(92, "Black"), IVORY, maxw=920, lh=1.1)
-    y = wrap_center(d, y + 40, body, lora(48), (240, 214, 178), maxw=960, lh=1.3)
+    if lab:
+        pill(im, 215, lab, inter(58, "Black"), h=100, padx=50)
+        d.text((W / 2, 345), f"DIWALI FUN FACT #{n}", font=pop(34, "Bold"), fill=(255, 210, 150), anchor="ma")
+    else:
+        pill(im, 260, f"DIWALI FUN FACT  #{n}", inter(40, "Black"))
+    y = wrap_center(d, 440, title, inter(90, "Black"), IVORY, maxw=920, lh=1.1)
+    y = wrap_center(d, y + 36, body, lora(48), (240, 214, 178), maxw=900, lh=1.3)
     diya_row(im, max(y + 110, 1040)); d = ImageDraw.Draw(im)
     yb = 1270; card = rounded(Image.open(BOX + box + "_box.jpg"), 300); im.alpha_composite(card, (80, yb))
     tx, maxw = 425, 590
@@ -108,7 +115,7 @@ def _fact_final(n, out, days, title, body, tie, box):
     y2 = colwrap(yb + 14, tie, inter(46, "ExtraBold"), IVORY)
     y2 = colwrap(y2 + 10, "Buy one perfume, get the whole Diwali set.", pop(34, "Medium"), (240, 214, 178))
     d.rounded_rectangle((tx, y2 + 16, tx + 400, y2 + 86), 35, fill=GOLD); d.text((tx + 200, y2 + 51), "Reply 'GIFT' for prices", font=pop(30, "Bold"), fill=(40, 8, 16), anchor="mm")
-    lg = LOGO.resize((150, int(LOGO.height * 150 / LOGO.width)), Image.LANCZOS); im.alpha_composite(lg, ((W - 150) // 2, 1640))
+    lg = LOGO.resize((150, int(LOGO.height * 150 / LOGO.width)), Image.LANCZOS); im.alpha_composite(lg, ((W - 150) // 2, 1700))
     im.convert("RGB").save(out, quality=92); return out
 
 def gift(n, out, days=None):
@@ -120,7 +127,8 @@ def gift(n, out, days=None):
     top = Image.new("RGBA", (W, 420)); top.putalpha(Image.linear_gradient("L").rotate(180).resize((W, 420)).point(lambda v: int(v * 0.65)))
     im.alpha_composite(Image.composite(Image.new("RGBA", (W, 420), (10, 2, 6, 255)), Image.new("RGBA", (W, 420)), top.getchannel("A")), (0, 0))
     lab = countdown_label(days)
-    pill(im, 230, "DIWALI GIFT IDEA" + (f"  ·  {lab}" if lab else ""), inter(34, "Black"), h=70)
+    pill(im, 215, lab if lab else "DIWALI GIFT IDEA", inter(58 if lab else 40, "Black"), h=100 if lab else 78, padx=50)
+    if lab: ImageDraw.Draw(im).text((W / 2, 335), "DIWALI GIFT IDEA", font=pop(34, "Bold"), fill=(255, 225, 175), anchor="ma", stroke_width=3, stroke_fill=(20, 6, 10))
     d = ImageDraw.Draw(im)
     y = wrap_center(d, 1010, who, inter(80, "Black"), IVORY, maxw=900, lh=1.1)
     d.text((W / 2, y + 24), setname, font=lora(56), fill=GOLD, anchor="ma")
