@@ -33,8 +33,9 @@ SHOTS = [
     (18.8, "08", "narr", "Bhai Dooj ki subah...", (1.0, 1.08, 0, 0)),
     (B_OFF + 0.00, "07", "BHAIYA", "Chhoti... ye parcel tumne bheja?", (1.04, 1.12, 0, 0)),
     (B_OFF + 2.72, "06", "CHHOTI", "Khol ke dekho na!", (1.0, 1.08, 0, 0)),
-    (B_OFF + 4.16, "04", None, None, (1.0, 1.10, 0, 0.02)),
-    (B_OFF + 5.50, "05", "BHAIYA", "Ye toh... bilkul ghar jaisi khushboo hai.", (1.12, 1.02, 0, 0)),
+    (B_OFF + 4.16, "17", None, None, (1.0, 1.10, 0, 0.02)),
+    (B_OFF + 4.95, "18", None, None, (1.0, 1.08, 0, 0)),
+    (B_OFF + 6.20, "05", "BHAIYA", "Ye toh... bilkul ghar jaisi khushboo hai.", (1.12, 1.02, 0, 0)),
     (B_OFF + 8.96, "03", "BHAIYA", "Happy Bhai Dooj, Chhoti.", (1.0, 1.08, 0, 0)),
     (B_OFF + 10.88, "01", "CHHOTI", "Happy Bhai Dooj, bhaiya.", (1.02, 1.10, 0, 0)),
     (B_OFF + 13.50, "02", "end", None, (1.0, 1.06, 0, 0)),
@@ -50,9 +51,23 @@ def src(name):
         SRC[name] = im.resize((int(im.width * s), int(im.height * s)), Image.LANCZOS)
     return SRC[name]
 
+CONTAIN = {"18"}   # non-9:16 product shot: show it whole (fit width) over a blurred fill, never crop the products
+_BG = {}
+def contain(name, u, kb):
+    z0, z1 = kb[0], kb[1]; z = z0 + (z1 - z0) * ss(u)
+    im = Image.open(D + "source/" + name + ".png").convert("RGB")
+    if name not in _BG:
+        b = im.resize((int(im.width * H / im.height * 1.3), int(H * 1.3))).filter(ImageFilter.GaussianBlur(25)).resize((60, int(60 * H / W))).resize((int(im.width * H / im.height * 1.3), int(H * 1.3)), Image.BICUBIC).filter(ImageFilter.GaussianBlur(30))
+        _BG[name] = b.crop(((b.width - W) // 2, (b.height - H) // 2, (b.width - W) // 2 + W, (b.height - H) // 2 + H))
+    bg = Image.eval(_BG[name], lambda v: int(v * 0.55)).convert("RGBA")
+    w = int(W * 0.98 * (0.97 + 0.03 * (z - 1) / 0.08)); h = int(im.height * w / im.width)
+    bg.alpha_composite(im.resize((w, h), Image.LANCZOS).convert("RGBA"), ((W - w) // 2, (H - h) // 2 - 60))
+    return bg
+
 def kenburns(name, u, kb):
+    if name in CONTAIN: return contain(name, u, kb)
     z0, z1, dx, dy = kb; im = src(name); z = z0 + (z1 - z0) * ss(u)
-    k = im.width / (W * 1.16); ww, hh = W * k / z, H * k / z
+    k = 1.0; ww, hh = W * k / z, H * k / z
     cx = im.width / 2 + dx * im.width * ss(u); cy = im.height / 2 + dy * im.height * ss(u)
     return im.resize((W, H), Image.BICUBIC, box=(cx - ww / 2, cy - hh / 2, cx + ww / 2, cy + hh / 2)).convert("RGBA")
 
@@ -134,7 +149,6 @@ def frame(t):
     if kind == "hook": hook(im, t)
     elif kind in ("CHHOTI", "BHAIYA"): caption(im, t - t0 - 0.1, kind, text)
     elif kind == "narr": narr(im, t - t0, text)
-    if B_OFF + 4.5 <= t < B_OFF + 5.6: giftcard(im, t - (B_OFF + 4.5))
     if kind == "end": endcard(im, t)
     # soft dip-through-black on the montage cuts
     for tc in (13.9, 15.6, 17.3, 18.8, B_OFF, END_T):
@@ -160,7 +174,7 @@ def audio(path):
         add(piano(note, 2.5, loud), t)
         if k % 4 == 0: add(piano(ch[0] / 2, 3.5, loud * 1.2), t)
         t += beat; k += 1
-    for f in (523.3, 659.3, 784.0): add(piano(f, 4, .05), B_OFF + 4.5)      # gift reveal shimmer
+    for f in (523.3, 659.3, 784.0): add(piano(f, 4, .05), B_OFF + 4.95)      # gift reveal shimmer
     for f in (130.8, 196.0, 261.6, 329.6): add(piano(f, 5, .06), END_T)
     out = np.tanh(out * 1.4) * .7; fade = np.ones(n); fade[-int(1.2 * SR):] = np.linspace(1, 0, int(1.2 * SR)); out *= fade
     import scipy.io.wavfile as wf; wf.write(path, SR, (np.stack([out, np.roll(out, 120)], 1) * 32767).astype(np.int16))
