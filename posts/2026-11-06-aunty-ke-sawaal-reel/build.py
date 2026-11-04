@@ -7,7 +7,7 @@ from scipy.signal import lfilter
 
 D = os.path.dirname(os.path.abspath(__file__)) + "/"; R = D + "../../"
 OUT = sys.argv[1] if len(sys.argv) > 1 else "/tmp/ak_frames/"
-W, H, FPS, DUR = 1080, 1920, 30, 21.0
+W, H, FPS, DUR = 1080, 1920, 30, 29.7
 GOLD, IVORY, WINE, GREEN = (226, 186, 112), (250, 242, 230), (110, 18, 36), (22, 84, 52)
 LOGO = Image.open(R + "assets/cutouts/logo_gold.png").convert("RGBA")
 BOX = R + "posts/2026-11-03-gift-sets-3x3/source/misspoem_box.jpg"
@@ -20,20 +20,22 @@ def ss(x): x = cl(x); return x * x * (3 - 2 * x)
 def back(x): x = cl(x); c = 1.7; return 1 + (c + 1) * (x - 1) ** 3 + c * (x - 1) ** 2
 
 # (start, image, speaker, line, kenburns (z0, z1, dx, dy))
+VO = 2.0   # ElevenLabs dialogue (Creative Claw) starts here; shot cuts follow its voice segments
 SHOTS = [
     (0.0, "01", None, None, (1.00, 1.10, 0, -0.02)),
-    (2.0, "02", "AUNTY", "Beta, shaadi kab kar rahi ho?", (1.05, 1.14, 0, 0)),
-    (3.7, "07", "HER", "*polite smile*", (1.10, 1.02, 0, 0)),
-    (5.0, "11", "AUNTY", "Aur salary kitni hai aajkal?", (1.02, 1.12, 0.02, 0)),
-    (6.7, "10", "HER", "Enough, aunty.", (1.08, 1.0, 0, 0)),
-    (8.0, "06", "AUNTY", "Itna mehenga perfume? Kisne dilaya?", (1.0, 1.12, 0, -0.02)),
-    (10.0, "05", "HER", "Khud ke paise se, aunty.", (1.06, 1.14, 0, 0)),
-    (11.7, "08", "AUNTY", "Accha... kaunsa perfume hai?", (1.12, 1.02, -0.02, 0)),
-    (13.4, "12", "HER", "Mi Amor Paris.", (1.0, 1.1, 0.02, 0)),
-    (15.0, "03", None, "Ab aunty ko bhi chahiye.", (1.04, 1.12, 0, 0)),
-    (17.0, "04", None, None, (1.0, 1.08, 0, -0.03)),
+    (VO + 0.00, "02", "AUNTY", "Beta, shaadi kab kar rahi ho?", (1.05, 1.14, 0, 0)),
+    (VO + 2.96, "07", "HER", "Arre aunty...", (1.10, 1.02, 0, 0)),
+    (VO + 4.96, "11", "AUNTY", "Accha, aur salary kitni hai aajkal?", (1.02, 1.12, 0.02, 0)),
+    (VO + 8.64, "10", "HER", "Enough, aunty.", (1.08, 1.0, 0, 0)),
+    (VO + 9.92, "06", "AUNTY", "Haye! Itna mehenga perfume? Kisne dilaya?", (1.0, 1.12, 0, -0.02)),
+    (VO + 14.16, "05", "HER", "Khud ke paise se, aunty.", (1.06, 1.14, 0, 0)),
+    (VO + 16.00, "08", "AUNTY", "Accha... suno na... kaunsa perfume hai?", (1.12, 1.02, -0.02, 0)),
+    (VO + 19.04, "12", "HER", "Mi Amor Paris.", (1.0, 1.1, 0.02, 0)),
+    (VO + 20.80, "03", "AUNTY", "Ab toh mujhe bhi chahiye!", (1.04, 1.12, 0, 0)),
+    (VO + 23.70, "04", None, None, (1.0, 1.08, 0, -0.03)),
 ]
-END_T = 17.0
+END_T = VO + 23.70
+
 SRC = {}
 def src(name):
     if name not in SRC:
@@ -65,10 +67,10 @@ def wrap(d, text, f, maxw):
         else: out.append(cur); cur = w_
     out.append(cur); return out
 
-def caption(im, u, speaker, line):
+def caption(im, u, speaker, line):  # line shown while it is spoken
     """speaker tag + big line in a box, lower third (above IG UI)"""
     a = ss(u / 0.12); sc = 0.85 + 0.15 * back(u / 0.25)
-    f = inter(70, "Black") if line != "*polite smile*" else lora(70)
+    f = inter(70, "Black") if line != "__none__" else lora(70)
     tmp = ImageDraw.Draw(Image.new("RGB", (1, 1))); lines = wrap(tmp, line, f, 880)
     lh = int(f.size * 1.18); bw = int(max(tmp.textlength(l, font=f) for l in lines)) + 80; bh = lh * len(lines) + 56
     tagh = 64 if speaker else 0
@@ -129,7 +131,7 @@ def frame(t):
     im = kenburns(name, (t - t0) / (t1 - t0), kb)
     if i == 0: hook(im, t)
     elif line and t < END_T: caption(im, t - t0 - 0.1, spk, line)
-    if 15.3 <= t < END_T: giftcard(im, t - 15.3)
+    if VO + 21.0 <= t < END_T: giftcard(im, t - (VO + 21.0))
     if t >= END_T: endcard(im, t)
     if i in (6, 8) and 0 <= t - t0 < 0.1: im = Image.blend(im, Image.new("RGBA", im.size, (255, 240, 210, 255)), 0.35 * (1 - (t - t0) / 0.1))
     return im.convert("RGB")
@@ -144,9 +146,7 @@ def audio(path):
         x = np.arange(int(L * SR)) / SR; return sum(h * np.sin(2 * np.pi * f * (i + 1) * x) for i, h in enumerate(harm)) * env(L, a, r) * g
     for k, s in enumerate(SHOTS):
         if k: nz = np.random.default_rng(k).normal(0, 1, int(.3 * SR)); add(lfilter([1], [1, -.9], nz) * np.hanning(len(nz)) * .035, s[0] - .15)
-        if s[3]: add(tone(1046.5 if s[2] == "HER" else 784, .2, .12, r=.07), s[0] + .1)
-    for f in (1318.5, 1661, 1975.5): add(tone(f, 1.2, .07, r=.5, harm=(1,)), 10.1)       # "khud ke paise se" ding
-    for f in (1568, 2093, 2637, 3136): add(tone(f, 1.4, .05, r=.5, harm=(1,)), 13.5)   # Mi Amor Paris sparkle
+    for f in (1568, 2093, 2637, 3136): add(tone(f, 1.4, .04, r=.5, harm=(1,)), VO + 19.1)   # Mi Amor Paris sparkle
     for f in (261.6, 329.6, 392, 523.3): add(tone(f, 4.0, .06, a=.3, r=1.6, harm=(1, .3)), END_T)
     out = np.tanh(out * 1.2) * .8; fade = np.ones(n); fade[-int(.6 * SR):] = np.linspace(1, 0, int(.6 * SR)); out *= fade
     import scipy.io.wavfile as wf; wf.write(path, SR, (np.stack([out, np.roll(out, 80)], 1) * 32767).astype(np.int16))
