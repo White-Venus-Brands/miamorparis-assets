@@ -109,16 +109,14 @@ Posts published are listed in `ops/post_log.md`.
 Tannay approved: Claude may reply publicly to comments on @miamorparisofficial posts as the Mi Amor Paris marketing team, aiming to drive sales, without asking each time. Rules: live Shopify prices only; no invented claims (lasting time, notes, skin); complaints/sensitive/spam -> no public reply, flag to Tannay; never link perfumes to puja; point to link in bio / Lajpat Nagar-II store. Send Tannay a summary after each check.
 BLOCKER (28 Oct): Zapier task limit reached for the billing period, so the Instagram Graph API route (Zapier 'Instagram for Business' raw request) is unavailable until Zapier is upgraded/renews. Metricool MCP has no comment tools.
 
-## Daily Stories (from 28 Oct 2026)
-Tannay: "start doing stories too", then (28 Oct) "2 stories everyday 12 hours apart". Posted via Metricool (instagramData.type STORY, no text, autoPublish true):
-- **11:00 IST: This or that** (two scent moods, rules below).
-- **23:00 IST: Today's Star** — one product highlighted (perfume, body wash, cream, candle…), name + mood/benefits from the listing + live price and was-price. `make.star()` in ops/stories/make.py, example batch `stars1.py`. Rotate categories; never the same product two nights running.
-- **Always compare two different scent MOODS, not product names** (e.g. "FRESH & CITRUSY" vs "FRUITY & FLORAL", "LIGHT & BREEZY" vs "WARM & WOODY") so people choose by feel. Product name + live price appear small under each mood.
-- Scent words come only from the Shopify listing's notes/family. Prices checked live before each batch.
-- Generator: `ops/stories/make.py` (+ `week1.py` as the example batch). Real bottle cutouts in `assets/cutouts/` (mraqua, missaqua, moksha, liita, derossa). No photo yet for Ombre, Bouquet, Flora 5, Miss Poem, Smuggler, Hold Mi, Marhaba perfumes: ask Tannay; never AI-draw a bottle.
-- Vary the pair, the question and the background every day; don't repeat the exact same pair two days running.
-- Instagram API can't add polls/quiz/link stickers to Stories; the Story asks people to "Reply 1 or 2" (replies arrive as DMs).
-- Weekly scheduled task builds and books the next 7 days every Sunday, logs them in `ops/post_log.md`, and messages Tannay the week's sheet.
+## Daily Stories (from 4 Nov 2026, replaces This-or-that and Today's Star)
+Tannay 4 Nov: "a new story everyday for diwali, a fact about diwali and why it's celebrated and then how we should gift our loved ones... no more star product and comparisons."
+- **11:00 IST: Diwali fun fact** `fact(n)` in ops/stories/diwali.py. One small TRUE fact (meaning of Deepavali, Amavasya night, five days, many faiths, why we gift, rangoli, Bhai Dooj), then a soft gifting tie-in with a real gift-box photo and "Reply 'GIFT' for prices". Facts live in the FACTS list; use the next number not yet in ops/post_log.md. Add new facts only if you can verify them; keep them respectful and never link perfume to puja.
+- **23:00 IST: Diwali gift idea** `gift(n)`: a witty "For the sister who 'borrows' your perfume" style line on the real gift-box photo, set name + scent words from the listing, offer + delivery* + "REPLY 'GIFT' FOR PRICES". Next GIFTS number not yet used.
+- `--days N` adds the "N DAYS TO DIWALI" countdown (Diwali 8 Nov 2026). No ₹ prices on Stories either.
+- After Bhai Dooj (11 Nov): same two-story format for the next occasion (wedding season, Christmas, New Year): a light fact or tradition at 11:00 and a "for the ... who ..." gift idea at 23:00. Extend the lists in diwali.py (or a new module) with real product photos.
+- Old generator ops/stories/make.py (This-or-that / Star) is retired.
+- Instagram API can't add stickers; replies arrive as DMs (ManyChat keyword GIFT).
 
 ## Daily feed post (from 28 Oct 2026)
 Tannay: "1 post everyday for upcoming festivals … something new everyday, we have more than 180 products, choose a new set or combination everyday for festive gifting posts."
@@ -131,7 +129,7 @@ Tannay: "1 post everyday for upcoming festivals … something new everyday, we h
 - Show whole products only (no cropping of the product), live Shopify prices, no puja link for perfumes (candles/incense may appear in festive home settings), max 5 hashtags.
 
 ## Automation
-- Scheduled task "Mi Amor Paris daily posts and Stories" (trig_01Efxt4X4UpSjwZ9kqXEpcov) runs daily 14:37 IST: books tomorrow's 11:00 This-or-that Story, 23:00 Today's Star Story and 19:30 feed carousel, skipping anything already booked, then messages Tannay. Approved by Tannay 28 Oct.
+- Scheduled task "Mi Amor Paris daily posts and Stories" (trig_01Efxt4X4UpSjwZ9kqXEpcov) runs daily 14:37 IST: books tomorrow's 11:00 Diwali fact Story, 23:00 gift-idea Story and 19:30 feed carousel, skipping anything already booked, then messages Tannay. Approved by Tannay 28 Oct.
 
 ## Reels (Tannay, 3 Nov): every WEDNESDAY and SATURDAY evening, 20:00 IST
 - On top of the daily feed post. Built by Claude from real product photos (no AI people, no AI-drawn products), 1080x1920, 12–25 s, original music/SFX.
