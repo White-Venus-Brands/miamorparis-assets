@@ -111,8 +111,9 @@ BLOCKER (28 Oct): Zapier task limit reached for the billing period, so the Insta
 
 ## Daily Stories (from 4 Nov 2026, replaces This-or-that and Today's Star)
 Tannay 4 Nov: "a new story everyday for diwali, a fact about diwali and why it's celebrated and then how we should gift our loved ones... no more star product and comparisons."
-- **11:00 IST: Diwali fun fact** `fact(n)` in ops/stories/diwali.py. One small TRUE fact (meaning of Deepavali, Amavasya night, five days, many faiths, why we gift, rangoli, Bhai Dooj), then a soft gifting tie-in with a real gift-box photo and "Reply 'GIFT' for prices". Facts live in the FACTS list; use the next number not yet in ops/post_log.md. Add new facts only if you can verify them; keep them respectful and never link perfume to puja.
-- **23:00 IST: Diwali gift idea** `gift(n)`: a witty "For the sister who 'borrows' your perfume" style line on the real gift-box photo, set name + scent words from the listing, offer + delivery* + "REPLY 'GIFT' FOR PRICES". Next GIFTS number not yet used.
+- **Timing (4 Nov, from Metricool audience data: followers most active 17:00-20:00, peak 18:00-19:00; activity falls ~35% by 22:00 and ~60% by 23:00):** fact Story **12:30 IST** (lunch scroll), gift Story **19:00 IST** (peak, people home, DM replies can be answered the same evening and delivered next day within office hours).
+- **12:30 IST: Diwali fun fact** `fact(n)` in ops/stories/diwali.py. One small TRUE fact (meaning of Deepavali, Amavasya night, five days, many faiths, why we gift, rangoli, Bhai Dooj), then a soft gifting tie-in with a real gift-box photo and "Reply 'GIFT' for prices". Facts live in the FACTS list; use the next number not yet in ops/post_log.md. Add new facts only if you can verify them; keep them respectful and never link perfume to puja.
+- **19:00 IST: Diwali gift idea** `gift(n)`: a witty "For the sister who 'borrows' your perfume" style line on the real gift-box photo, set name + scent words from the listing, offer + delivery* + "REPLY 'GIFT' FOR PRICES". Next GIFTS number not yet used.
 - `--days N` puts a big "DIWALI IN N DAYS" pill on top (Tannay 4 Nov wording; 1 = DIWALI TOMORROW, 0 = HAPPY DIWALI). Diwali is 8 Nov 2026.
 - Facts (Tannay 4 Nov): only CONFIRMED facts that celebrate Diwali (knowledge, records, global recognition). Nothing that could offend any religion: no comparisons between faiths, no claims about rituals. Sources in ops/stories/diwali_sources.md; verify any new fact by web search before using it. No ₹ prices on Stories either.
 - After Bhai Dooj (11 Nov): same two-story format for the next occasion (wedding season, Christmas, New Year): a light fact or tradition at 11:00 and a "for the ... who ..." gift idea at 23:00. Extend the lists in diwali.py (or a new module) with real product photos.
@@ -130,7 +131,7 @@ Tannay: "1 post everyday for upcoming festivals … something new everyday, we h
 - Show whole products only (no cropping of the product), live Shopify prices, no puja link for perfumes (candles/incense may appear in festive home settings), max 5 hashtags.
 
 ## Automation
-- Scheduled task "Mi Amor Paris daily posts and Stories" (trig_01Efxt4X4UpSjwZ9kqXEpcov) runs daily 14:37 IST: books tomorrow's 11:00 Diwali fact Story, 23:00 gift-idea Story and 19:30 feed carousel, skipping anything already booked, then messages Tannay. Approved by Tannay 28 Oct.
+- Scheduled task "Mi Amor Paris daily posts and Stories" (trig_01Efxt4X4UpSjwZ9kqXEpcov) runs daily 14:37 IST: books tomorrow's 12:30 Diwali fact Story, 19:00 gift-idea Story and 19:30 feed carousel, skipping anything already booked, then messages Tannay. Approved by Tannay 28 Oct.
 
 ## Reels (Tannay, 3 Nov): every WEDNESDAY and SATURDAY evening, 20:00 IST
 - On top of the daily feed post. Built by Claude from real product photos (no AI people, no AI-drawn products), 1080x1920, 12–25 s, original music/SFX.
