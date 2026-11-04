@@ -9,7 +9,11 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 R = os.path.dirname(os.path.abspath(__file__)) + "/../../"
-BOX = R + "posts/2026-11-03-gift-sets-3x3/source/"
+BOXDIRS = [R + "posts/2026-11-03-gift-sets-3x3/source/", R + "posts/2026-11-gift-boxes-for-him/source/", R + "posts/2026-11-03-gift-boxes-for-her/source/"]
+def boxphoto(key):
+    for d_ in BOXDIRS:
+        if os.path.exists(d_ + key + "_box.jpg"): return Image.open(d_ + key + "_box.jpg")
+    raise FileNotFoundError(key)
 LOGO = Image.open(R + "assets/cutouts/logo_gold.png").convert("RGBA")
 W, H = 1080, 1920
 GOLD, IVORY, WINE = (226, 186, 112), (250, 240, 226), (74, 14, 28)
@@ -30,14 +34,19 @@ FACTS = [  # (headline, detail, gifting line). Every fact verified by web search
     ("It lights up the darkest night of the month.", "Diwali falls on Amavasya, the new-moon night, which is why every home brings the light.", "Bring some glow to the people you love."),
     ("Rangoli is a welcome at the door.", "The colours at the doorstep welcome guests and good luck into the home.", "Walk in with a gift worth the welcome."),
 ]
-GIFTS = [  # (box photo, who it's for, set name, line)
+GIFTS = [  # (box photo key, who it's for, set name, scent words FROM THE SHOPIFY LISTING TITLE, checked 4 Nov)
     ("bouquet", "For the sister who 'borrows' your perfume", "Bouquet Diwali set", "fresh, fruity, floral"),
+    ("misspoem", "For the one who remembers every date", "Miss Poem Diwali set", "floral, sweet, elegant"),
+    ("liita", "For the one who still gives you butterflies", "Love Is In The Air Diwali set", "fruity, floral, citrus"),
+    ("flora5", "For the mother-in-law you want to impress", "Flora 5 Diwali set", "fresh, floral, powdery"),
+    ("smuggler", "For the cousin who says he 'got it from Dubai'", "Smuggler Diwali set", "sweet, vanilla, coffee"),
+    ("marhaba", "For the host who throws the best Diwali party", "Marhaba Oudh Diwali set", "woody, oudh, rose, warm spice"),
+    ("holdmi", "For the brother who smells like 'deo only'", "Hold Mi Diwali set", "citrus, fresh spicy, woody"),
     ("derossa", "For the man who walks in like he owns the party", "De Rossa Oudh Diwali set", "warm, woody, amber"),
-    ("misspoem", "For the one who remembers every date", "Miss Poem Diwali set", "soft, sweet, romantic"),
-    ("holdmi", "For the brother who smells like 'deo only'", "Hold Mi Diwali set", "an upgrade he needs"),
-    ("flora5", "For the mother-in-law you want to impress", "Flora 5 Diwali set", "powdery, floral, graceful"),
-    ("mraqua", "For the friend who is always 'on the way'", "Mr Aqua Diwali set", "fresh, aquatic, easy"),
+    ("moksha", "For the dad who's worn the same scent for years", "Moksha Diwali set", "citrus, woody, musky"),
+    ("mraqua", "For the friend who is always 'on the way'", "Mr Aqua Diwali set", "woody, citrus, spicy"),
 ]
+GKEY = {g[0]: i + 1 for i, g in enumerate(GIFTS)}
 
 def background(seed, top=(30, 10, 40), bot=(70, 12, 26)):
     yy = np.linspace(0, 1, H)[:, None, None]
@@ -88,9 +97,9 @@ def countdown_label(days):
     if days == 1: return "DIWALI TOMORROW"
     return f"DIWALI IN {days} DAYS"
 
-def fact(n, out, days=None):
+def fact(n, out, days=None, box=None):
     title, body, tie = FACTS[(n - 1) % len(FACTS)]
-    return _fact_final(n, out, days, title, body, tie, GIFTS[(n - 1) % len(GIFTS)][0])
+    return _fact_final(n, out, days, title, body, tie, box or GIFTS[(n - 1) % len(GIFTS)][0])
 
 def _fact_final(n, out, days, title, body, tie, box):
     im = background(100 + n); d = ImageDraw.Draw(im)
@@ -102,26 +111,21 @@ def _fact_final(n, out, days, title, body, tie, box):
         pill(im, 260, f"DIWALI FUN FACT  #{n}", inter(40, "Black"))
     y = wrap_center(d, 440, title, inter(90, "Black"), IVORY, maxw=920, lh=1.1)
     y = wrap_center(d, y + 36, body, lora(48), (240, 214, 178), maxw=900, lh=1.3)
-    diya_row(im, max(y + 110, 1040)); d = ImageDraw.Draw(im)
-    yb = 1270; card = rounded(Image.open(BOX + box + "_box.jpg"), 300); im.alpha_composite(card, (80, yb))
-    tx, maxw = 425, 590
-    def colwrap(y, text, f, fill, lh=1.18):
-        cur = ""
-        for w_ in text.split():
-            t = (cur + " " + w_).strip()
-            if d.textlength(t, font=f) <= maxw: cur = t
-            else: d.text((tx, y), cur, font=f, fill=fill); y += f.size * lh; cur = w_
-        d.text((tx, y), cur, font=f, fill=fill); return y + f.size * lh
-    y2 = colwrap(yb + 14, tie, inter(46, "ExtraBold"), IVORY)
-    y2 = colwrap(y2 + 10, "Buy one perfume, get the whole Diwali set.", pop(34, "Medium"), (240, 214, 178))
-    d.rounded_rectangle((tx, y2 + 16, tx + 400, y2 + 86), 35, fill=GOLD); d.text((tx + 200, y2 + 51), "Reply 'GIFT' for prices", font=pop(30, "Bold"), fill=(40, 8, 16), anchor="mm")
-    lg = LOGO.resize((150, int(LOGO.height * 150 / LOGO.width)), Image.LANCZOS); im.alpha_composite(lg, ((W - 150) // 2, 1700))
+    diya_row(im, max(y + 95, 840)); d = ImageDraw.Draw(im)
+    setname = next(g[2] for g in GIFTS if g[0] == box)
+    y2 = max(y + 95, 840) + 95
+    y2 = wrap_center(d, y2, tie, inter(46, "ExtraBold"), IVORY, maxw=940, lh=1.15)
+    d.text((W / 2, y2 + 4), "Today's pick: " + setname, font=lora(46), fill=GOLD, anchor="ma")
+    cs = int(min(560, 1640 - (y2 + 80))); card = rounded(boxphoto(box), cs); im.alpha_composite(card, ((W - card.width) // 2, int(y2 + 75)))
+    yp = y2 + 75 + card.height + 30
+    pill(im, yp, "REPLY 'GIFT' FOR PRICES", inter(40, "Black"), h=84)
+    d = ImageDraw.Draw(im); d.text((W / 2, yp + 108), "Buy one perfume, get the whole Diwali set", font=pop(32, "Medium"), fill=(240, 214, 178), anchor="ma")
     im.convert("RGB").save(out, quality=92); return out
 
 def gift(n, out, days=None):
     box, who, setname, mood = GIFTS[(n - 1) % len(GIFTS)]
     im = background(200 + n, top=(52, 10, 24), bot=(24, 6, 12))
-    photo = Image.open(BOX + box + "_box.jpg").convert("RGB").resize((W, W), Image.LANCZOS).convert("RGBA")
+    photo = boxphoto(box).convert("RGB").resize((W, W), Image.LANCZOS).convert("RGBA")
     fade = Image.linear_gradient("L").resize((W, W)).point(lambda v: 255 if v < 150 else int(255 * max(0, 1 - (v - 150) / 105)))
     photo.putalpha(fade); im.alpha_composite(photo, (0, 0)); d = ImageDraw.Draw(im)
     top = Image.new("RGBA", (W, 420)); top.putalpha(Image.linear_gradient("L").rotate(180).resize((W, 420)).point(lambda v: int(v * 0.65)))
