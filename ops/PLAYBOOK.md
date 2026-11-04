@@ -1,5 +1,8 @@
 # Mi Amor Paris — Instagram & store operations playbook
 
+> **HOLD (Tannay, 4 Nov 2026): STORIES ONLY.** No Reels or feed posts are created, scheduled or un-drafted until Tannay lifts this. Drafts on hold: Office Reel (5 Nov), Bhai Dooj Reel (6 Nov), Flora 5 carousel (5 Nov), Delhi checklist Reel, De Rossa Reel, Marhaba carousel, gift-box post.
+
+
 Read this first in every scheduled run. It is the source of truth for how the
 Mi Amor Paris marketing automation works. Owner: Tannay.
 
