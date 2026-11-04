@@ -143,7 +143,7 @@ Tannay: "1 post everyday for upcoming festivals … something new everyday, we h
 - USED 4 Nov: "POV: Diwali party in 2 hours. You forgot the gift."
 - USED 7 Nov: "POV: Delhi girl ki Diwali checklist" (Tannay: premium, no Sarojini/Chandni Chowk, no forced slang)
 - NEXT (Tannay filming): street interviews "Is Diwali aapne khud ke liye kuch liya?" (women buying for themselves). Edit his raw clips: best answer first, Hinglish captions, end card.
-- Ideas: "Diwali party pe aunty ke sawaal" (questions -> "Khud ke paise se. Mi Amor Paris."), "Bonus aaya. Pehla gift? Khud ko.", "Nobody says gents CEO". Women-empowerment tone: everyday moments, funny, never preachy or anti-men. (countdown clock running all video)
+- USED 6 Nov: "Diwali card party pe aunty ke sawaal" (Tannay stills). Ideas: "Bonus aaya. Pehla gift? Khud ko.", "Nobody says gents CEO". Women-empowerment tone: everyday moments, funny, never preachy or anti-men. (countdown clock running all video)
 - "Things that disappear by Bhai Dooj: kaju katli, sone papdi, your bonus. Things that don't: this scent." (Bhai Dooj, 11 Nov)
 - "Rate my Diwali gift /10" then reveal box contents one by one, score climbs each item
 - "Guess the scent from 3 notes" mini-quiz, answer revealed at the end (keeps them to the last second)
