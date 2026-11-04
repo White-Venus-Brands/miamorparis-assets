@@ -29,11 +29,11 @@ SHOTS = [
     (VO + 5.90, "11", "ME", "Thank you, but... no thank you.", (1.02, 1.10, 0, 0)),
     (VO + 8.45, "05", "ME", "Toh is baar maine socha...", (1.0, 1.10, 0, 0)),
     (VO + 10.60, "09", "ME", "Apna Diwali gift, main khud lungi.", (1.08, 1.0, 0, 0)),
-    (VO + 13.35, "06", "ME", "Miss Poem, by Mi Amor Paris.", (1.02, 1.10, 0, 0)),
-    (VO + 15.90, "08", "ME", "Khud ke liye. Khud ke paise se.", (1.0, 1.08, 0, -0.02)),
-    (VO + 18.30, "07", None, None, (1.0, 1.08, 0, -0.03)),
+    (VO + 13.10, "06", "ME", "Miss Poem, by Mi Amor Paris.", (1.02, 1.10, 0, 0)),
+    (VO + 15.65, "08", "ME", "Khud ke liye. Khud ke paise se.", (1.0, 1.08, 0, -0.02)),
+    (VO + 18.10, "07", None, None, (1.0, 1.08, 0, -0.03)),
 ]
-END_T = VO + 18.30
+END_T = VO + 18.10
 SRC = {}
 def src(name):
     if name not in SRC:
@@ -129,7 +129,7 @@ def frame(t):
     im = kenburns(name, (t - t0) / (t1 - t0), kb)
     if i == 0: hook(im, t)
     elif line and t < END_T: caption(im, t - t0 - 0.1, spk, line)
-    if VO + 13.6 <= t < VO + 15.9: giftcard(im, t - (VO + 13.6))
+    if VO + 13.35 <= t < VO + 15.65: giftcard(im, t - (VO + 13.35))
     if t >= END_T: endcard(im, t)
     if i in (6, 8) and 0 <= t - t0 < 0.1: im = Image.blend(im, Image.new("RGBA", im.size, (255, 240, 210, 255)), 0.35 * (1 - (t - t0) / 0.1))
     return im.convert("RGB")
@@ -144,7 +144,7 @@ def audio(path):
         x = np.arange(int(L * SR)) / SR; return sum(h * np.sin(2 * np.pi * f * (i + 1) * x) for i, h in enumerate(harm)) * env(L, a, r) * g
     for k, s in enumerate(SHOTS):
         if k: nz = np.random.default_rng(k).normal(0, 1, int(.3 * SR)); add(lfilter([1], [1, -.9], nz) * np.hanning(len(nz)) * .035, s[0] - .15)
-    for f in (1568, 2093, 2637, 3136): add(tone(f, 1.4, .04, r=.5, harm=(1,)), VO + 13.5)   # Mi Amor Paris sparkle
+    for f in (1568, 2093, 2637, 3136): add(tone(f, 1.4, .04, r=.5, harm=(1,)), VO + 13.2)   # Mi Amor Paris sparkle
     for f in (261.6, 329.6, 392, 523.3): add(tone(f, 4.0, .06, a=.3, r=1.6, harm=(1, .3)), END_T)
     for k, f in enumerate((233.1, 220.0, 207.7, 196.0)):   # "womp womp womp wommmp" on the soan papdi reveal
         add(tone(f, .5 if k < 3 else 1.1, .16, a=.02, r=.35 if k < 3 else .7, harm=(1, .6, .4, .2)), VO + 2.75 + k * .32)
