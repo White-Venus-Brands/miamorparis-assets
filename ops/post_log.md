@@ -75,3 +75,4 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 
 - 2026-11-04 18:58: Bhai Dooj "Ghar ki khushboo" Reel moved Mon 10 Nov 20:00 -> Fri 6 Nov 20:00 (new id 416506777)
 - 2026-11-04 23:55: HOLD: Stories only. Set to draft: Office Reel (416858236), Bhai Dooj Reel (416858243), Flora 5 carousel (416858254). Daily task now books Stories only.
+- 2026-11-06 20:00 IST | REEL (IG+FB) | Bhai Dooj texting Reel v2 (28 Oct chat video, end card changed from "50% OFF · LINK IN BIO" to "DM FOR PRICES · LAJPAT NAGAR-II"), Miss Aqua + Mr Aqua, own audio, isAiGenerated false. Tannay 6 Nov: post this instead of the people version. | Metricool 418675451 | posts/2026-10-28-bhaidooj-story @f24f6a3
