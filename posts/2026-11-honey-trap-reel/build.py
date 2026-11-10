@@ -1,4 +1,4 @@
-"""Reel: 'Someone got past security.'  Spy-thriller nod to the honey-trap news (no names, no country).
+"""Reel: 'Someone got past security.'  Spy-thriller nod to the honey-trap news (Tannay 10 Nov: names the "Chinese spy"; no person named).
 Miss Poem extrait de parfum. Tannay stills (10 Nov 2026, AI-generated -> isAiGenerated true). 1080x1920, 30 fps, ~24 s.
 Sound design is all synthesized: drone, heartbeat, CCTV clicks, typewriter, stamp, stinger. No prices.
 Usage: python3 build.py WORKDIR   (ONLY=1.0,8.0 for stills)"""
@@ -139,8 +139,8 @@ def reticle(im, t, cx, cy, r, a):
 def overlays(im, t):
     if t < 2.5:
         cctv_hud(im, t)
-        ctext(im, 420, "Someone got past", inter(96), IVORY, win(t, 0.15, 2.5, 0.12), scale=1 + 0.25 * (1 - back(t / 0.3)))
-        ctext(im, 530, "his security.", inter(96), IVORY, win(t, 0.55, 2.5, 0.12))
+        ctext(im, 420, "A Chinese spy", inter(96), IVORY, win(t, 0.15, 2.5, 0.12), scale=1 + 0.25 * (1 - back(t / 0.3)))
+        ctext(im, 530, "got past his security.", inter(86), IVORY, win(t, 0.55, 2.5, 0.12))
     elif t < 4.7:
         ctext(im, 380, "No break-in.", inter(84), IVORY, win(t, 2.6, 4.7))
         ctext(im, 485, "No hacking.", inter(84), IVORY, win(t, 3.3, 4.7))
