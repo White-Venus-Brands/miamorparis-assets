@@ -21,23 +21,25 @@ def cl(x): return max(0.0, min(1.0, x))
 def ss(x): x = cl(x); return x * x * (3 - 2 * x)
 
 # ---------- shots: (src, start, end, zoom0, zoom1, (fx0, fy0), (fx1, fy1)) focus = relative centre ----------
+# Timed to the ElevenLabs narration (VO_OFFSET 0.5 s; Simran 9w21nMuk8CWXIME31V1S, 10 Nov)
 SHOTS = [
-    ("01", 0.0, 3.2, 1.00, 1.09, (.5, .5), (.5, .45)),     # store room, push in
-    ("10", 3.0, 5.0, 1.06, 1.00, (.5, .5), (.5, .5)),      # casserole
-    ("11", 4.8, 6.8, 1.00, 1.07, (.5, .52), (.5, .5)),     # dinner set
-    ("12", 6.6, 8.7, 1.07, 1.00, (.5, .5), (.5, .5)),      # clock
-    ("01", 8.5, 9.8, 1.02, 1.04, (.5, .55), (.5, .58)),    # store room again...
-    ("09", 9.6, 12.2, 1.04, 1.12, (.5, .58), (.5, .62)),   # ...lights go out, spotlight on empty shelf
-    ("08", 12.0, 13.8, 1.00, 1.06, (.5, .55), (.5, .6)),   # empty wedding table
-    ("06", 13.6, 15.5, 1.08, 1.00, (.5, .55), (.5, .55)),  # closed box, bow
-    ("07", 15.3, 17.1, 1.00, 1.05, (.5, .55), (.5, .55)),  # ribbon loose
-    ("04", 16.9, 18.8, 1.00, 1.06, (.5, .5), (.5, .48)),   # lid half open
-    ("03", 18.6, 20.9, 1.00, 1.07, (.5, .55), (.5, .6)),   # open, petals
-    ("02", 20.7, 23.2, 1.08, 1.00, (.5, .55), (.5, .55)),  # bottle close-up
+    ("01", 0.0, 3.9, 1.00, 1.09, (.5, .5), (.5, .45)),     # store room, push in
+    ("10", 3.7, 6.6, 1.06, 1.00, (.5, .5), (.5, .5)),      # casserole
+    ("11", 6.4, 8.8, 1.00, 1.07, (.5, .52), (.5, .5)),     # dinner set
+    ("12", 8.6, 10.6, 1.07, 1.00, (.5, .5), (.5, .5)),     # clock
+    ("01", 10.4, 11.3, 1.02, 1.04, (.5, .55), (.5, .58)),  # store room again...
+    ("09", 10.6, 14.0, 1.04, 1.12, (.5, .58), (.5, .62)),  # ...lights go out, spotlight on empty shelf
+    ("08", 13.8, 15.4, 1.00, 1.06, (.5, .55), (.5, .6)),   # empty wedding table
+    ("06", 15.2, 17.0, 1.08, 1.00, (.5, .55), (.5, .55)),  # closed box, bow
+    ("07", 16.8, 18.0, 1.00, 1.05, (.5, .55), (.5, .55)),  # ribbon loose
+    ("04", 17.8, 18.6, 1.00, 1.04, (.5, .5), (.5, .48)),   # lid half open
+    ("03", 18.4, 20.1, 1.00, 1.06, (.5, .55), (.5, .6)),   # open, petals
+    ("02", 19.9, 22.8, 1.08, 1.00, (.5, .55), (.5, .55)),  # bottle close-up
 ]
-END = 23.0
+END = 22.6
 DUR = END + 4.4
-XF = {9.6: 0.9}  # longer dissolve for the lights-out moment (default 0.2-0.25 s)
+XF = {10.6: 0.9}  # longer dissolve for the lights-out moment
+VO_OFFSET = 0.5
 
 _src = {}
 def src(name):
@@ -87,24 +89,24 @@ def win(t, a, b, fi=0.35, fo=0.3):   # alpha for a text window [a,b]
 
 # (start, end, y, text, kind)
 CAPS = [
-    (0.35, 3.0, 360, "Har shaadi ke baad,", "s"), (1.2, 3.0, 460, "ghar ka store room.", "s"),
-    (3.25, 4.95, 390, "Casserole.", "s"), (3.75, 4.95, 490, "Abhi bhi plastic mein.", "s"),
-    (5.05, 6.75, 390, "Dinner set no. 4", "s"),
-    (6.85, 8.65, 390, "Ghadi.", "s"), (7.4, 8.65, 490, "Teesri.", "s"),
-    (9.9, 12.1, 360, "Par ek gift...", "s"), (10.7, 12.1, 460, "kabhi store room nahi jaata.", "s"),
-    (12.2, 15.3, 360, "Is shaadi season,", "s"), (13.0, 15.3, 460, "kuch aisa gift karo...", "s"),
-    (18.8, 20.8, 360, "jo roz use ho.", "s"),
-    (20.95, 23.1, 360, "Aur har spray pe,", "s"), (21.6, 23.1, 460, "aapki yaad aaye.", "s"),
+    (0.6, 3.6, 360, "Har shaadi ke baad,", "s"), (2.2, 3.6, 460, "ghar ka store room.", "s"),
+    (3.85, 6.3, 390, "Casserole.", "s"), (4.85, 6.3, 490, "Abhi bhi plastic mein.", "s"),
+    (6.6, 8.5, 390, "Dinner set no. 4", "s"),
+    (8.8, 10.4, 390, "Ghadi.", "s"), (9.55, 10.4, 490, "Teesri.", "s"),
+    (10.75, 13.7, 360, "Par ek gift...", "s"), (12.0, 13.7, 460, "kabhi store room nahi jaata.", "s"),
+    (13.95, 16.8, 360, "Is shaadi season,", "s"), (15.25, 16.8, 460, "kuch aisa gift karo...", "s"),
+    (18.15, 19.6, 360, "jo roz use ho.", "s"),
+    (19.7, 22.5, 360, "Aur har spray pe,", "s"), (21.15, 22.5, 460, "aapki yaad aaye.", "s"),
 ]
 
 def counter(im, t):
     d = ImageDraw.Draw(im)
-    if t < 9.9:
-        n = int(round(47 * ss(t / 8.6) if t < 8.6 else 47))
+    if t < 10.9:
+        n = int(round(47 * ss(t / 9.8) if t < 9.8 else 47))
         lab = f"SHAADI GIFTS: {n}"; fill = (20, 10, 8, 170); col = (255, 236, 210)
-        a = ss(t / 0.4) * (1 - ss((t - 9.5) / 0.4))
-    elif 21.2 <= t < 23.1:
-        lab = "GIFTS ACTUALLY USED: 1"; fill = GOLD + (235,); col = (40, 10, 14); a = ss((t - 21.2) / 0.3) * (1 - ss((t - 22.8) / 0.3))
+        a = ss(t / 0.4) * (1 - ss((t - 10.5) / 0.4))
+    elif 20.3 <= t < 22.55:
+        lab = "GIFTS ACTUALLY USED: 1"; fill = GOLD + (235,); col = (40, 10, 14); a = ss((t - 20.3) / 0.3) * (1 - ss((t - 22.3) / 0.25))
     else: return
     f = inter(38, "Bold"); tw = d.textlength(lab, font=f)
     lay = Image.new("RGBA", im.size); dl = ImageDraw.Draw(lay); y = 225
@@ -123,7 +125,7 @@ def particles(im, t, petals=0.0):
         d.ellipse((xx - r, yy - r, xx + r, yy + r), fill=(255, 220, 150, max(0, a)))
     if petals > 0:
         for x, y, r, sp, ph, sc in PETALS:
-            yy = y + (t - 18.6) * sp; xx = x + 40 * math.sin((t - 18.6) * .9 + ph)
+            yy = y + (t - 18.4) * sp; xx = x + 40 * math.sin((t - 18.4) * .9 + ph)
             if -60 < yy < H + 60:
                 ang = (t * 40 * sc + ph * 57) % 360
                 p = Image.new("RGBA", (int(r * 2.4), int(r * 1.4))); ImageDraw.Draw(p).ellipse((0, 0, p.width - 1, p.height - 1), fill=(178, 24, 40, int(220 * petals)))
@@ -169,7 +171,7 @@ def frame(t):
     if t >= END: im = scene_end(t)
     else:
         im = plate(t).convert("RGBA"); im.alpha_composite(TOPGRAD)
-        particles(im, t, petals=ss((t - 18.6) / 0.5) if t > 18.6 else 0)
+        particles(im, t, petals=ss((t - 18.4) / 0.5) if t > 18.4 else 0)
         for a, b, y, s, k in CAPS:
             if a <= t < b: ctext(im, y, s, lora(74), IVORY, win(t, a, b))
         counter(im, t)
@@ -208,7 +210,7 @@ def audio(path):
     while t < DUR - 1.5:
         deg = phrase[k % len(phrase)]; f = sa * 2 * sc[deg]
         if deg not in cache: cache[deg] = pluck(f)
-        g = 0.16 if not (9.6 <= t < 12.0) else 0.08
+        g = 0.10 if not (10.6 <= t < 13.4) else 0.05
         add(cache[deg], t, g, pan=0.25 * math.sin(k))
         if k % 4 == 0:
             bd = [0, 4, 2, 0][(k // 4) % 4]
@@ -218,17 +220,17 @@ def audio(path):
     # soft counter ticks during 0-8.6
     tick = np.sin(2 * np.pi * 3200 * np.arange(int(.025 * SR)) / SR) * np.exp(-np.arange(int(.025 * SR)) / SR / .006)
     last = -1
-    for i in range(int(8.6 * FPS)):
-        tt_ = i / FPS; nn = int(round(47 * ss(tt_ / 8.6)))
+    for i in range(int(9.8 * FPS)):
+        tt_ = i / FPS; nn = int(round(47 * ss(tt_ / 9.8)))
         if nn != last: add(tick, tt_, 0.05); last = nn
     # lights-out: low "thoom" + air
-    th = np.sin(2 * np.pi * 55 * np.arange(int(1.6 * SR)) / SR) * np.exp(-np.arange(int(1.6 * SR)) / SR / .5); add(th, 9.6, 0.35)
+    th = np.sin(2 * np.pi * 55 * np.arange(int(1.6 * SR)) / SR) * np.exp(-np.arange(int(1.6 * SR)) / SR / .5); add(th, 10.6, 0.35)
     # ribbon slide (silky noise), lid lift (soft whump), reveal chime
     nz = r.normal(0, 1, int(.9 * SR)); from scipy.signal import lfilter
-    rib = lfilter([1, -1], [1, -0.85], nz) * np.hanning(len(nz)) * 0.05; add(rib, 15.3, 1.0, 0.3)
-    wh = lfilter([1], [1, -0.97], r.normal(0, 1, int(.6 * SR))) * np.hanning(int(.6 * SR)) * 0.012; add(wh, 16.9)
+    rib = lfilter([1, -1], [1, -0.85], nz) * np.hanning(len(nz)) * 0.05; add(rib, 16.8, 1.0, 0.3)
+    wh = lfilter([1], [1, -0.97], r.normal(0, 1, int(.6 * SR))) * np.hanning(int(.6 * SR)) * 0.012; add(wh, 17.8)
     for i, f in enumerate((1174.7, 1480, 1760, 2349.3)):
-        x = np.arange(int(2.5 * SR)) / SR; add(np.sin(2 * np.pi * f * x) * np.exp(-x / .9) * 0.05, 18.6 + i * 0.09, 1.0, (-0.4, 0.4, -0.2, 0.2)[i])
+        x = np.arange(int(2.5 * SR)) / SR; add(np.sin(2 * np.pi * f * x) * np.exp(-x / .9) * 0.05, 18.4 + i * 0.09, 1.0, (-0.4, 0.4, -0.2, 0.2)[i])
     # end swell
     x = np.arange(int(4.4 * SR)) / SR
     for f in (sa / 2, sa * 3 / 4, sa, sa * 5 / 4 * 2):
@@ -248,6 +250,6 @@ if __name__ == "__main__":
         audio(OUT + "a.wav")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-i", OUT + "%04d.jpg", "-i", OUT + "a.wav",
                         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "19", "-preset", "medium", "-c:a", "aac", "-b:a", "192k",
-                        "-movflags", "+faststart", "-shortest", D + "wedding_storeroom_reel.mp4"], check=True)
+                        "-movflags", "+faststart", "-shortest", D + "wedding_storeroom_reel_bed.mp4"], check=True)
         frame(1.9).save(D + "cover.jpg", quality=92)
         print("ok", DUR)
