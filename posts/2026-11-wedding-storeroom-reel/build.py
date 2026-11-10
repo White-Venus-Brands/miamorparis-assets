@@ -88,7 +88,7 @@ def win(t, a, b, fi=0.35, fo=0.3):   # alpha for a text window [a,b]
     return ss((t - a) / fi) * (1 - ss((t - (b - fo)) / fo))
 
 # (start, end, y, text, kind)
-CAPS = [
+CAPS_HI = [
     (0.6, 3.6, 360, "Har shaadi ke baad,", "s"), (2.2, 3.6, 460, "ghar ka store room.", "s"),
     (3.85, 6.3, 390, "Casserole.", "s"), (4.85, 6.3, 490, "Abhi bhi plastic mein.", "s"),
     (6.6, 8.5, 390, "Dinner set no. 4", "s"),
@@ -98,12 +98,24 @@ CAPS = [
     (18.15, 19.6, 360, "jo roz use ho.", "s"),
     (19.7, 22.5, 360, "Aur har spray pe,", "s"), (21.15, 22.5, 460, "aapki yaad aaye.", "s"),
 ]
+CAPS_EN = [  # English VO (Simran, en), offset 0.4 s
+    (0.55, 3.6, 360, "After every wedding,", "s"), (2.3, 3.6, 460, "there's a store room.", "s"),
+    (3.95, 6.3, 390, "A casserole.", "s"), (5.0, 6.3, 490, "Still in its plastic.", "s"),
+    (6.8, 8.5, 390, "Dinner set no. 4", "s"),
+    (8.95, 10.45, 390, "A clock.", "s"), (9.55, 10.45, 490, "The third one.", "s"),
+    (11.1, 13.7, 360, "But one gift...", "s"), (12.3, 13.7, 460, "never ends up in there.", "s"),
+    (14.2, 16.8, 360, "This wedding season,", "s"), (15.6, 16.8, 460, "give something...", "s"),
+    (17.6, 19.55, 360, "they'll use every day.", "s"),
+    (19.65, 22.5, 360, "And with every spray,", "s"), (21.2, 22.5, 460, "they'll think of you.", "s"),
+]
+EN = os.environ.get("EN") == "1"
+CAPS = CAPS_EN if EN else CAPS_HI
 
 def counter(im, t):
     d = ImageDraw.Draw(im)
     if t < 10.9:
         n = int(round(47 * ss(t / 9.8) if t < 9.8 else 47))
-        lab = f"SHAADI GIFTS: {n}"; fill = (20, 10, 8, 170); col = (255, 236, 210)
+        lab = (f"WEDDING GIFTS: {n}" if EN else f"SHAADI GIFTS: {n}"); fill = (20, 10, 8, 170); col = (255, 236, 210)
         a = ss(t / 0.4) * (1 - ss((t - 10.5) / 0.4))
     elif 20.3 <= t < 22.55:
         lab = "GIFTS ACTUALLY USED: 1"; fill = GOLD + (235,); col = (40, 10, 14); a = ss((t - 20.3) / 0.3) * (1 - ss((t - 22.3) / 0.25))
@@ -250,6 +262,6 @@ if __name__ == "__main__":
         audio(OUT + "a.wav")
         subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-i", OUT + "%04d.jpg", "-i", OUT + "a.wav",
                         "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "19", "-preset", "medium", "-c:a", "aac", "-b:a", "192k",
-                        "-movflags", "+faststart", "-shortest", D + "wedding_storeroom_reel_bed.mp4"], check=True)
-        frame(1.9).save(D + "cover.jpg", quality=92)
+                        "-movflags", "+faststart", "-shortest", D + ("wedding_storeroom_reel_bed_en.mp4" if EN else "wedding_storeroom_reel_bed.mp4")], check=True)
+        if not EN: frame(1.9).save(D + "cover.jpg", quality=92)
         print("ok", DUR)
