@@ -16,10 +16,12 @@ OFFER = "Buy one perfume, get the whole Diwali set"   # playbook wording (Tannay
 WFACTS = [  # (headline, detail, gifting line). Verified by web search; sources in diwali_sources.md
     ("46 lakh weddings. 45 days.", "Traders' body CAIT's estimate for India's 2025 wedding season, from 1 November to 14 December.", "So many shaadis. Gifts sorted?"),
     ("Delhi alone: 4.8 lakh weddings.", "CAIT's estimate for the capital in the 2025 wedding season, 1 November to 14 December.", "Your shaadi calendar full too?"),
+    ("Shaadi season:\n1 crore jobs.", "CAIT expected India's 2025 wedding season to create over 1 crore temporary jobs, in catering, event setup, logistics and hospitality.", "Big season. Long guest list. Gifts sorted?"),
 ]
 WGIFTS = [  # (box key, who it's for, set name, scent words FROM THE SHOPIFY LISTING TITLE)
     ("smuggler", "For the baraati who dances first, leaves last", "Smuggler gift set", "sweet, vanilla, coffee"),
     ("moksha", "For the groom who got ready in 10 minutes", "Moksha gift set", "citrus, woody, musky"),
+    ("mraqua", "For the cousin who becomes the DJ at every sangeet", "Mr Aqua gift set", "woody, citrus, spicy"),
 ]
 SETNAME = {"flora5": "Flora 5 gift set", "smuggler": "Smuggler gift set", "bouquet": "Bouquet gift set", "misspoem": "Miss Poem gift set",
            "liita": "Love Is In The Air gift set", "marhaba": "Marhaba Oudh gift set", "holdmi": "Hold Mi gift set",
