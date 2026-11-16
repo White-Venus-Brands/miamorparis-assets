@@ -19,6 +19,7 @@ WFACTS = [  # (headline, detail, gifting line). Verified by web search; sources 
     ("Shaadi season:\n1 crore jobs.", "CAIT expected India's 2025 wedding season to create over 1 crore temporary jobs, in catering, event setup, logistics and hospitality.", "Big season. Long guest list. Gifts sorted?"),
     ("70% made in India.", "CAIT says over 70% of wedding-related purchases in the 2025 season were expected to be Indian-made.", "Long shaadi list? Gifts sorted?"),
     ("Jewellery: 15% of the shaadi spend.", "CAIT's study of India's 2025 wedding season: jewellery about 15% of spending, apparel and sarees 10%, catering 10%.", "Long shaadi list? We've got you."),
+    ("6.5 lakh crore rupees of shaadi business.", "CAIT's estimate for India's 2025 wedding season: 46 lakh weddings in about 45 days, 1 November to 14 December.", "One of those shaadis is yours. Gifts sorted?"),
 ]
 WGIFTS = [  # (box key, who it's for, set name, scent words FROM THE SHOPIFY LISTING TITLE)
     ("smuggler", "For the baraati who dances first, leaves last", "Smuggler gift set", "sweet, vanilla, coffee"),
@@ -26,6 +27,7 @@ WGIFTS = [  # (box key, who it's for, set name, scent words FROM THE SHOPIFY LIS
     ("mraqua", "For the cousin who becomes the DJ at every sangeet", "Mr Aqua gift set", "woody, citrus, spicy"),
     ("misspoem", "For the bride's best friend who planned the whole sangeet", "Miss Poem gift set", "floral, sweet, elegant"),
     ("holdmi", "For the friend who flew in just for the baraat", "Hold Mi gift set", "citrus, fresh spicy, woody"),
+    ("smuggler", "For the cousin who's been 'bas 5 minute' since the haldi", "Smuggler gift set", "sweet, vanilla, coffee"),
 ]
 SETNAME = {"flora5": "Flora 5 gift set", "smuggler": "Smuggler gift set", "bouquet": "Bouquet gift set", "misspoem": "Miss Poem gift set",
            "liita": "Love Is In The Air gift set", "marhaba": "Marhaba Oudh gift set", "holdmi": "Hold Mi gift set",
