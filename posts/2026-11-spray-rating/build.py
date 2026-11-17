@@ -12,19 +12,20 @@ LOGO = Image.open(R + "assets/cutouts/logo_gold.png").convert("RGBA")
 W, H, FPS = 1080, 1920, 30
 GOLD, IVORY, INK, RED, GREEN = (226, 186, 112), (250, 245, 236), (30, 24, 20), (215, 40, 45), (70, 190, 110)
 
-# (clip, start, dur, label, score, quip)
+# (clip, start, dur, peak, label, score, quip)   peak=None -> no slow-mo. One Ombre clip only (IMG_5069); IMG_5070 dropped.
 SEGS = [
-    ("IMG_5071", 0.9, 3.4, "SPRAY #1", "0/10", "...it's broken 💀"),
-    ("IMG_5073", 4.9, 2.2, "SPRAY #2", "7.5/10", "Tiny puff. Shy, but it tried."),
-    ("IMG_5067", 2.3, 2.2, "SPRAY #3", "8/10", "Soft cloud. Very polite."),
-    ("IMG_5068b", 1.7, 2.1, "SPRAY #4", "8/10", "Smooth. Zero drip."),
-    ("IMG_5069", 5.3, 2.2, "SPRAY #5", "8.5/10", "Double pump. Main character."),
-    ("IMG_5074", 9.4, 2.2, "SPRAY #6", "8.5/10", "Straight jet. No hesitation."),
-    ("IMG_5070", 2.5, 2.2, "SPRAY #7", "9/10", "Laser-fine mist. Show-off."),
-    ("IMG_5076", 1.2, 3.6, "SPRAY #8", "10/10 🏆", "The cloud. The legend."),
+    ("IMG_5071", 0.9, 3.4, None, "SPRAY #1", "0/10", "...it's broken 💀"),
+    ("IMG_5073", 4.8, 1.5, 5.16, "SPRAY #2", "7.5/10", "Tiny puff. Shy, but it tried."),
+    ("IMG_5067", 2.4, 1.4, 2.84, "SPRAY #3", "8/10", "Soft cloud. Very polite."),
+    ("IMG_5068b", 2.5, 1.2, 2.98, "SPRAY #4", "8/10", "Smooth. Zero drip."),
+    ("IMG_5069", 6.3, 1.1, 6.72, "SPRAY #5", "8.5/10", "Ombré. Straight up, main character."),
+    ("IMG_5074", 3.9, 1.1, 4.34, "SPRAY #6", "9/10", "Laser jet. Show-off."),
+    ("IMG_5076", 1.3, 1.9, 1.78, "SPRAY #7", "10/10 🏆", "The cloud. The legend."),
 ]
+SLOW = 0.4          # playback speed around each spray
+SLOW_PRE, SLOW_POST = 0.25, 0.85
 END_DUR = 3.6
-GRADE = "eq=gamma=1.22:contrast=1.28:saturation=1.05,curves=all='0/0 0.05/0.09 0.2/0.32 0.6/0.72 1/1',unsharp=5:5:0.6"
+GRADE = "eq=gamma=1.06:contrast=1.08,unsharp=5:5:0.4"
 
 def inter(s, w="Black"): return ImageFont.truetype(f"/usr/share/fonts/opentype/inter/InterDisplay-{w}.otf", s)
 def pop(s, w="Medium"): return ImageFont.truetype(f"/usr/share/fonts/truetype/google-fonts/Poppins-{w}.ttf", s)
@@ -82,15 +83,33 @@ def run(cmd): subprocess.run(cmd, check=True)
 def main():
     os.makedirs(OUT, exist_ok=True)
     frames = []; seg_audio = []; t_cursor = 0.0; marks = []
-    for i, (clip, st, du, label, score, quip) in enumerate(SEGS):
+    sys.path.insert(0, D); from mist_fx import background, enhance
+    for i, (clip, st, du, peak, label, score, quip) in enumerate(SEGS):
         fd = OUT + f"s{i}/"; os.makedirs(fd, exist_ok=True)
         src = D + "src/" + clip + ".mov"
         run(["ffmpeg", "-v", "error", "-y", "-ss", str(st), "-t", str(du), "-i", src,
-             "-vf", f"fps={FPS},scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},{GRADE}", "-q:v", "3", fd + "%04d.jpg"])
+             "-vf", f"fps=25,scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},{GRADE}", "-q:v", "2", fd + "%04d.jpg"])
+        srcf = sorted(f for f in os.listdir(fd) if f.endswith(".jpg")); ims = [Image.open(fd + f).convert("RGB") for f in srcf]
+        if peak is not None:
+            bg = background(ims); ims = [enhance(im, bg) for im in ims]
+        # time remap: normal speed, SLOW around the spray
+        outs, ts = [], 0.0; srcdur = len(ims) / 25
+        if peak is None: segs_t = [(0, srcdur, 1.0)]
+        else:
+            p0, p1 = max(0, peak - st - SLOW_PRE), min(srcdur, peak - st + SLOW_POST)
+            segs_t = [(0, p0, 1.0), (p0, p1, SLOW), (p1, srcdur, 1.0)]
+        for a0, a1, sp in segs_t:
+            n = int(round((a1 - a0) / sp * FPS))
+            for k in range(n):
+                tsrc = a0 + k / FPS * sp; x = tsrc * 25; j = int(x); f = x - j
+                A = ims[min(j, len(ims) - 1)]; B = ims[min(j + 1, len(ims) - 1)]
+                outs.append(Image.blend(A, B, f) if f > .05 else A)
+        for j, im in enumerate(outs):
+            pth = fd + f"o{j:04d}.jpg"; im.save(pth, quality=92); frames.append((i, pth, j / FPS))
+        marks.append(t_cursor); t_cursor += len(outs) / FPS
+        # audio: real spray sound, slowed the same way is not needed; keep natural sound at segment start
         run(["ffmpeg", "-v", "error", "-y", "-ss", str(st), "-t", str(du), "-i", src, "-vn", "-ac", "2", "-ar", "44100", OUT + f"a{i}.wav"])
-        n = len([f for f in os.listdir(fd) if f.endswith(".jpg")])
-        for j in range(n): frames.append((i, fd + f"{j + 1:04d}.jpg", j / FPS))
-        marks.append(t_cursor); seg_audio.append((OUT + f"a{i}.wav", t_cursor)); t_cursor += n / FPS
+        seg_audio.append((OUT + f"a{i}.wav", marks[-1]))
     total = t_cursor + END_DUR
     last = frames[-1][1]
     for k in range(int(END_DUR * FPS)): frames.append((-1, last, k / FPS))
@@ -103,7 +122,7 @@ def main():
             ctext(im, 250, "Rating every spray", inter(92), IVORY, ss(u / .15), scale=1 + .25 * (1 - back(u / .3)))
             ctext(im, 360, "we make. Honestly.", inter(92), GOLD, ss((u - .25) / .15))
         if si >= 0:
-            clip, st, du, label, score, quip = SEGS[si]
+            clip, st, du, peak, label, score, quip = SEGS[si]
             if si > 0: score_card(im, u + .5, label, score, quip, winner=(si == len(SEGS) - 1))
             else: score_card(im, u - 1.1, label, score, quip, y0=560)
         else:
