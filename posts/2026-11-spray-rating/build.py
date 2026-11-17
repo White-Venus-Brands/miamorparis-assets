@@ -13,14 +13,14 @@ W, H, FPS = 1080, 1920, 30
 GOLD, IVORY, INK, RED, GREEN = (226, 186, 112), (250, 245, 236), (30, 24, 20), (215, 40, 45), (70, 190, 110)
 
 # (clip, start, dur, peak, label, score, quip)   peak=None -> no slow-mo. One Ombre clip only (IMG_5069); IMG_5070 dropped.
-SEGS = [
-    ("IMG_5071", 0.9, 3.4, None, "SPRAY #1", "0/10", "...it's broken 💀"),
-    ("IMG_5073", 4.8, 1.5, 5.16, "SPRAY #2", "7.5/10", "Tiny puff. Shy, but it tried."),
-    ("IMG_5067", 2.4, 1.4, 2.84, "SPRAY #3", "8/10", "Soft cloud. Very polite."),
-    ("IMG_5068b", 2.5, 1.2, 2.98, "SPRAY #4", "8/10", "Smooth. Zero drip."),
-    ("IMG_5069", 6.3, 1.1, 6.72, "SPRAY #5", "8.5/10", "Ombré. Straight up, main character."),
-    ("IMG_5074", 3.9, 1.1, 4.34, "SPRAY #6", "9/10", "Laser jet. Show-off."),
-    ("IMG_5076", 1.3, 1.9, 1.78, "SPRAY #7", "10/10 🏆", "The cloud. The legend."),
+SEGS = [   # Tannay 17 Nov: 3 perfumes x (vertical, horizontal) + broken spray hook. Name card on vertical, score on horizontal.
+    ("IMG_5071", 0.9, 3.4, None, "WARM-UP SPRAY", "0/10", "...it's broken 💀"),
+    ("IMG_5069", 6.3, 1.1, 6.72, "VERTICAL SPRAY", "MISS POEM", "Soft plume. Elegant, obviously."),
+    ("IMG_5070", 0.5, 1.1, 0.90, "MISS POEM · HORIZONTAL", "9/10", "Fine mist, zero drama."),
+    ("IMG_5068b", 2.5, 1.2, 2.98, "VERTICAL SPRAY", "MOKSHA", "Smooth. Zero drip."),
+    ("IMG_5073", 4.8, 1.5, 5.16, "MOKSHA · HORIZONTAL", "9.5/10", "Even both ways. Bestseller energy."),
+    ("IMG_5076", 1.3, 1.9, 1.78, "VERTICAL SPRAY", "OMBRÉ", "The cloud."),
+    ("IMG_5074", 3.9, 1.1, 4.34, "OMBRÉ · HORIZONTAL", "10/10 🏆", "Laser jet. The legend."),
 ]
 SLOW = 0.4          # playback speed around each spray
 SLOW_PRE, SLOW_POST = 0.25, 0.85
@@ -72,8 +72,8 @@ def score_card(im, u, label, score, quip, winner=False, y0=230):
     d.rounded_rectangle((0, 0, cw - 1, ch - 1), 40, fill=(250, 246, 238, 238))
     d.rounded_rectangle((0, 0, cw - 1, ch - 1), 40, outline=GOLD + (255,), width=6)
     d.text((44, 40), label, font=inter(40, "Bold"), fill=(140, 110, 70, 255))
-    sc_col = RED if score.startswith("0/") else (GREEN if winner else INK)
-    sc = text_with_emoji(score, inter(118), sc_col); card.alpha_composite(sc, (40, 84))
+    sc_col = RED if score.startswith("0/") else (GREEN if winner else (INK if score[0].isdigit() else (150, 104, 40)))
+    sc = text_with_emoji(score, inter(118 if score[0].isdigit() else 104), sc_col); card.alpha_composite(sc, (40, 84))
     q = text_with_emoji(quip, pop(40, "Medium"), (60, 52, 46)); card.alpha_composite(q, (46, 238))
     card = card.resize((int(cw * s), int(ch * s)), Image.LANCZOS); card.putalpha(card.getchannel("A").point(lambda v: int(v * a)))
     shadowed(im, card, (W - card.width) / 2, y0 - (card.height - ch * s) / 2, 22, .55)
@@ -129,8 +129,8 @@ def main():
             k = ss(u / .5); dark = Image.new("RGBA", im.size, (8, 6, 6, int(225 * k))); im.alpha_composite(dark)
             lg = LOGO.resize((220, int(LOGO.height * 220 / LOGO.width)), Image.LANCZOS); a = ss((u - .2) / .4)
             lg.putalpha(lg.getchannel("A").point(lambda v: int(v * a))); im.alpha_composite(lg, ((W - 220) // 2, 420))
-            ctext(im, 660, "Which number should", inter(78), IVORY, ss((u - .4) / .3))
-            ctext(im, 760, "we restock first? 👇", inter(78), GOLD, ss((u - .55) / .3))
+            ctext(im, 660, "Which one are you", inter(78), IVORY, ss((u - .4) / .3))
+            ctext(im, 760, "adding to cart? 👇", inter(78), GOLD, ss((u - .55) / .3))
             a3 = ss((u - 1.0) / .4)
             if a3 > 0:
                 f = inter(46, "Black"); lab = "DM FOR PRICES"; w_ = ImageDraw.Draw(im).textlength(lab, font=f); lay = Image.new("RGBA", im.size); dl = ImageDraw.Draw(lay); y = 960
