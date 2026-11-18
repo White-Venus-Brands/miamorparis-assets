@@ -116,7 +116,7 @@ def audio(path):
     # slow, warm pad under the jersey, then a lift
     for f, v in ((110, .10), (164.8, .07), (220, .06), (277.2, .05)):
         a[:int(T2 * sr)] += v * np.sin(2 * np.pi * f * tt[:int(T2 * sr)]) * np.minimum(1, tt[:int(T2 * sr)] / 1.2)
-    a[int((T2 - .6) * sr):int(T2 * sr)] *= np.linspace(1, .2, int(.6 * sr))
+    _i0, _i1 = int((T2 - .6) * sr), int(T2 * sr); a[_i0:_i1] *= np.linspace(1, .2, _i1 - _i0)
     rng = np.random.default_rng(1); sw = int(.6 * sr); i = int((T2 - .6) * sr)
     a[i:i + sw] += .18 * rng.standard_normal(sw) * np.linspace(0, 1, sw) ** 2            # whoosh into the reveal
     beat = .5

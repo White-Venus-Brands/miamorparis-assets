@@ -108,3 +108,4 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 - 2026-11-19 21:00 IST | STORY (IG+FB) | Wedding gift 8: Mr Aqua set ("For the guy who changes outfits three times a shaadi"; woody, citrus, spicy from listing) | Metricool 432555850 | ops/stories/diwali_out/2026-11-19_2100_wgift8_mraqua.jpg @b12101f
 
 - 2026-11-18: Marhaba 'still wearing yellow' moment Reel (No. 7 yellow jersey retiring, no name/photo). posts/2026-11-marhaba-yellow/. Post by 19 Nov.
+- 2026-11-18: Marhaba yellow v2 from Tannay's 8-panel grid (looks AI-generated: tick AI label). marhaba_yellow_reel_v2.mp4
