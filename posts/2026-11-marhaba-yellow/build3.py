@@ -8,13 +8,14 @@ from build2 import SHADE
 
 D = B.D; OUT = (sys.argv[1].rstrip("/") + "/") if len(sys.argv) > 1 else "/tmp/my3/"
 os.makedirs(OUT + "f", exist_ok=True)
-P = {k: Image.open(D + f"src/{k}.png").convert("RGB").resize((W, H), Image.LANCZOS).filter(ImageFilter.UnsharpMask(2, 50, 2)) for k in ("trio", "jersey", "window", "inbox")}
+P = {k: Image.open(D + f"src/{k}.png").convert("RGB") for k in ("trio", "jersey", "window", "inbox")}   # keep source res; resample once per frame
 
 def view(k, cx, cy, z):
     """crop centred on (cx, cy) in 0..1 coords at zoom z (1 = full frame)."""
-    w, h = W / z, H / z
-    x0 = min(max(cx * W - w / 2, 0), W - w); y0 = min(max(cy * H - h / 2, 0), H - h)
-    return P[k].crop((int(x0), int(y0), int(x0 + w), int(y0 + h))).resize((W, H), Image.LANCZOS).convert("RGBA")
+    src = P[k]; SW, SH = src.size; w, h = SW / z, SH / z
+    x0 = min(max(cx * SW - w / 2, 0), SW - w); y0 = min(max(cy * SH - h / 2, 0), SH - h)
+    out = src.resize((W, H), Image.BICUBIC, box=(x0, y0, x0 + w, y0 + h), reducing_gap=None) if False else src.resize((W, H), Image.LANCZOS, box=(x0, y0, x0 + w, y0 + h))
+    return out.filter(ImageFilter.UnsharpMask(1.6, 70, 1)).convert("RGBA")
 def lerp(a, b, p): return a + (b - a) * p
 
 # (photo, start view, end view, end time)   view = (cx, cy, zoom)
@@ -66,9 +67,9 @@ if __name__ == "__main__":
         sys.exit()
     B.T2, B.T3, B.T4, B.T5, B.END = 3.4, 8.6, 13.1, 15.2, END
     B.audio(OUT + "a.wav")
-    for n in range(int(END * FPS)): frame(n / FPS).convert("RGB").save(OUT + f"f/{n:04d}.jpg", quality=92)
-    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-i", OUT + "f/%04d.jpg", "-i", OUT + "a.wav",
-                    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "18", "-preset", "veryfast", "-c:a", "aac", "-b:a", "192k", "-shortest",
-                    "-movflags", "+faststart", D + "marhaba_yellow_reel_v3.mp4"], check=True)
+    for n in range(int(END * FPS)): frame(n / FPS).convert("RGB").save(OUT + f"f/{n:04d}.png", compress_level=1)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS), "-i", OUT + "f/%04d.png", "-i", OUT + "a.wav",
+                    "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "14", "-preset", "slow", "-profile:v", "high", "-tune", "film", "-c:a", "aac", "-b:a", "192k", "-shortest",
+                    "-movflags", "+faststart", D + "marhaba_yellow_reel_v3_hq.mp4"], check=True)
     frame(5.8).convert("RGB").save(D + "cover_v3.jpg", quality=92)
     print("done")
