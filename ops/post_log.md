@@ -106,3 +106,5 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 - 2026-11-17 | SPRAY RATING REEL (not booked; Tannay posts) | Real phone clips, broken spray as 0/10 hook, v2 17 Nov: one Ombre clip only (#5), mist boosted (mist_fx.py), slow-mo on each spray, 6 sprays 7.5-10. 24 s. isAiGenerated false. | posts/2026-11-spray-rating
 - 2026-11-19 09:00 IST | STORY (IG+FB) | Wedding season fact 8 (CAIT: 48 lakh weddings, ~5.9 lakh crore rupees, Nov-Dec 2024 season) + Bouquet set | Metricool 432555833 | ops/stories/diwali_out/2026-11-19_0900_wfact8_bouquet.jpg @b12101f
 - 2026-11-19 21:00 IST | STORY (IG+FB) | Wedding gift 8: Mr Aqua set ("For the guy who changes outfits three times a shaadi"; woody, citrus, spicy from listing) | Metricool 432555850 | ops/stories/diwali_out/2026-11-19_2100_wgift8_mraqua.jpg @b12101f
+
+- 2026-11-18: Marhaba 'still wearing yellow' moment Reel (No. 7 yellow jersey retiring, no name/photo). posts/2026-11-marhaba-yellow/. Post by 19 Nov.
