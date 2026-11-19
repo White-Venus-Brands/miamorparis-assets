@@ -112,3 +112,4 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 - 2026-11-18: Marhaba 'still wearing yellow' moment Reel (No. 7 yellow jersey retiring, no name/photo). posts/2026-11-marhaba-yellow/. Post by 19 Nov.
 - 2026-11-18: Marhaba yellow v2 from Tannay's 8-panel grid (looks AI-generated: tick AI label). marhaba_yellow_reel_v2.mp4
 - 2026-11-18: Marhaba yellow v3 from Tannay's 4 real photos (use this one). marhaba_yellow_reel_v3.mp4
+- 2026-11-19: 'Most Wanted' carousel for GTA VI launch day (4 slides, drawn in code + real cutouts, no game logos/fonts/names). posts/2026-11-19-most-wanted-carousel/. Post today.
