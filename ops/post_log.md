@@ -114,3 +114,5 @@ Note: carousels crop every slide to 4:5 (1080x1350). Make carousel slides and ca
 - 2026-11-18: Marhaba yellow v3 from Tannay's 4 real photos (use this one). marhaba_yellow_reel_v3.mp4
 - 2026-11-19: 'Most Wanted' carousel for GTA VI launch day (4 slides, drawn in code + real cutouts, no game logos/fonts/names). posts/2026-11-19-most-wanted-carousel/. Post today.
 - 2026-11-19: GTA VI launch-day Reel 'Most Wanted' from Tannay's 4 illustrations (AI-made: tick AI label). Copied title/tagline cropped out. posts/2026-11-19-gta-reel/. Post today.
+- 2026-11-21 09:00 IST | STORY (IG+FB) | Wedding season fact 10 (CAIT: ~42 lakh weddings, ~5.5 lakh crore rupees, 15 Jan-15 Jul 2024) + De Rossa Oudh set | Metricool 435287488 | ops/stories/diwali_out/2026-11-21_0900_wfact10_derossa.jpg @c30cded
+- 2026-11-21 21:00 IST | STORY (IG+FB) | Wedding gift 10: Hold Mi set ("For the jiju who wins every joota chupai negotiation"; citrus, fresh spicy, woody from listing) | Metricool 435287498 | ops/stories/diwali_out/2026-11-21_2100_wgift10_holdmi.jpg @c30cded
