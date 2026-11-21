@@ -1,5 +1,5 @@
-"""Black Friday (27-30 Nov 2026) Reel, Tannay's English VO. Real footage only: spray clips (spray-rating/src2),
-body wash studio shots, Marhaba photos. Offer stays secret: 'DM us FRIDAY'.
+"""Black Friday sale (live now, ends Black Friday 27 Nov 2026) Reel, Tannay's English VO. Real footage only: spray clips (spray-rating/src2),
+body wash studio shots, Marhaba photos. Offer stays secret: 'comment anything, we DM the offers'.
 Segment starts live in CUES so the edit can be retimed to the recorded VO.
 Usage: python3 build.py OUTDIR [vo.wav]"""
 import json, math, os, subprocess, sys, wave
@@ -101,6 +101,13 @@ def frame(t):
         text(im, 480, "FRIDAY", MS(190), fill=GOLD2, a=ss((u - .45) / .1), scale=1 + .4 * (1 - back((u - .45) / .3)))
         gold_line(im, 610, int(560 * ss((u - .8) / .4)))
         text(im, 680, "M I   A M O R   P A R I S", MS(44, "SemiBold"), fill=IVORY, a=ss((u - 1.0) / .3))
+        if u > 1.5:   # LIVE NOW pill
+            a = ss((u - 1.5) / .15); pill = Image.new("RGBA", (420, 96)); pd = ImageDraw.Draw(pill)
+            pd.rounded_rectangle((0, 0, 419, 95), 48, fill=(214, 40, 40, int(255 * a)))
+            pd.ellipse((40, 36, 64, 60), fill=(255, 255, 255, int(255 * a * (.5 + .5 * math.sin(u * 9) ** 2))))
+            pd.text((235, 48), "SALE LIVE", font=MS(46, "ExtraBold"), fill=(255, 255, 255, int(255 * a)), anchor="mm")
+            sc = 1 + .3 * (1 - back((u - 1.5) / .3)); pill = pill.resize((int(420 * sc), int(96 * sc)), Image.LANCZOS)
+            im.alpha_composite(pill, ((W - pill.width) // 2, 790 - pill.height // 2))
         return im
     if t < C["wash"]:                                    # SIGNATURE SCENT
         u = t - C["scent"]; im = spray("moksha_v", u, C["wash"] - C["scent"]); im.alpha_composite(SHADE)
@@ -126,8 +133,8 @@ def frame(t):
         return im
     if t < C["offer"]:                                   # DATES
         u = t - C["dates"]; im = spray("poem_v", u, C["offer"] - C["dates"]); im.alpha_composite(SHADE)
-        text(im, 300, "27 – 30", MS(220), fill=GOLD2, a=ss(u / .15), scale=1 + .3 * (1 - back(u / .3)))
-        text(im, 470, "NOVEMBER", MS(84, "ExtraBold"), a=ss((u - .3) / .2))
+        text(im, 290, "NOW – 27 NOV", MS(122), fill=GOLD2, a=ss(u / .15), scale=1 + .3 * (1 - back(u / .3)))
+        text(im, 450, "ENDS ON BLACK FRIDAY", MS(70, "ExtraBold"), a=ss((u - .3) / .2))
         gold_line(im, 560, int(420 * ss((u - .6) / .3)))
         text(im, 1560, "IN STORE · LAJPAT NAGAR-II", MS(50, "Bold"), a=ss((u - 1.4) / .25))
         text(im, 1640, "+ ONLINE · miamorparis.in", MS(50, "Bold"), fill=GOLD2, a=ss((u - 2.2) / .25))
@@ -150,13 +157,16 @@ def frame(t):
     u = t - C["dm"]                                       # DM CTA + end card
     im = Image.new("RGBA", (W, H), (8, 6, 6, 255))
     glow = Image.new("RGBA", (W, H)); ImageDraw.Draw(glow).ellipse((90, 520, W - 90, 1300), fill=(226, 186, 112, 45)); im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(120)))
-    text(im, 560, "DM us", LORA(110), fill=GOLD2, a=ss(u / .2))
-    text(im, 740, "“FRIDAY”", MS(170), a=ss((u - .25) / .15), scale=1 + .4 * (1 - back((u - .25) / .3)))
-    text(im, 900, "and find out.", LORA(80), fill=IVORY, a=ss((u - .8) / .3))
+    text(im, 540, "Comment", LORA(110), fill=GOLD2, a=ss(u / .2))
+    text(im, 720, "ANYTHING 👇" if False else "ANYTHING", MS(170), a=ss((u - .25) / .15), scale=1 + .4 * (1 - back((u - .25) / .3)))
+    text(im, 890, "we'll send you the offers.", LORA(72), fill=IVORY, a=ss((u - .8) / .3))
+    if u > 1.0:   # bouncing arrow to the comments
+        d = ImageDraw.Draw(im); y = 1700 + 18 * math.sin((u - 1.0) * 6); a = int(255 * ss((u - 1.0) / .3))
+        d.polygon([(W - 160, y), (W - 100, y), (W - 130, y + 50)], fill=GOLD + (a,)); d.rectangle((W - 140, y - 70, W - 120, y), fill=GOLD + (a,))
     gold_line(im, 1010, int(520 * ss((u - 1.2) / .4)))
     lg = Image.open(R + "assets/cutouts/logo_gold.png").convert("RGBA"); lg = lg.resize((200, int(200 * lg.height / lg.width)), Image.LANCZOS)
     a = ss((u - 1.4) / .4); lg.putalpha(lg.getchannel("A").point(lambda v: int(v * a))); im.alpha_composite(lg, ((W - lg.width) // 2, 1080))
-    text(im, 1080 + lg.height + 70, "BLACK FRIDAY · 27–30 NOV", MS(46, "Bold"), fill=GOLD2, a=ss((u - 1.7) / .3))
+    text(im, 1080 + lg.height + 70, "BLACK FRIDAY SALE · ENDS 27 NOV", MS(46, "Bold"), fill=GOLD2, a=ss((u - 1.7) / .3))
     text(im, 1080 + lg.height + 140, "O-17, Lajpat Nagar-II  ·  miamorparis.in", MS(38, "SemiBold"), a=ss((u - 2.0) / .3))
     return im
 
