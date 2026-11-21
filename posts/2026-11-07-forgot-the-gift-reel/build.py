@@ -1,4 +1,4 @@
-"""Reel: 'POV: Diwali party in 2 hours. You forgot the gift.'  1080x1920, 30 fps, ~17 s.
+"""Reel: 'POV: Shaadi in 2 hours. (was Diwali party, swapped 21 Nov for wedding season) You forgot the gift.'  1080x1920, 30 fps, ~17 s.
 Real gift-box photos only. No prices (DM for prices). Original synthesized audio."""
 import math, os, subprocess, sys
 import numpy as np
@@ -74,7 +74,7 @@ def shadowed(im, lay, x, y, blur=10, strength=0.85):
 def countdown(im, t, calm=False):
     secs = 2 * 3600 - 1 - int(t * 7)          # ticks a bit faster than real time for urgency
     hh, mm, s_ = secs // 3600, secs % 3600 // 60, secs % 60
-    lab = f"PARTY IN  {hh:02d}:{mm:02d}:{s_:02d}"
+    lab = f"SHAADI IN  {hh:02d}:{mm:02d}:{s_:02d}"
     f = inter(40, "Bold"); d0 = ImageDraw.Draw(im); tw = d0.textlength(lab, font=f)
     blink = (int(t * 2) % 2 == 0) and not calm
     col = (255, 255, 255) if calm else (255, 236, 236)
@@ -86,7 +86,7 @@ def countdown(im, t, calm=False):
     d.text((W / 2 + 10, y0 + 39), lab, font=f, fill=col + (255,), anchor="mm"); im.alpha_composite(lay)
 
 # ---------- scenes ----------
-OPTIONS = [("Dry fruit box no. 47", 1.95), ("Another diya set", 2.75), ("Re-gift the sone papdi", 3.55)]
+OPTIONS = [("Dry fruit box no. 47", 1.95), ("Another steel casserole", 2.75), ("A lifafa with ₹101", 3.55)]
 BOXES = [("bouquet", "FOR HER"), ("derossa", "FOR HIM"), ("misspoem", "FOR HER"), ("holdmi", "FOR HIM"), ("flora5", "FOR HER"), ("mraqua", "FOR HIM")]
 PH = {}
 def card(name, size):
@@ -102,7 +102,7 @@ def scene_hook(im, t):
     # 0.0–1.85: two slams
     d = ImageDraw.Draw(im)
     ctext(d, 420, "POV:", pop(54, "Bold"), GOLD + (int(255 * ss(t / 0.15)),))
-    for i, (txt, t0, y) in enumerate((("DIWALI PARTY\nIN 2 HOURS.", 0.0, 540), ("YOU FORGOT\nTHE GIFT.", 0.75, 960))):
+    for i, (txt, t0, y) in enumerate((("SHAADI\nIN 2 HOURS.", 0.0, 540), ("YOU FORGOT\nTHE GIFT.", 0.75, 960))):
         u = t - t0
         if u < 0: continue
         sc = 1.6 - 0.6 * back(u / 0.22); al = ss(u / 0.08)
@@ -142,7 +142,7 @@ def scene_boxes(im, t):
     u = t - 5.0; i = min(5, int(u / 0.9)); v = u - i * 0.9
     d = ImageDraw.Draw(im)
     ctext(d, 350, "Buy one perfume.", inter(78, "ExtraBold"), IVORY + (255,))
-    ctext(d, 445, "Get the whole Diwali set.", lora(76), GOLD + (255,))
+    ctext(d, 445, "Get the whole gift set.", lora(76), GOLD + (255,))
     size = 860; c = card(BOXES[i][0], size)
     sl = 1 - ss(v / 0.22); x = (W - c.width) // 2 + int(sl * (W * 0.9) * (1 if i % 2 else -1))
     zoom = 1 + 0.03 * cl(v / 0.9)
@@ -159,27 +159,27 @@ def scene_boxes(im, t):
 def scene_payoff(im, t):
     # 10.4–13.6: delivery payoff
     u = t - 10.4; d = ImageDraw.Draw(im)
-    ctext(d, 420, "Delhi NCR delivery in", pop(58, "Medium"), (240, 225, 205, int(255 * ss(u / 0.2))))
-    lay, x = scaled_text_layer([("2-3 HOURS*", inter(160), GOLD)], 1.5 - 0.5 * back((u - 0.15) / 0.25), ss((u - 0.15) / 0.1), 0)
+    ctext(d, 420, "Delivery anywhere in Delhi NCR in", pop(58, "Medium"), (240, 225, 205, int(255 * ss(u / 0.2))))
+    lay, x = scaled_text_layer([("2 HOURS*", inter(180), GOLD)], 1.5 - 0.5 * back((u - 0.15) / 0.25), ss((u - 0.15) / 0.1), 0)
     if lay is not None and u > 0.15: shadowed(im, lay, x, 520, 14)
     if u > 0.9:
         a = ss((u - 0.9) / 0.3)
-        ctext(d, 800, "Party's in 2 hours.", lora(76), (IVORY + (int(255 * a),)))
+        ctext(d, 800, "Shaadi's in 2 hours.", lora(76), (IVORY + (int(255 * a),)))
         ctext(d, 900, "You're basically early.", lora(76), (255, 200, 140, int(255 * a)))
     if u > 1.7:
         ctext(d, 1080, "Gift sorted. Panic cancelled.", inter(56, "ExtraBold"), (140, 230, 170, int(255 * ss((u - 1.7) / 0.25))))
-    ctext(d, 1700, "*During office hours", pop(32, "Medium"), (230, 210, 190, 230))
+    ctext(d, 1665, "*Order during business hours", pop(32, "Medium"), (230, 210, 190, 230)); ctext(d, 1712, "Free delivery on orders above ₹1,500", pop(32, "Medium"), (230, 210, 190, 230))
 
 def scene_end(im, t):
     u = t - 13.6
     lg = LOGO.resize((240, int(LOGO.height * 240 / LOGO.width)), Image.LANCZOS); al = ss(u / 0.5)
     lg.putalpha(lg.getchannel("A").point(lambda v: int(v * al))); im.alpha_composite(lg, ((W - 240) // 2, 360))
     d = ImageDraw.Draw(im)
-    ctext(d, 620, "THE DIWALI GIFT SETS", inter(70, "Black"), GOLD + (int(255 * ss((u - 0.2) / 0.4)),))
+    ctext(d, 620, "THE GIFT SETS", inter(70, "Black"), GOLD + (int(255 * ss((u - 0.2) / 0.4)),))
     ctext(d, 720, "10 scents  ·  for her & for him", pop(40, "Medium"), (240, 222, 200, int(255 * ss((u - 0.4) / 0.4))))
     a2 = ss((u - 0.8) / 0.4)
     if a2 > 0:
-        f = inter(46, "Black"); lab = "DM FOR PRICES & DIWALI DEALS"; tw = d.textlength(lab, font=f)
+        f = inter(46, "Black"); lab = "DM FOR PRICES & BLACK FRIDAY DEALS"; tw = d.textlength(lab, font=f)
         lay = Image.new("RGBA", im.size); dl = ImageDraw.Draw(lay); y = 900
         dl.rounded_rectangle(((W - tw) / 2 - 46, y - 50, (W + tw) / 2 + 46, y + 50), 50, fill=GOLD + (int(255 * a2),))
         dl.text((W / 2, y), lab, font=f, fill=(40, 8, 16, int(255 * a2)), anchor="mm"); im.alpha_composite(lay)
@@ -190,7 +190,7 @@ def scene_end(im, t):
         for k, (n, _) in enumerate(BOXES):
             c = card(n, 150).copy(); c.putalpha(c.getchannel("A").point(lambda v: int(v * a3)))
             im.alpha_composite(c, (int(W / 2 - 3 * 168 + k * 168 + 6), 1200))
-    ctext(d, 1700, "*Delhi NCR 2-3 hr delivery during office hours", pop(28, "Medium"), (220, 200, 180, int(200 * ss((u - 1.3) / 0.5))))
+    ctext(d, 1665, "*2-hr delivery anywhere in Delhi NCR, order during business hours", pop(28, "Medium"), (220, 200, 180, int(200 * ss((u - 1.3) / 0.5)))); ctext(d, 1708, "Free delivery on orders above ₹1,500", pop(28, "Medium"), (220, 200, 180, int(200 * ss((u - 1.3) / 0.5))))
 
 def frame(tr):
     t = ST(tr)
