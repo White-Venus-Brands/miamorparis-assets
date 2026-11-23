@@ -18,14 +18,15 @@ SRC = {"5211": A + "5f1d5c70-IMG_5211.mov", "5212": A + "450a0d04-IMG_5212.mov",
 RED = (214, 40, 40)
 
 # (audio clip, in, out, [(video src, src_in, dur), ...])  video pieces must sum to out-in
-SEGS = [
-    ("5226", 0.00, 7.70, [("5226", 0.00, 7.70)]),                                  # opener: Black Friday at Mi Amor Paris is live (+ dates, store, online)
-    ("5227", 0.45, 2.50, [("5227", 0.45, 2.05)]),                                  # your signature scent
-    ("5211", 0.40, 1.80, [("5211", 0.40, 1.40)]),                                  # your body wash
-    ("5228", 0.50, 3.10, [("5228", 0.50, 1.10), ("5212", 0.60, 1.50)]),            # your entire gift list (+ Marhaba box)
-    ("5215", 1.50, 7.95, [("5215", 1.50, 6.45)]),                                  # buy one get one free / or 50% off / your pick
-    ("5216", 0.50, 5.70, [("5216", 0.50, 1.60), ("zodiac_aries", 0, 0.9), ("zodiac_gemini", 0, 0.9), ("5216", 3.90, 1.80)]),  # candles
-    ("5222", 0.00, 4.40, [("5222", 0.00, 4.40)]),                                  # closer: it's Black Friday guys... don't miss it
+SEGS = [   # script order (Tannay 23 Nov 21:25: IMG_5228 is line 1)
+    ("5228", 0.40, 3.20, [("5228", 0.40, 2.80)]),                                  # 1 Black Friday at Mi Amor Paris is live
+    ("5227", 0.45, 2.50, [("5227", 0.45, 2.05)]),                                  # 2 your signature scent
+    ("5211", 0.40, 1.80, [("5211", 0.40, 1.40)]),                                  # 3 your body wash
+    ("5212", 0.40, 2.70, [("5212", 0.40, 2.30)]),                                  # 4 your entire gift list (over the Marhaba box)
+    ("5215", 1.50, 7.95, [("5215", 1.50, 6.45)]),                                  # 5-6 buy one get one free / or 50% off, your pick
+    ("5216", 0.50, 5.70, [("5216", 0.50, 1.60), ("zodiac_aries", 0, 0.9), ("zodiac_gemini", 0, 0.9), ("5216", 3.90, 1.80)]),  # 7 candles
+    ("5226", 0.00, 7.70, [("5226", 0.00, 7.70)]),                                  # 8 on till 27th / in store, Lajpat Nagar + online
+    ("5222", 0.00, 4.40, [("5222", 0.00, 4.40)]),                                  # 9 it's Black Friday guys, don't miss out, happy shopping
 ]
 END_DUR = 0.0
 STARTS = []; t = 0.0
@@ -83,15 +84,16 @@ def frame(t):
     u = t - STARTS[si]; clip_t = SEGS[si][1] + u          # time inside the speaking clip (matches speech spans)
     im = base_frame(si, u); im.alpha_composite(LOW)
     key = SEGS[si][0]
-    if key == "5226":                                   # opener
+    if key == "5228":                                   # line 1
+        text(im, 230, "BLACK FRIDAY", MS(120), fill=GOLD2, a=ss((clip_t - .45) / .12), scale=1 + .3 * (1 - back((clip_t - .45) / .3)))
+        text(im, 340, "at Mi Amor Paris", LORA(64), a=ss((clip_t - 1.2) / .2))
+        pill(im, 1560, "SALE IS LIVE", a=ss((clip_t - 2.35) / .1), scale=1 + .4 * (1 - back((clip_t - 2.35) / .3)))
+    elif key == "5226":                                 # line 8
         if clip_t < 2.05:
-            text(im, 230, "BLACK FRIDAY", MS(120), fill=GOLD2, a=ss(clip_t / .12), scale=1 + .3 * (1 - back(clip_t / .3)))
-            text(im, 340, "at Mi Amor Paris", LORA(64), a=ss((clip_t - .5) / .2))
-            pill(im, 1560, "SALE IS LIVE", a=ss((clip_t - 1.0) / .1), scale=1 + .4 * (1 - back((clip_t - 1.0) / .3)))
+            text(im, 1520, "ON TILL 27 NOV", MS(110), fill=GOLD2, a=ss(clip_t / .1), scale=1 + .3 * (1 - back(clip_t / .3)))
         elif clip_t < 6.0:
-            text(im, 1500, "23 – 27 NOV", MS(120), fill=GOLD2, a=ss((clip_t - 2.2) / .1), scale=1 + .3 * (1 - back((clip_t - 2.2) / .3)))
-            text(im, 1630, "IN STORE · LAJPAT NAGAR-II", MS(52, "Bold"), a=ss((clip_t - 3.0) / .15))
-            text(im, 1710, "+ ONLINE · miamorparis.in", MS(52, "Bold"), fill=GOLD2, a=ss((clip_t - 4.0) / .15))
+            text(im, 1520, "IN STORE · LAJPAT NAGAR-II", MS(56, "Bold"), a=ss((clip_t - 2.25) / .15))
+            text(im, 1610, "+ ONLINE · miamorparis.in", MS(56, "Bold"), fill=GOLD2, a=ss((clip_t - 4.0) / .15))
         else:
             text(im, 1520, "ENDS ON", MS(64, "ExtraBold"), a=ss((clip_t - 6.15) / .1))
             text(im, 1640, "BLACK FRIDAY", MS(110), fill=GOLD2, a=ss((clip_t - 6.15) / .1), scale=1 + .3 * (1 - back((clip_t - 6.15) / .3)))
@@ -99,7 +101,7 @@ def frame(t):
         text(im, 1540, "Your", LORA(70), fill=GOLD2); text(im, 1640, "SIGNATURE SCENT", MS(88), scale=1 + .2 * (1 - back(u / .3)))
     elif key == "5211":
         text(im, 1540, "Your", LORA(70), fill=GOLD2); text(im, 1640, "BODY WASH", MS(100), scale=1 + .2 * (1 - back(u / .3)))
-    elif key == "5228":
+    elif key == "5212":
         text(im, 1540, "Your entire", LORA(70), fill=GOLD2); text(im, 1640, "GIFT LIST", MS(110), scale=1 + .2 * (1 - back(u / .3)))
     elif key == "5215":
         if clip_t < 3.3:
@@ -116,8 +118,10 @@ def frame(t):
         if 2.1 <= clip_t < 3.9: text(im, 1760, "ZODIAC CANDLES", MS(46, "Bold"), fill=GOLD2)
     elif key == "5222":                                 # closer on his line, recap on screen
         text(im, 230, "IT'S BLACK FRIDAY", MS(100), fill=GOLD2, a=ss(clip_t / .12), scale=1 + .3 * (1 - back(clip_t / .3)))
-        if clip_t > 2.55:
-            text(im, 360, "DON'T MISS IT", MS(96), a=ss((clip_t - 2.55) / .08), scale=1 + .35 * (1 - back((clip_t - 2.55) / .3)))
+        if clip_t > 1.3:
+            text(im, 360, "DON'T MISS OUT", MS(96), a=ss((clip_t - 1.3) / .08), scale=1 + .35 * (1 - back((clip_t - 1.3) / .3)))
+        if clip_t > 2.58:
+            pill(im, 480, "HAPPY SHOPPING", fill=GOLD, fg=(10, 8, 6), size=52, a=ss((clip_t - 2.58) / .1), scale=1 + .35 * (1 - back((clip_t - 2.58) / .3)))
         if clip_t > 2.9:
             a_ = ss((clip_t - 2.9) / .25)
             text(im, 1440, "Buy 1 Get 1 Free  ·  or 50% off", MS(50, "ExtraBold"), a=a_)
