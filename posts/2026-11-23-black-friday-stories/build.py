@@ -38,16 +38,17 @@ def s2():   # product + poll slot
     B.text(im, 1700, "All in the Black Friday sale", B.MS(48, "Bold"))
     return im
 
-def s3():   # reply CTA
+def s3():   # the offer
     im = Image.new("RGBA", (W, H), (8, 6, 6, 255))
-    glow = Image.new("RGBA", (W, H)); ImageDraw.Draw(glow).ellipse((90, 520, W - 90, 1300), fill=(226, 186, 112, 45)); im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(120)))
-    B.text(im, 520, "The offer?", B.LORA(110), fill=B.GOLD2)
-    B.text(im, 690, "REPLY 🖤" if False else "REPLY", B.MS(170))
-    B.text(im, 850, "to this story and we'll", B.LORA(70)); B.text(im, 940, "send you the offers.", B.LORA(70))
-    B.gold_line(im, 1050, 520); badge(im, 1170, "ENDS 27 NOV")
-    lg = Image.open(B.R + "assets/cutouts/logo_gold.png").convert("RGBA"); lg = lg.resize((180, int(180 * lg.height / lg.width)), Image.LANCZOS)
-    im.alpha_composite(lg, ((W - lg.width) // 2, 1320))
-    B.text(im, 1320 + lg.height + 70, "O-17, Lajpat Nagar-II  ·  miamorparis.in", B.MS(36, "SemiBold"))
+    glow = Image.new("RGBA", (W, H)); ImageDraw.Draw(glow).ellipse((90, 420, W - 90, 1300), fill=(226, 186, 112, 45)); im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(120)))
+    B.text(im, 330, "The offer", B.LORA(100), fill=B.GOLD2)
+    B.text(im, 520, "BUY 1 GET 1", B.MS(140)); badge(im, 690, "FREE", col=(226, 186, 112))
+    B.text(im, 830, "or simply take", B.LORA(70), fill=B.GOLD2); B.text(im, 960, "50% OFF", B.MS(140))
+    B.gold_line(im, 1080, 520); B.text(im, 1160, "+ CANDLES CLEARANCE SALE", B.MS(52, "ExtraBold"))
+    badge(im, 1290, "ENDS 27 NOV")
+    B.text(im, 1440, "Reply to this story to order", B.LORA(60))
+    B.text(im, 1560, "O-17, Lajpat Nagar-II  ·  miamorparis.in", B.MS(36, "SemiBold"))
+    B.text(im, 1820, "*T&C apply", B.MS(28, "Medium"), fill=(200, 190, 175), shadow=False)
     return im
 
 if __name__ == "__main__":
