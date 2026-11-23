@@ -79,7 +79,7 @@ def fit_white(path, zoom):
     can = Image.new("RGB", (W, H), (246, 244, 241)); s = H * .78 / im.height * zoom
     p = im.resize((int(im.width * s), int(im.height * s)), Image.LANCZOS)
     can.paste(p, ((W - p.width) // 2, (H - p.height) // 2 + 40)); return can.convert("RGBA")
-WASH = [ATT + f for f in ("14a68f49-IMG_0086_copy.jpg", "1a5e6885-IMG_0067_copy.jpg", "715ec5b1-IMG_0061_copy.jpg", "328411ec-IMG_0075_copy.jpg")]
+WASH = [ATT + f for f in ("14a68f49-IMG_0086_copy.jpg", "1a5e6885-IMG_0067_copy.jpg", "94b1bf1c-IMG_0059_copy.jpg", "736da88f-IMG_0073_copy.jpg")]
 WASH_IM = [Image.open(p).convert("RGB") for p in WASH]
 def wash(i, p):
     im = WASH_IM[i]; can = Image.new("RGB", (W, H), (246, 244, 241)); s = H * .8 / im.height * (1 + .05 * p)
