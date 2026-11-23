@@ -1,1 +1,2 @@
 posts/*/src/*.mov
+__pycache__/
