@@ -10,16 +10,19 @@ from build import W, H, FPS, GOLD, GOLD2, IVORY, MS, LORA, ss, back, text, gold_
 OUT = B.OUT; os.makedirs(OUT, exist_ok=True)
 
 CUES = json.load(open(D + "cues2.json")) if os.path.exists(D + "cues2.json") else \
-    {"hook": 0.0, "scent": 2.6, "wash": 4.0, "gifts": 5.3, "offer": 7.2, "or": 9.6, "candles": 12.2, "dates": 14.8, "end": 17.4, "stop": 21.0}
-CANDLES = [Image.open(B.R + f"posts/2026-11-02-oudh-candles/{k}.jpg").convert("RGB") for k in ("zeenat_4", "aleud_1", "sandali_1", "abyad_1")]
+    {"hook": 0.0, "scent": 2.6, "wash": 4.0, "gifts": 5.3, "offer": 7.2, "or": 9.6, "candles": 12.2, "dates": 15.6, "end": 18.2, "stop": 21.8}
+CANDLES = [Image.open(B.R + "posts/2026-11-02-oudh-candles/zeenat_4.jpg").convert("RGB")] + \
+          [Image.open(D + f"src/zodiac_{k}.jpg").convert("RGB") for k in ("aries", "taurus", "gemini", "cancer")]
+CLABEL = ["OUDH CANDLES", "ZODIAC CANDLES", "ZODIAC CANDLES", "ZODIAC CANDLES", "ZODIAC CANDLES"]
 RED = (214, 40, 40)
 
 def candle(i, p):
-    im = CANDLES[i]; s = W / im.width * (1.02 + .06 * p); q = im.resize((int(im.width * s), int(im.height * s)), Image.LANCZOS)
-    can = Image.new("RGB", (W, H), (246, 244, 241)) if i else Image.new("RGB", (W, H), (40, 22, 16))
-    if i == 0:   # lit candle photo: blurred fill
-        bg = im.resize((H, H), Image.LANCZOS).crop(((H - W) // 2, 0, (H - W) // 2 + W, H)).filter(ImageFilter.GaussianBlur(40)); can = Image.blend(bg, can, .4)
-    can.paste(q, ((W - q.width) // 2, (H - q.height) // 2 + 60)); return can.convert("RGBA")
+    """website photo, fit to width over a blurred copy of itself"""
+    im = CANDLES[i]; s = W / im.width * (1.0 + .06 * p); q = im.resize((int(im.width * s), int(im.height * s)), Image.LANCZOS)
+    bs = H / im.height; bg = im.resize((int(im.width * bs), H), Image.LANCZOS)
+    bg = bg.crop(((bg.width - W) // 2, 0, (bg.width - W) // 2 + W, H)).filter(ImageFilter.GaussianBlur(45))
+    can = Image.blend(bg, Image.new("RGB", (W, H), (10, 6, 6)), .35)
+    can.paste(q, ((W - q.width) // 2, (H - q.height) // 2 + 120)); return can.convert("RGBA")
 
 def pill(im, cy, label, fill=RED, fg=(255, 255, 255), size=50, scale=1.0, a=1.0):
     if a <= 0: return
@@ -86,6 +89,7 @@ def frame(t):
         text(im, 170, "PLUS", MS(56, "ExtraBold"), fill=GOLD2)
         text(im, 280, "CANDLES", MS(140), scale=1 + .2 * (1 - back(u / .3)))
         pill(im, 430, "CLEARANCE SALE", size=54, a=ss((u - .3) / .1), scale=1 + .3 * (1 - back((u - .3) / .3)))
+        text(im, 1760, CLABEL[k], MS(46, "Bold"), fill=GOLD2)
         return im
     if t < C["end"]:                                     # DATES
         u = t - C["dates"]; im = spray("poem_v", u, 2.6); im.alpha_composite(SHADE)
