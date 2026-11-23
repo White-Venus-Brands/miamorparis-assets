@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFilter
 D = os.path.dirname(os.path.abspath(__file__)) + "/"
 WORK = (sys.argv[1].rstrip("/") + "/") if len(sys.argv) > 1 else "/tmp/bft/"
 BFR = D + "../2026-11-21-black-friday-reel/"
-sys.argv = [sys.argv[0], WORK + "bfr"]; sys.path.insert(0, BFR)
+sys.argv = [sys.argv[0], WORK + "bfr"]; sys.path.insert(0, BFR); sys.path.append(D)
 import build as B
 from build import W, H, FPS, GOLD, GOLD2, IVORY, MS, LORA, ss, back, text, gold_line
 import build2 as B2
@@ -19,15 +19,15 @@ RED = (214, 40, 40)
 
 # (audio clip, in, out, [(video src, src_in, dur), ...])  video pieces must sum to out-in
 SEGS = [
-    ("5222", 0.00, 3.45, [("5222", 0.00, 3.45)]),                                  # Black Friday at Mi Amor Paris... is live
+    ("5226", 0.00, 7.70, [("5226", 0.00, 7.70)]),                                  # opener: Black Friday at Mi Amor Paris is live (+ dates, store, online)
     ("5227", 0.45, 2.50, [("5227", 0.45, 2.05)]),                                  # your signature scent
     ("5211", 0.40, 1.80, [("5211", 0.40, 1.40)]),                                  # your body wash
     ("5228", 0.50, 3.10, [("5228", 0.50, 1.10), ("5212", 0.60, 1.50)]),            # your entire gift list (+ Marhaba box)
     ("5215", 1.50, 7.95, [("5215", 1.50, 6.45)]),                                  # buy one get one free / or 50% off / your pick
     ("5216", 0.50, 5.70, [("5216", 0.50, 1.60), ("zodiac_aries", 0, 0.9), ("zodiac_gemini", 0, 0.9), ("5216", 3.90, 1.80)]),  # candles
-    ("5226", 0.00, 7.60, [("5226", 0.00, 7.60)]),                                  # on till 27th / in store + online / don't miss it
+    ("5222", 0.00, 4.40, [("5222", 0.00, 4.40)]),                                  # closer: it's Black Friday guys... don't miss it
 ]
-END_DUR = 2.6
+END_DUR = 0.0
 STARTS = []; t = 0.0
 for s in SEGS: STARTS.append(t); t += s[2] - s[1]
 TOTAL = t + END_DUR
@@ -42,6 +42,10 @@ def extract(key, t0, dur):
               f"fps={FPS},scale={W}:-2")
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(t0), "-t", f"{dur + .1:.2f}", "-i", SRC[key], "-vf", vf + ",eq=contrast=1.04:saturation=1.06",
                         "-q:v", "2", fd + "%04d.jpg"], check=True)
+        if key != "5212":   # teeth whitening on the talking clips
+            import cv2; from teeth import Whitener
+            wt = Whitener()
+            for f in sorted(os.listdir(fd)): cv2.imwrite(fd + f, wt(cv2.imread(fd + f)), [cv2.IMWRITE_JPEG_QUALITY, 95])
     return fd
 
 ZOD = {k: Image.open(BFR + f"src/{k}.jpg").convert("RGB") for k in ("zodiac_aries", "zodiac_gemini")}
@@ -78,17 +82,26 @@ def frame(t):
     if si is None: return end_card(t - (TOTAL - END_DUR))
     u = t - STARTS[si]; clip_t = SEGS[si][1] + u          # time inside the speaking clip (matches speech spans)
     im = base_frame(si, u); im.alpha_composite(LOW)
-    if si == 0:
-        text(im, 230, "BLACK FRIDAY", MS(120), fill=GOLD2, a=ss(u / .12), scale=1 + .3 * (1 - back(u / .3)))
-        text(im, 340, "at Mi Amor Paris", LORA(64), a=ss((u - .5) / .2))
-        pill(im, 1560, "SALE IS LIVE", a=ss((clip_t - 2.55) / .1), scale=1 + .4 * (1 - back((clip_t - 2.55) / .3)))
-    elif si == 1:
+    key = SEGS[si][0]
+    if key == "5226":                                   # opener
+        if clip_t < 2.05:
+            text(im, 230, "BLACK FRIDAY", MS(120), fill=GOLD2, a=ss(clip_t / .12), scale=1 + .3 * (1 - back(clip_t / .3)))
+            text(im, 340, "at Mi Amor Paris", LORA(64), a=ss((clip_t - .5) / .2))
+            pill(im, 1560, "SALE IS LIVE", a=ss((clip_t - 1.0) / .1), scale=1 + .4 * (1 - back((clip_t - 1.0) / .3)))
+        elif clip_t < 6.0:
+            text(im, 1500, "23 – 27 NOV", MS(120), fill=GOLD2, a=ss((clip_t - 2.2) / .1), scale=1 + .3 * (1 - back((clip_t - 2.2) / .3)))
+            text(im, 1630, "IN STORE · LAJPAT NAGAR-II", MS(52, "Bold"), a=ss((clip_t - 3.0) / .15))
+            text(im, 1710, "+ ONLINE · miamorparis.in", MS(52, "Bold"), fill=GOLD2, a=ss((clip_t - 4.0) / .15))
+        else:
+            text(im, 1520, "ENDS ON", MS(64, "ExtraBold"), a=ss((clip_t - 6.15) / .1))
+            text(im, 1640, "BLACK FRIDAY", MS(110), fill=GOLD2, a=ss((clip_t - 6.15) / .1), scale=1 + .3 * (1 - back((clip_t - 6.15) / .3)))
+    elif key == "5227":
         text(im, 1540, "Your", LORA(70), fill=GOLD2); text(im, 1640, "SIGNATURE SCENT", MS(88), scale=1 + .2 * (1 - back(u / .3)))
-    elif si == 2:
+    elif key == "5211":
         text(im, 1540, "Your", LORA(70), fill=GOLD2); text(im, 1640, "BODY WASH", MS(100), scale=1 + .2 * (1 - back(u / .3)))
-    elif si == 3:
+    elif key == "5228":
         text(im, 1540, "Your entire", LORA(70), fill=GOLD2); text(im, 1640, "GIFT LIST", MS(110), scale=1 + .2 * (1 - back(u / .3)))
-    elif si == 4:
+    elif key == "5215":
         if clip_t < 3.3:
             text(im, 1460, "BUY 1", MS(150), a=ss((clip_t - 1.62) / .08), scale=1 + .35 * (1 - back((clip_t - 1.62) / .3)))
             text(im, 1630, "GET 1 FREE", MS(120), fill=GOLD2, a=ss((clip_t - 2.25) / .08), scale=1 + .35 * (1 - back((clip_t - 2.25) / .3)))
@@ -96,20 +109,23 @@ def frame(t):
             text(im, 1430, "or simply take", LORA(66), fill=GOLD2, a=ss((clip_t - 3.35) / .15))
             text(im, 1580, "50% OFF", MS(170), a=ss((clip_t - 4.3) / .08), scale=1 + .35 * (1 - back((clip_t - 4.3) / .3)))
             if clip_t > 7.25: pill(im, 1760, "YOUR PICK", fill=GOLD, fg=(10, 8, 6), a=ss((clip_t - 7.3) / .1), scale=1 + .3 * (1 - back((clip_t - 7.3) / .3)))
-    elif si == 5:
+    elif key == "5216":
         text(im, 200, "PLUS", MS(56, "ExtraBold"), fill=GOLD2, a=ss((clip_t - .6) / .1))
         text(im, 310, "CANDLES", MS(140), a=ss((clip_t - .6) / .1), scale=1 + .25 * (1 - back((clip_t - .6) / .3)))
         pill(im, 460, "CLEARANCE SALE", size=54, a=ss((clip_t - 1.4) / .1), scale=1 + .3 * (1 - back((clip_t - 1.4) / .3)))
         if 2.1 <= clip_t < 3.9: text(im, 1760, "ZODIAC CANDLES", MS(46, "Bold"), fill=GOLD2)
-    elif si == 6:
-        if clip_t < 2.1:
-            text(im, 1520, "23 – 27 NOV", MS(120), fill=GOLD2, a=ss(clip_t / .1), scale=1 + .3 * (1 - back(clip_t / .3)))
-            text(im, 1660, "ENDS ON BLACK FRIDAY", MS(58, "ExtraBold"), a=ss((clip_t - .4) / .15))
-        elif clip_t < 6.0:
-            text(im, 1520, "IN STORE · LAJPAT NAGAR-II", MS(56, "Bold"), a=ss((clip_t - 2.25) / .15))
-            text(im, 1620, "+ ONLINE · miamorparis.in", MS(56, "Bold"), fill=GOLD2, a=ss((clip_t - 3.6) / .15))
-        else:
-            text(im, 1580, "DON'T MISS IT", MS(120), fill=GOLD2, a=ss((clip_t - 6.15) / .1), scale=1 + .3 * (1 - back((clip_t - 6.15) / .3)))
+    elif key == "5222":                                 # closer on his line, recap on screen
+        text(im, 230, "IT'S BLACK FRIDAY", MS(100), fill=GOLD2, a=ss(clip_t / .12), scale=1 + .3 * (1 - back(clip_t / .3)))
+        if clip_t > 2.55:
+            text(im, 360, "DON'T MISS IT", MS(96), a=ss((clip_t - 2.55) / .08), scale=1 + .35 * (1 - back((clip_t - 2.55) / .3)))
+        if clip_t > 2.9:
+            a_ = ss((clip_t - 2.9) / .25)
+            text(im, 1440, "Buy 1 Get 1 Free  ·  or 50% off", MS(50, "ExtraBold"), a=a_)
+            text(im, 1520, "+ candles clearance sale", MS(44, "Bold"), fill=GOLD2, a=a_)
+            pill(im, 1630, "ENDS 27 NOV", size=46, a=a_)
+            text(im, 1740, "O-17, Lajpat Nagar-II  ·  miamorparis.in", MS(38, "SemiBold"), a=a_)
+            text(im, 1820, "*T&C apply", MS(26, "Medium"), fill=(220, 210, 195), a=a_, shadow=False)
+        if clip_t > 4.0: im.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, int(255 * ss((clip_t - 4.0) / .4)))))
     if u < .08 and si > 0: im.alpha_composite(Image.new("RGBA", (W, H), (255, 240, 210, int(110 * (1 - u / .08)))))
     return im
 
@@ -137,8 +153,8 @@ def build_audio(out):
         parts.append(f"[{i}:a]atrim={a0}:{a1},asetpts=PTS-STARTPTS,aresample=44100,aformat=channel_layouts=mono,highpass=f=80,"
                      f"afade=t=in:d=0.03,afade=t=out:st={a1 - a0 - .05:.2f}:d=0.05,loudnorm=I=-16:TP=-1.5:LRA=7,aresample=44100[s{i}]")
     n = len(SEGS)
-    ins += ["-f", "lavfi", "-t", str(END_DUR), "-i", "anullsrc=r=44100:cl=mono"]
-    B.CUES = {"hook": 0.0, "dates": STARTS[4] + .12, "dm": TOTAL - END_DUR}; B.music(WORK + "bed.wav", TOTAL)
+    ins += ["-f", "lavfi", "-t", str(max(END_DUR, .05)), "-i", "anullsrc=r=44100:cl=mono"]
+    B.CUES = {"hook": 0.0, "dates": STARTS[4] + .12, "dm": STARTS[-1] + 2.3}; B.music(WORK + "bed.wav", TOTAL)
     ins += ["-i", WORK + "bed.wav"]
     fc = ";".join(parts) + ";" + "".join(f"[s{i}]" for i in range(n)) + f"[{n}:a]concat=n={n + 1}:v=0:a=1[vo];" + \
          f"[{n + 1}:a]volume=0.18[m];[vo][m]amix=inputs=2:duration=longest:normalize=0,alimiter=limit=0.95[a]"
