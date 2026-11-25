@@ -1,2 +1,3 @@
 posts/*/src/*.mov
 __pycache__/
+assets/music/*.wav
