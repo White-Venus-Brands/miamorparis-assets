@@ -41,7 +41,7 @@ CAND["oudh"] = Image.open(B.R + "posts/2026-11-02-oudh-candles/zeenat_4.jpg").co
 LASTFACE = {}
 def stinger(lines, u, bg=(8, 6, 6)):
     """full-screen kinetic text card (style b: over his blurred last face frame, text on yellow blocks)"""
-    if STYLE == "b" and "im" in LASTFACE:
+    if STYLE in ("b", "c") and "im" in LASTFACE:
         im = LASTFACE["im"].filter(ImageFilter.GaussianBlur(22)); im.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, 120)))
         for k, (s_, f, col, y) in enumerate(lines):
             t0 = k * .12; a = ss((u - t0) / .06); sc = 1 + .5 * (1 - back((u - t0) / .25))
@@ -71,7 +71,7 @@ def caption_b(im, s, u, hi=()):
     im.alpha_composite(lay, ((W - lay.width) // 2, int(1480 - lay.height // 2 + 30 * (1 - ss(u / .15)))))
 
 def caption(im, s, u, hi=()):
-    if STYLE == "b": return caption_b(im, s, u, hi)
+    if STYLE in ("b", "c"): return caption_b(im, s, u, hi)
     """big chunk caption, white with black outline, keywords yellow; pops in"""
     f = MS(78, "Black"); words = s.split(); d0 = ImageDraw.Draw(Image.new("RGB", (1, 1)))
     sp = d0.textlength(" ", font=f); widths = [d0.textlength(w_, font=f) for w_ in words]; tw = sum(widths) + sp * (len(words) - 1)
@@ -119,6 +119,65 @@ for (clip, a0, a1, shots, caps), s0 in zip(P, STARTS):
     acc = 0.0
     for dur, kind, args in shots: CUTS.append((s0 + acc, kind)); acc += dur
 
+BPM = 128; BEAT = 60 / BPM
+DROPS = [0.0] + [t0 for t0, kind in CUTS if kind == "sting"] + [TOTAL - TAIL]
+BEATS = []
+for i_, s_ in enumerate(DROPS):
+    e_ = DROPS[i_ + 1] if i_ + 1 < len(DROPS) else TOTAL
+    b_ = s_
+    while b_ < e_ - .01: BEATS.append(b_); b_ += BEAT
+
+def music_drop(path):
+    """original track (made here, no licensing issues): 128 bpm groove, riser + snare roll into a bass drop at every offer stinger"""
+    sr = 44100; n = int(TOTAL * sr) + sr; a = np.zeros(n); rng = np.random.default_rng(7)
+    def add(sig, t0, g=1.0):
+        i0 = int(t0 * sr)
+        if i0 < 0: sig = sig[-i0:]; i0 = 0
+        m = min(n - i0, len(sig))
+        if m > 0: a[i0:i0 + m] += g * sig[:m]
+    def tone(f, d, dec, h=(1,)):
+        x = np.arange(int(d * sr)) / sr; return sum(c * np.sin(2 * np.pi * f * (k + 1) * x) for k, c in enumerate(h)) * np.exp(-x * dec)
+    x = np.arange(int(.45 * sr)) / sr
+    kick = .9 * np.sin(2 * np.pi * (48 + 110 * np.exp(-x * 35)) * x) * np.exp(-x * 9)
+    sub = lambda f, d: .55 * np.tanh(2.2 * np.sin(2 * np.pi * f * np.arange(int(d * sr)) / sr)) * np.exp(-np.arange(int(d * sr)) / sr * 2.2)
+    hat = rng.standard_normal(int(.04 * sr)) * np.exp(-np.arange(int(.04 * sr)) / 180) * .16
+    xs = np.arange(int(.22 * sr)) / sr
+    clap = rng.standard_normal(len(xs)) * np.exp(-xs * 22) * .38
+    snare = rng.standard_normal(int(.12 * sr)) * np.exp(-np.arange(int(.12 * sr)) / sr * 30) * .3
+    chords = [(220.0, 261.6, 329.6), (196.0, 246.9, 293.7), (174.6, 220.0, 261.6), (196.0, 246.9, 329.6)]   # Am G F G
+    bassn = [55.0, 49.0, 43.65, 49.0]
+    for i_, s0 in enumerate(DROPS):
+        e0 = DROPS[i_ + 1] if i_ + 1 < len(DROPS) else TOTAL
+        is_drop = i_ > 0
+        b = 0; t = s0
+        while t < e0 - .02:
+            bar = int(b // 4) % 4; heavy = is_drop and (t - s0) < BEAT * 8
+            add(kick, t, 1.0 if heavy else .7)
+            if b % 2 == 1: add(clap if heavy else snare, t)
+            add(hat, t + BEAT / 2); 
+            if heavy: add(hat * .7, t + BEAT / 4); add(hat * .7, t + 3 * BEAT / 4)
+            if b % 4 == 0:
+                add(sub(bassn[bar], BEAT * 4) if heavy else .5 * sub(bassn[bar], BEAT * 4), t)
+                for f in chords[bar]: add(tone(f, BEAT * 4, 1.3, (.06, .03, .015)), t)
+            if not heavy and b % 2 == 0:   # pluck
+                add(tone(chords[bar][b % 3] * 2, .25, 14, (.08, .03)), t + BEAT / 2)
+            b += 1; t += BEAT
+        if i_ + 1 < len(DROPS):   # riser + roll into the next drop, tiny gap right before it
+            d = DROPS[i_ + 1]; L = min(1.5, d - s0 - .2)
+            if L > .4:
+                xr = np.arange(int(L * sr)) / sr; env = (xr / L) ** 2
+                noise = rng.standard_normal(len(xr)); noise = noise - np.convolve(noise, np.ones(8) / 8, "same")
+                rise = .35 * noise * env + .12 * np.sin(2 * np.pi * (300 + 900 * (xr / L) ** 2) * xr) * env
+                add(rise, d - L)
+                k = 0; tr = d - min(.75, L)
+                while tr < d - .06: add(snare * (.4 + .6 * k / 12), tr); tr += BEAT / 4; k += 1
+                i0 = int((d - .09) * sr); a[i0:int(d * sr)] *= .05
+    for d in DROPS[1:]:   # impact on each drop
+        xi = np.arange(int(1.0 * sr)) / sr; add(.8 * np.sin(2 * np.pi * (35 + 80 * np.exp(-xi * 10)) * xi) * np.exp(-xi * 3.5), d)
+    a = a[:int(TOTAL * sr)]; a *= np.minimum(1, (TOTAL - np.arange(len(a)) / sr) / .6); a = np.tanh(a * 1.1) * .8
+    with wave.open(path, "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(sr); w.writeframes((a * 32767).astype(np.int16).tobytes())
+
 PH = {k: Image.open(D + f"../2026-11-marhaba-yellow/src/{k}.png").convert("RGB") for k in ("trio", "inbox", "window")}
 def photo(k, p):
     src = PH[k]; z = 1.0 + .1 * p; sw, sh = src.size; w, h = sw / z, sh / z
@@ -156,15 +215,29 @@ def frame(t):
             lu = u - acc; im = render_shot(kind, args, clip, src_t, lu, dur); cut_t = lu; break
         acc += dur
     if kind == "face": LASTFACE["im"] = im.copy()
-    if STYLE == "b":
+    if STYLE in ("b", "c"):
         if cut_t < .14:   # zoom-blur in
             k = 1 - cut_t / .14; z = 1 + .14 * k; w_, h_ = W / z, H / z
             im = im.resize((W, H), Image.LANCZOS, box=((W - w_) / 2, (H - h_) / 2, (W + w_) / 2, (H + h_) / 2))
             if k > .3: im = im.filter(ImageFilter.BoxBlur(int(14 * k)))
     elif cut_t < .05: im.alpha_composite(Image.new("RGBA", (W, H), (255, 255, 255, int(120 * (1 - cut_t / .05)))))   # flash frame on cut
+    if STYLE == "c": im = beat_fx(im, t, kind)
     if kind != "sting":
         for c0, c1, s, hi in caps:
             if c0 <= u < c1: caption(im, s, u - c0, hi)
+    return im
+
+def beat_fx(im, t, kind):
+    """music-driven: zoom bump on every beat (face shots), shake + flash on each drop"""
+    pb = [b for b in BEATS if b <= t]
+    if pb and kind == "face":
+        k = math.exp(-(t - pb[-1]) * 11); z = 1 + .035 * k; w_, h_ = W / z, H / z
+        im = im.resize((W, H), Image.LANCZOS, box=((W - w_) / 2, (H - h_) / 2, (W + w_) / 2, (H + h_) / 2))
+    pd = [d for d in DROPS if d <= t]
+    if pd and t - pd[-1] < .4:
+        e = t - pd[-1]; amp = 26 * (1 - e / .4); dx = int(amp * math.sin(e * 90)); dy = int(amp * math.cos(e * 70))
+        sh = Image.new("RGBA", (W, H), (0, 0, 0, 255)); sh.alpha_composite(im, (dx, dy)); im = sh
+        if e < .08: im.alpha_composite(Image.new("RGBA", (W, H), (255, 236, 190, int(170 * (1 - e / .08)))))
     return im
 
 # ---------- audio: tight voice + SFX on cuts + bed ----------
@@ -210,10 +283,17 @@ def build_audio(out):
     sfx = sfx_track()
     with wave.open(WORK + "sfx.wav", "wb") as w:
         w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR); w.writeframes((np.clip(sfx, -1, 1) * 32767).astype(np.int16).tobytes())
-    B.CUES = {"hook": 0.0, "dates": STARTS[4], "dm": TOTAL - TAIL}; B.music(WORK + "bed.wav", TOTAL)
-    ins += ["-i", WORK + "sfx.wav", "-i", WORK + "bed.wav"]
-    fc = ";".join(parts) + ";" + "".join(f"[s{i}]" for i in range(n)) + f"[{n}:a]concat=n={n + 1}:v=0:a=1[vo];" + \
-         f"[{n + 1}:a]volume=0.55[fx];[{n + 2}:a]volume=0.16[m];[vo][fx][m]amix=inputs=3:duration=longest:normalize=0,alimiter=limit=0.95[a]"
+    if os.environ.get("MUSIC") == "drop":
+        music_drop(WORK + "drop.wav")
+        ins += ["-i", WORK + "sfx.wav", "-i", WORK + "drop.wav"]
+        fc = ";".join(parts) + ";" + "".join(f"[s{i}]" for i in range(n)) + f"[{n}:a]concat=n={n + 1}:v=0:a=1[vo];[vo]asplit=2[vo1][vo2];" + \
+             f"[{n + 1}:a]volume=0.55[fx];[{n + 2}:a]volume=0.5[m0];[m0][vo2]sidechaincompress=threshold=0.02:ratio=5:attack=8:release=280[m];" + \
+             f"[vo1][fx][m]amix=inputs=3:duration=longest:normalize=0,alimiter=limit=0.95[a]"
+    else:
+        B.CUES = {"hook": 0.0, "dates": STARTS[4], "dm": TOTAL - TAIL}; B.music(WORK + "bed.wav", TOTAL)
+        ins += ["-i", WORK + "sfx.wav", "-i", WORK + "bed.wav"]
+        fc = ";".join(parts) + ";" + "".join(f"[s{i}]" for i in range(n)) + f"[{n}:a]concat=n={n + 1}:v=0:a=1[vo];" + \
+             f"[{n + 1}:a]volume=0.55[fx];[{n + 2}:a]volume=0.16[m];[vo][fx][m]amix=inputs=3:duration=longest:normalize=0,alimiter=limit=0.95[a]"
     subprocess.run(["ffmpeg", "-v", "error", "-y"] + ins + ["-filter_complex", fc, "-map", "[a]", "-ar", "44100", out], check=True)
 
 if __name__ == "__main__":
@@ -225,7 +305,7 @@ if __name__ == "__main__":
     if not os.environ.get("REUSE"):
         for i in range(int(TOTAL * FPS)): frame(i / FPS).convert("RGB").save(fdir + f"{i:04d}.jpg", quality=93)
     build_audio(WORK + f"fa_{SFXMODE}.wav")
-    name = "black_friday_fastcut_sample.mp4" if STYLE == "a" and SFXMODE == "punchy" else f"black_friday_fastcut_{STYLE}_{SFXMODE}.mp4"
+    name = "black_friday_fastcut_sample.mp4" if STYLE == "a" and SFXMODE == "punchy" else f"black_friday_fastcut_{STYLE}_{SFXMODE}" + ("_drop" if os.environ.get("MUSIC") == "drop" else "") + ".mp4"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", str(FPS), "-i", fdir + "%04d.jpg", "-i", WORK + f"fa_{SFXMODE}.wav", "-map", "0:v", "-map", "1:a",
                     "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "20", "-preset", "medium", "-maxrate", "10M", "-bufsize", "20M",
                     "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", D + name], check=True)
