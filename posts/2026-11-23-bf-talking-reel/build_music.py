@@ -76,8 +76,9 @@ def arrange(n):
         return A.out, [T1, OUT0], env
     if NAME == "trk6":   # soft pads; bass returns at 25.72 -> on 'free' and again to open the outro
         x = load(6); A = Arr(x, n); off = T1 - 25.72
-        A.place(-off, 30.53, 0, .3); e = 30.53 + off; pre = OUT0 - (25.72 - 24.3)
-        A.loop(8.0, 23.36, e - .4, pre + .4, xf=.4); A.place(24.3, 30.53, pre, .4)
+        A.place(-off, 29.3, 0, .3); e = 29.3 + off; pre = OUT0 - (25.72 - 24.3)          # leave before the track's own fade-out
+        A.loop(8.0, 23.36, e - .6, pre + .4, xf=.6); A.place(24.3, 30.53, pre, .4)
+        for k_ in range(2): A.place(8.0 + 6 * k_, 14.0 + 6 * k_, pre + 1.5 + 4 * k_, xf=1.0, g=.4)   # soft pad under the outro so it never thins out
         return A.out, [T1, OUT0], None
 
 # outro start: on the song's last drop near the end of the voice
