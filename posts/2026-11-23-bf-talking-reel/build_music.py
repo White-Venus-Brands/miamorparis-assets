@@ -63,8 +63,9 @@ def arrange(n):
         return A.out, [T1, 15.1 + off, 21.3 + off, OUT0], None
     if NAME == "trk4":   # 131 bpm: beat -> long breakdown 7.3-13.58 under the build-up -> DROP 13.58 on 'free'
         x = load(4); A = Arr(x, n); off = T1 - 13.58; bar = 1.835
-        A.place(-off, 20.97 + .06, 0); e = 20.97 + off; pre = OUT0 - 2.0
-        A.loop(13.58, 13.58 + 3 * bar, e, pre); A.place(11.58, 13.58 + .06, pre); A.place(13.58, 13.58 + (TOTAL - OUT0) + .1, OUT0)
+        A.place(-off, 7.3 + .06, 0); A.place(7.3, 13.58 + .02, 7.3 + off, g=2.8)     # lift the very quiet breakdown (+9 dB) so the bed never drops out
+        A.place(13.58, 20.97 + .06, T1); e = 20.97 + off; pre = OUT0 - 2.0
+        A.loop(13.58, 13.58 + 3 * bar, e, pre); A.place(11.58, 13.58 + .06, pre, g=2.8); A.place(13.58, 13.58 + (TOTAL - OUT0) + .1, OUT0)
         drops = [T1] + [e + i * 3 * bar for i in range(6) if e + i * 3 * bar < pre - .5] + [OUT0]
         return A.out, drops, None
     if NAME == "trk5":   # 129 bpm steady groove: muffled (lowpass) under the build-up, filter opens on 'free'; dips before the outro
