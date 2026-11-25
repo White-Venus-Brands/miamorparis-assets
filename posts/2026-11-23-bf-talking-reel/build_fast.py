@@ -19,6 +19,8 @@ W, H, FPS = B.W, B.H, B.FPS
 MS, LORA, GOLD, GOLD2, IVORY = B.MS, B.LORA, B.GOLD, B.GOLD2, B.IVORY
 ss, back, pill = B.ss, B.back, B2.pill
 YEL = (255, 214, 64); RED = (214, 40, 40)
+STYLE = os.environ.get("STYLE", "a")      # a = first sample, b = second style (zoom-blur cuts, boxed captions, overlay stingers)
+SFXMODE = os.environ.get("SFX", "punchy")  # punchy | soft | none
 
 # ---------- shots ----------
 def face(key, src_t, zoom=1.0, cy=760):
@@ -36,8 +38,19 @@ def stillfill(im, p): return tk.still_fill(im, p).convert("RGBA")
 CAND = {k: Image.open(B2.B.R + "posts/2026-11-21-black-friday-reel/src/" + f"zodiac_{k}.jpg").convert("RGB") for k in ("aries", "taurus", "gemini", "cancer")}
 CAND["oudh"] = Image.open(B.R + "posts/2026-11-02-oudh-candles/zeenat_4.jpg").convert("RGB")
 
+LASTFACE = {}
 def stinger(lines, u, bg=(8, 6, 6)):
-    """full-screen kinetic text card"""
+    """full-screen kinetic text card (style b: over his blurred last face frame, text on yellow blocks)"""
+    if STYLE == "b" and "im" in LASTFACE:
+        im = LASTFACE["im"].filter(ImageFilter.GaussianBlur(22)); im.alpha_composite(Image.new("RGBA", (W, H), (0, 0, 0, 120)))
+        for k, (s_, f, col, y) in enumerate(lines):
+            t0 = k * .12; a = ss((u - t0) / .06); sc = 1 + .5 * (1 - back((u - t0) / .25))
+            lay = Image.new("RGBA", (W * 2, 500)); d = ImageDraw.Draw(lay); bb = d.textbbox((W, 250), s_, font=f, anchor="mm")
+            if col == YEL: d.rounded_rectangle((bb[0] - 40, bb[1] - 30, bb[2] + 40, bb[3] + 30), 30, fill=YEL); d.text((W, 250), s_, font=f, fill=(10, 8, 6), anchor="mm")
+            else: d.text((W, 250), s_, font=f, fill=(255, 255, 255), anchor="mm", stroke_width=8, stroke_fill=(0, 0, 0))
+            lay = lay.crop(lay.getbbox()); lay = lay.resize((max(1, int(lay.width * sc)), max(1, int(lay.height * sc))), Image.LANCZOS)
+            lay.putalpha(lay.getchannel("A").point(lambda v: int(v * a))); im.alpha_composite(lay, ((W - lay.width) // 2, int(y - lay.height / 2)))
+        return im
     im = Image.new("RGBA", (W, H), bg + (255,))
     glow = Image.new("RGBA", (W, H)); ImageDraw.Draw(glow).ellipse((60, 560, W - 60, 1360), fill=(226, 186, 112, 60)); im.alpha_composite(glow.filter(ImageFilter.GaussianBlur(110)))
     for k, (s, f, col, y) in enumerate(lines):
@@ -45,7 +58,20 @@ def stinger(lines, u, bg=(8, 6, 6)):
     return im
 
 # ---------- captions ----------
+def caption_b(im, s, u, hi=()):
+    """boxed caption: black rounded box, white words, keyword in yellow; slides up a little"""
+    f = MS(64, "ExtraBold"); words = s.split(); d0 = ImageDraw.Draw(Image.new("RGB", (1, 1)))
+    sp = d0.textlength(" ", font=f); widths = [d0.textlength(w_, font=f) for w_ in words]; tw = sum(widths) + sp * (len(words) - 1)
+    lay = Image.new("RGBA", (int(tw) + 70, 116)); d = ImageDraw.Draw(lay)
+    d.rounded_rectangle((0, 0, lay.width - 1, lay.height - 1), 26, fill=(12, 10, 10, 225)); x = 35
+    for w_, ww in zip(words, widths):
+        d.text((x, 22), w_, font=f, fill=YEL if w_.strip(".,!?").upper() in hi else (255, 255, 255)); x += ww + sp
+    sc = min(1, (W - 80) / lay.width); lay = lay.resize((int(lay.width * sc), int(lay.height * sc)), Image.LANCZOS)
+    a = ss(u / .1); lay.putalpha(lay.getchannel("A").point(lambda v: int(v * a)))
+    im.alpha_composite(lay, ((W - lay.width) // 2, int(1480 - lay.height // 2 + 30 * (1 - ss(u / .15)))))
+
 def caption(im, s, u, hi=()):
+    if STYLE == "b": return caption_b(im, s, u, hi)
     """big chunk caption, white with black outline, keywords yellow; pops in"""
     f = MS(78, "Black"); words = s.split(); d0 = ImageDraw.Draw(Image.new("RGB", (1, 1)))
     sp = d0.textlength(" ", font=f); widths = [d0.textlength(w_, font=f) for w_ in words]; tw = sum(widths) + sp * (len(words) - 1)
@@ -129,7 +155,13 @@ def frame(t):
         if u < acc + dur or (dur, kind, args) == shots[-1]:
             lu = u - acc; im = render_shot(kind, args, clip, src_t, lu, dur); cut_t = lu; break
         acc += dur
-    if cut_t < .05: im.alpha_composite(Image.new("RGBA", (W, H), (255, 255, 255, int(120 * (1 - cut_t / .05)))))   # flash frame on cut
+    if kind == "face": LASTFACE["im"] = im.copy()
+    if STYLE == "b":
+        if cut_t < .14:   # zoom-blur in
+            k = 1 - cut_t / .14; z = 1 + .14 * k; w_, h_ = W / z, H / z
+            im = im.resize((W, H), Image.LANCZOS, box=((W - w_) / 2, (H - h_) / 2, (W + w_) / 2, (H + h_) / 2))
+            if k > .3: im = im.filter(ImageFilter.BoxBlur(int(14 * k)))
+    elif cut_t < .05: im.alpha_composite(Image.new("RGBA", (W, H), (255, 255, 255, int(120 * (1 - cut_t / .05)))))   # flash frame on cut
     if kind != "sting":
         for c0, c1, s, hi in caps:
             if c0 <= u < c1: caption(im, s, u - c0, hi)
@@ -150,6 +182,16 @@ def sfx_track():
     ching = (.18 * np.sin(2 * np.pi * 2093 * xc) + .14 * np.sin(2 * np.pi * 2637 * xc)) * np.exp(-xc * 6)
     ching[:int(.03 * SR)] += .3 * rng.standard_normal(int(.03 * SR)) * np.exp(-np.arange(int(.03 * SR)) / 300)
     boom = .55 * np.sin(2 * np.pi * (38 + 70 * np.exp(-xc * 9)) * xc) * np.exp(-xc * 5)
+    if SFXMODE == "none": return a
+    if SFXMODE == "soft":   # gentle shutter tick on cuts, soft low thump on the offer stingers
+        xt = np.arange(int(.05 * SR)) / SR
+        tick = rng.standard_normal(len(xt)) * np.exp(-xt * 180); tick = np.diff(np.concatenate([[0], tick])) * .25
+        thump = .45 * np.sin(2 * np.pi * (55 + 30 * np.exp(-xc * 12)) * xc) * np.exp(-xc * 7)
+        for t0, kind in CUTS:
+            if kind == "sting": add(thump, t0)
+            elif t0 > .01: add(tick, t0)
+        add(thump, 0); add(thump, TOTAL - TAIL)
+        return a
     for t0, kind in CUTS:
         if t0 < .01: add(boom, 0); continue
         add(whoosh, max(0, t0 - .08)); add(pop * .6, t0)
@@ -179,10 +221,12 @@ if __name__ == "__main__":
     if only:
         for s in only.split(","): frame(float(s)).convert("RGB").save(WORK + f"fs_{s}.jpg", quality=85)
         print("TOTAL", round(TOTAL, 2), "cuts", len(CUTS)); sys.exit()
-    os.makedirs(WORK + "ff", exist_ok=True)
-    for i in range(int(TOTAL * FPS)): frame(i / FPS).convert("RGB").save(WORK + f"ff/{i:04d}.jpg", quality=93)
-    build_audio(WORK + "fa.wav")
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", str(FPS), "-i", WORK + "ff/%04d.jpg", "-i", WORK + "fa.wav", "-map", "0:v", "-map", "1:a",
+    fdir = WORK + f"ff_{STYLE}/"; os.makedirs(fdir, exist_ok=True)
+    if not os.environ.get("REUSE"):
+        for i in range(int(TOTAL * FPS)): frame(i / FPS).convert("RGB").save(fdir + f"{i:04d}.jpg", quality=93)
+    build_audio(WORK + f"fa_{SFXMODE}.wav")
+    name = "black_friday_fastcut_sample.mp4" if STYLE == "a" and SFXMODE == "punchy" else f"black_friday_fastcut_{STYLE}_{SFXMODE}.mp4"
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", str(FPS), "-i", fdir + "%04d.jpg", "-i", WORK + f"fa_{SFXMODE}.wav", "-map", "0:v", "-map", "1:a",
                     "-c:v", "libx264", "-pix_fmt", "yuv420p", "-crf", "20", "-preset", "medium", "-maxrate", "10M", "-bufsize", "20M",
-                    "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", D + "black_friday_fastcut_sample.mp4"], check=True)
+                    "-c:a", "aac", "-b:a", "192k", "-shortest", "-movflags", "+faststart", D + name], check=True)
     print("done", round(TOTAL, 2), "cuts", len(CUTS))
