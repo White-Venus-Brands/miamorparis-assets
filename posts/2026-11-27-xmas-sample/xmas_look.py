@@ -131,7 +131,7 @@ def run(files):
         wb_med = np.median(arr[:, 2]); arr[:, 2] = .5 * arr[:, 2] + .5 * wb_med
     for i, (f, img, face, top, shirt) in enumerate(track):
         out = recolor(img, shirt)
-        if vals: out = place_hat(out, arr[i, 0], arr[i, 1], arr[i, 2], -arr[i, 3] - 4)
+        if vals and os.environ.get("HAT") == "1": out = place_hat(out, arr[i, 0], arr[i, 1], arr[i, 2], -arr[i, 3] - 4)   # off by default: a flat 2D hat reads as a sticker
         cv2.imwrite(os.path.join(DST, f), out, [cv2.IMWRITE_JPEG_QUALITY, 94])
 
 if __name__ == "__main__":
