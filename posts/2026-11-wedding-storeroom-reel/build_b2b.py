@@ -20,20 +20,35 @@ V = {
  "corporate": dict(
     lines=[(13.95, 16.8, 360, "Is year-end,"), (15.25, 16.8, 460, "apni team ko..."), (18.15, 19.6, 360, "kuch aisa do jo roz use ho."),
            (19.7, 22.5, 360, "Har spray pe,"), (21.15, 22.5, 460, "company ki yaad aaye.")],
-    title="YEAR-END CORPORATE GIFTING", sub="Gift sets for your team and clients", cta="DM \"CORPORATE\" FOR BULK ORDERS"),
+    title="YEAR-END CORPORATE GIFTING", sub="Gift sets for your team and clients", cta="DM \"CORPORATE\" FOR BULK ORDERS",
+    hook=("HR TEAMS:", "your year-end gift ends up here."),
+    seo=["corporate gifts", "corporate gifting ideas", "employee gifts", "client gifts India", "new year corporate gifts", "luxury corporate gift hampers"]),
  "planners": dict(
     lines=[(13.95, 16.8, 360, "Return gift aisa do..."), (15.25, 16.8, 460, "jo guest ghar le jaaye"), (18.15, 19.6, 360, "aur roz use kare."),
            (19.7, 22.5, 360, "Har spray pe,"), (21.15, 22.5, 460, "shaadi ki yaad aaye.")],
-    title="WEDDING RETURN GIFTS", sub="For planners and families ordering in bulk", cta="DM \"WEDDING\" FOR BULK ORDERS"),
+    title="WEDDING RETURN GIFTS", sub="For planners and families ordering in bulk", cta="DM \"WEDDING\" FOR BULK ORDERS",
+    hook=("WEDDING PLANNERS:", "your return gifts end up here."),
+    seo=["wedding return gifts", "return gifts for guests", "wedding favours India", "shaadi return gift ideas", "luxury return gifts", "wedding gift hampers"]),
  "retail": dict(
     lines=[(13.95, 16.8, 360, "Jo gift use hota hai,"), (15.25, 16.8, 460, "woh bikta bhi hai."), (18.15, 19.6, 360, "Aapke shehar mein..."),
            (19.7, 22.5, 360, "agla Mi Amor Paris"), (21.15, 22.5, 460, "aapka ho sakta hai.")],
-    title="OPEN A MI AMOR PARIS STORE", sub="Franchise and dealer enquiries", cta="DM \"FRANCHISE\""),
+    title="OPEN A MI AMOR PARIS STORE", sub="Franchise and dealer enquiries", cta="DM \"FRANCHISE\"",
+    hook=("SHOP OWNERS:", "this is why some gifts never sell."),
+    seo=["perfume franchise", "franchise business in India", "perfume business", "retail franchise Delhi", "fragrance store franchise", "business opportunity Delhi"]),
  "hospitality": dict(
     lines=[(13.95, 16.8, 360, "Guests sab bhool jaate hain..."), (15.25, 16.8, 460, "room, menu, bill."), (18.15, 19.6, 360, "Khushboo nahi."),
            (19.7, 22.5, 360, "Har visit pe,"), (21.15, 22.5, 460, "aapki jagah yaad aaye.")],
-    title="FOR HOTELS, SALONS AND CAFES", sub="Hand wash · Body wash · Diffuser oils · Candles", cta="DM \"BULK\" FOR PRICES"),
+    title="FOR HOTELS, SALONS AND CAFES", sub="Hand wash · Body wash · Diffuser oils · Candles", cta="DM \"BULK\" FOR PRICES",
+    hook=("HOTEL OWNERS:", "guests forget everything. Except this."),
+    seo=["hotel amenities", "hotel bathroom amenities", "luxury hand wash for hotels", "salon retail products", "room fragrance for hotels", "diffuser for cafe"]),
+ "builders": dict(
+    lines=[(13.95, 16.8, 360, "Naye ghar ki chaabi ke saath,"), (15.25, 16.8, 460, "aisa gift do..."), (18.15, 19.6, 360, "jo roz use ho."),
+           (19.7, 22.5, 360, "Har spray pe,"), (21.15, 22.5, 460, "aapka project yaad aaye.")],
+    title="POSSESSION-DAY GIFTS", sub="Gift boxes for your homebuyers", cta="DM \"BUILDER\" FOR BULK ORDERS",
+    hook=("BUILDERS:", "your possession-day gift ends up here."),
+    seo=["housewarming gifts", "griha pravesh gift", "gifts for new home owners", "real estate client gifts", "possession day gifts", "luxury housewarming gift"]),
 }[AUD]
+HOOK_END = 2.6
 
 B.CAPS = [(a, b, y, s, k) for a, b, y, s, k in B.CAPS_HI if a < SPLIT] + [(a, b, y, s, "s") for a, b, y, s in V["lines"]]
 
@@ -63,6 +78,33 @@ def scene_end(t):
     B.ctext(im, 1530, "O-17 LAJPAT NAGAR-II  ·  R CUBE MONAD MALL, NOIDA", B.pop(32, "Bold"), (226, 180, 110), ss((u - 1.6) / 0.4), 6)
     return im
 B.scene_end = scene_end
+
+_counter = B.counter
+def counter(im, t):
+    """first 2.6 s: the audience hook replaces the counter; then the counter runs as posted"""
+    if t < HOOK_END:
+        a = B.ss(t / .25) * (1 - B.ss((t - (HOOK_END - .3)) / .3))
+        d = ImageDraw.Draw(im); f1, f2 = B.inter(44, "Black"), B.inter(50, "Black")
+        t1, t2 = V["hook"]; w2 = d.textlength(t2, font=f2)
+        if w2 > 940: f2 = B.inter(int(50 * 940 / w2), "Black"); w2 = d.textlength(t2, font=f2)
+        lay = Image.new("RGBA", im.size); dl = ImageDraw.Draw(lay); y = 190
+        dl.rounded_rectangle(((B.W - w2) / 2 - 36, y - 10, (B.W + w2) / 2 + 36, y + 150), 34, fill=(16, 8, 8, 200))
+        dl.text((B.W / 2, y + 36), t1, font=f1, fill=B.GOLD + (255,), anchor="mm")
+        dl.text((B.W / 2, y + 100), t2, font=f2, fill=B.IVORY + (255,), anchor="mm")
+        if a < 1: lay.putalpha(lay.getchannel("A").point(lambda v: int(v * a)))
+        im.alpha_composite(lay)
+    else: _counter(im, t)
+B.counter = counter
+
+_frame = B.frame
+def frame(t):
+    """+ the six search phrases as tiny, near-transparent text along the bottom edge"""
+    im = _frame(t).convert("RGBA"); lay = Image.new("RGBA", im.size); d = ImageDraw.Draw(lay); f = B.pop(15, "Medium")
+    d.text((B.W / 2, B.H - 44), "  ·  ".join(V["seo"][:3]), font=f, fill=(255, 255, 255, 255), anchor="mm")
+    d.text((B.W / 2, B.H - 24), "  ·  ".join(V["seo"][3:]), font=f, fill=(255, 255, 255, 255), anchor="mm")
+    lay.putalpha(lay.getchannel("A").point(lambda v: int(v * .05))); im.alpha_composite(lay)
+    return im.convert("RGB")
+B.frame = frame
 
 def read(path):
     r = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-vn", "-ac", "2", "-ar", "44100", "-f", "f32le", "-"], capture_output=True, check=True)
