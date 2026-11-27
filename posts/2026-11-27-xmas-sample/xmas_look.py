@@ -12,6 +12,13 @@ import onnxruntime as ort
 SESS = ort.InferenceSession(MODEL, providers=["CPUExecutionProvider"])
 
 def person_mask(img):
+    """U2Net misses body parts touching the frame edge, so run it on a padded copy and on the plain frame, take the max"""
+    h0, w0 = img.shape[:2]; p = int(w0 * .25)
+    padded = cv2.copyMakeBorder(img, p // 2, 0, p, p, cv2.BORDER_REPLICATE)
+    mp_ = _mask(padded)[p // 2:, p:p + w0]
+    return np.maximum(_mask(img), mp_)
+
+def _mask(img):
     h, w = img.shape[:2]
     x = cv2.resize(img[:, :, ::-1], (320, 320)).astype(np.float32) / 255
     x = ((x - [0.485, 0.456, 0.406]) / [0.229, 0.224, 0.225]).transpose(2, 0, 1)[None].astype(np.float32)
@@ -46,7 +53,7 @@ def make_hat(wb):
 
 def analyse(img, m):
     """returns face box (x0,y0,x1,y1), head top y, shirt mask"""
-    h, w = img.shape[:2]; pm = m > .5
+    h, w = img.shape[:2]; pm = cv2.dilate((m > .3).astype(np.uint8), np.ones((9, 9), np.uint8)) > 0
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     Hh, Ss, Vv = hsv[..., 0], hsv[..., 1].astype(int), hsv[..., 2].astype(int)
     skin = pm & (((Hh <= 22) | (Hh >= 170)) & (Ss > 45) & (Ss < 200) & (Vv > 70))
@@ -67,7 +74,7 @@ def analyse(img, m):
     if face is not None:
         cx0, cx1 = face[0] + (face[2] - face[0]) // 4, face[2] - (face[2] - face[0]) // 4
         rows = np.where(pm[:, cx0:cx1].any(1))[0]; top = rows.min() if len(rows) else 0
-    white = pm & (Ss < 60) & (Vv > 120)
+    white = pm & (Ss < 75) & (Vv > 95)
     if face is not None:
         x0, y0, x1, y1 = face[:4]; fw = x1 - x0
         white[: max(0, y0), :] = False
@@ -76,7 +83,7 @@ def analyse(img, m):
     keep = np.zeros_like(white)
     for i in range(1, n2):
         if st2[i, cv2.CC_STAT_AREA] > w * h * .004 and st2[i, cv2.CC_STAT_TOP] + st2[i, cv2.CC_STAT_HEIGHT] > h * .7: keep[lab2 == i] = 255   # shirt reaches the bottom; eyes/teeth don't
-    shirt = cv2.GaussianBlur(keep, (0, 0), 3).astype(np.float32) / 255 * np.clip(m, 0, 1)
+    shirt = cv2.GaussianBlur(keep, (0, 0), 3).astype(np.float32) / 255 * np.clip(m * 1.6, 0, 1)
     return face, top, shirt
 
 RED = np.array([38, 30, 158], np.float32)            # BGR deep Christmas red
