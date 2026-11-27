@@ -49,8 +49,19 @@ V = {
     seo=["housewarming gifts", "griha pravesh gift", "gifts for new home owners", "real estate client gifts", "possession day gifts", "luxury housewarming gift"]),
 }[AUD]
 HOOK_END = 2.6
+# Only the wedding-planner version keeps the Hinglish wedding VO. Everyone else gets their own opening lines on screen over the music bed.
+INTRO = {
+ "corporate": ["Har year-end ke baad,", "office ka store room.", "Casserole.", "Abhi bhi plastic mein.", "Dinner set no. 4", "Ghadi.", "Teesri.", "Par ek gift...", "kabhi store room nahi jaata."],
+ "retail": ["Har dukaan mein,", "ek store room hota hai.", "Casserole.", "Abhi bhi plastic mein.", "Dinner set no. 4", "Ghadi.", "Teesri.", "Par kuch cheezein...", "kabhi store room nahi jaati."],
+ "hospitality": ["Har hotel mein,", "ek store room hota hai.", "Casserole.", "Abhi bhi plastic mein.", "Dinner set no. 4", "Ghadi.", "Teesri.", "Par ek cheez...", "kabhi purani nahi hoti."],
+ "builders": ["Har possession ke baad,", "ghar ka store room.", "Casserole.", "Abhi bhi plastic mein.", "Dinner set no. 4", "Ghadi.", "Teesri.", "Par ek gift...", "kabhi store room nahi jaata."],
+}.get(AUD)
+COUNTER = {"corporate": "OFFICE GIFTS", "retail": "DEAD STOCK", "hospitality": "UNUSED AMENITIES", "builders": "HOUSEWARMING GIFTS"}.get(AUD, "SHAADI GIFTS")
+USE_VO = INTRO is None
 
-B.CAPS = [(a, b, y, s, k) for a, b, y, s, k in B.CAPS_HI if a < SPLIT] + [(a, b, y, s, "s") for a, b, y, s in V["lines"]]
+_intro = [c for c in B.CAPS_HI if c[0] < SPLIT]
+if INTRO: _intro = [(a, b, y, INTRO[i], k) for i, (a, b, y, s, k) in enumerate(_intro)]
+B.CAPS = _intro + [(a, b, y, s, "s") for a, b, y, s in V["lines"]]
 
 def scene_end(t):
     u = t - B.END; ss = B.ss
@@ -93,6 +104,15 @@ def counter(im, t):
         dl.text((B.W / 2, y + 100), t2, font=f2, fill=B.IVORY + (255,), anchor="mm")
         if a < 1: lay.putalpha(lay.getchannel("A").point(lambda v: int(v * a)))
         im.alpha_composite(lay)
+    elif t < 10.9:
+        n = int(round(47 * B.ss(t / 9.8) if t < 9.8 else 47)); lab = f"{COUNTER}: {n}"
+        a = B.ss((t - HOOK_END) / 0.3) * (1 - B.ss((t - 10.5) / 0.4))
+        d = ImageDraw.Draw(im); f = B.inter(38, "Bold"); tw = d.textlength(lab, font=f)
+        lay = Image.new("RGBA", im.size); dl = ImageDraw.Draw(lay); y = 225
+        dl.rounded_rectangle(((B.W - tw) / 2 - 34, y, (B.W + tw) / 2 + 34, y + 70), 35, fill=(20, 10, 8, 170))
+        dl.text((B.W / 2, y + 35), lab, font=f, fill=(255, 236, 210, 255), anchor="mm")
+        if a < 1: lay.putalpha(lay.getchannel("A").point(lambda v: int(v * a)))
+        im.alpha_composite(lay)
     else: _counter(im, t)
 B.counter = counter
 
@@ -120,7 +140,8 @@ if __name__ == "__main__":
     g = np.sqrt(np.mean(vo[s - sr:s - int(.2 * sr)] ** 2)) / max(1e-6, np.sqrt(np.mean(bed[s - sr:s - int(.2 * sr)] ** 2)))
     g = float(np.clip(g, .4, 2.5))
     mix = np.zeros((m, 2), np.float32); r = np.linspace(0, 1, xf)[:, None]
-    mix[:s] = vo[:s]; mix[s:s + xf] = vo[s:s + xf] * (1 - r) + bed[s:s + xf] * g * r; mix[s + xf:] = bed[s + xf:m] * g
+    if USE_VO: mix[:s] = vo[:s]; mix[s:s + xf] = vo[s:s + xf] * (1 - r) + bed[s:s + xf] * g * r; mix[s + xf:] = bed[s + xf:m] * g
+    else: mix[:] = bed[:m]                     # no wedding VO: music bed only, text carries the story
     mix *= 10 ** (-1 / 20) / np.max(np.abs(mix))
     import scipy.io.wavfile as wf; wf.write(out + "a.wav", sr, (mix * 32767).astype(np.int16))
     name = D + f"storeroom_{AUD}.mp4"
