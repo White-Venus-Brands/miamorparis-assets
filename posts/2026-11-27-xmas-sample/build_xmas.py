@@ -49,6 +49,36 @@ for i_, (k, a0, a1, st) in enumerate(TL):
 SH[0][0] = 0.0
 for i in range(1, len(SH)): SH[i - 1][1] = SH[i][0]
 SHOTS = [tuple(s) for s in SH]
+# what Tannay films for each slot (placeholder version); keyed by (clip, shot number inside that line)
+SLOT = {("5227", 0): ("YOU, TO CAMERA", "Christmas outfit + Santa hat", "\"Get your signature scents.\""),
+        ("5227", 1): ("B-ROLL", "Moksha spray, slow-mo, lamp behind", "Step 3"),
+        ("5227", 2): ("B-ROLL", "Second bottle spray, slow-mo", "Step 3"),
+        ("5211", 0): ("YOU, TO CAMERA", "Holding the body wash", "\"Your body washes\""),
+        ("5211", 1): ("B-ROLL", "Body wash, label to camera", "Step 2"),
+        ("5212", 0): ("B-ROLL", "Gift set, lid opening, top-down", "Step 4"),
+        ("5212", 1): ("B-ROLL", "Gift sets in front of fairy lights", "Step 5"),
+        ("5212", 2): ("B-ROLL", "Gift box with ribbon", "Step 4"),
+        ("5213", 0): ("B-ROLL", "Hands tying a ribbon on a gift box", "Step 4"),
+        ("5213", 1): ("B-ROLL", "All gift sets next to the tree", "Step 5"),
+        ("5226", 0): ("B-ROLL", "Store entrance, Lajpat Nagar", "walk in, handheld"),
+        ("5226", 1): ("YOU, TO CAMERA", "In the store", "\"...R Cube Monad Mall, Noida...\""),
+        ("5226", 2): ("B-ROLL", "Order being packed, top-down", "Step 4"),
+        ("5222", 0): ("YOU, TO CAMERA", "Smile + wave", "\"Happy shopping.\"")}
+SLOTS = []; _c = {}
+for s_ in SHOTS:
+    n_ = _c.get(s_[5], 0); _c[s_[5]] = n_ + 1; SLOTS.append(SLOT.get((s_[5], n_)))
+PH = os.environ.get("PLACEHOLDER") == "1"
+def placeholder(i, lu, dur):
+    kind_, what, line = SLOTS[i]
+    im = Image.new("RGBA", (W, H), (22, 20, 20, 255)); d = ImageDraw.Draw(im)
+    for x in range(60, W - 60, 36): d.line((x, 60, x + 18, 60), fill=GOLD, width=4); d.line((x, H - 60, x + 18, H - 60), fill=GOLD, width=4)
+    for y in range(60, H - 60, 36): d.line((60, y, 60, y + 18), fill=GOLD, width=4); d.line((W - 60, y, W - 60, y + 18), fill=GOLD, width=4)
+    text_c(im, 900, f"SHOT {i + 1}", S.MS(40, "Bold"), GOLD)
+    text_c(im, 990, kind_, S.MS(76, "Black"), IVORY)
+    text_c(im, 1095, what, S.MS(46, "SemiBold"), (225, 215, 200))
+    text_c(im, 1170, line, S.MS(40, "Medium"), GOLD2)
+    text_c(im, 1250, f"{dur:.1f} s", S.MS(36, "Medium"), (170, 160, 150))
+    return im
 POPS = [("5227", 0, "CHRISTMAS SHOPPING", .9), ("5213", 2, "GIFT LIST: SORTED", 1.1), ("5212", 3, "GIFT SETS", .9), ("5226", 13, "miamorparis.in", 1.0), ("5222", 0, "HAPPY SHOPPING", 1.0)]
 S.POPT = [(at(k, wi), at(k, wi) + hold, txt) for k, wi, txt, hold in POPS]
 S.CAPS = []
@@ -89,12 +119,15 @@ def endcard(u):
 def frame(t):
     if t >= OUT0: return endcard(t - OUT0)
     i = max(j for j, s in enumerate(SHOTS) if s[0] <= t + 1e-6); t0, t1, kind, arg, zoom, k = SHOTS[i]; lu = t - t0
-    if kind == "face":
-        kk, a0, a1, st = [x for x in TL if x[0] == k][0]; im = S.face(k, a0 + (t - st), zoom)
-    else: im = S.shot(kind, arg, lu, t1 - t0)
-    for d in DROPS:
-        if 0 <= t - d < .4: im = S.punch(im, t - d)
-    im = S.grade(im).convert("RGBA")
+    if PH and SLOTS[i]:
+        im = placeholder(i, lu, t1 - t0)
+    else:
+        if kind == "face":
+            kk, a0, a1, st = [x for x in TL if x[0] == k][0]; im = S.face(k, a0 + (t - st), zoom)
+        else: im = S.shot(kind, arg, lu, t1 - t0)
+        for d in DROPS:
+            if 0 <= t - d < .4: im = S.punch(im, t - d)
+        im = S.grade(im).convert("RGBA")
     if lu < .06 and i > 0: im.alpha_composite(Image.new("RGBA", (W, H), (255, 245, 225, int(45 * (1 - lu / .06)))))
     for d in DROPS:
         if 0 <= t - d < .14: im.alpha_composite(Image.new("RGBA", (W, H), (245, 214, 150, int(120 * (1 - (t - d) / .14)))))
@@ -145,12 +178,12 @@ if __name__ == "__main__":
     print("TOTAL", TOTAL, "TL", [(k, round(st, 2)) for k, _, _, st in TL], "GIFT", T_GIFT)
     only = os.environ.get("ONLY")
     if only:
-        for s_ in only.split(","): frame(float(s_)).convert("RGB").save(WORK + f"xm_{s_}.jpg", quality=85)
+        for s_ in only.split(","): frame(float(s_)).convert("RGB").save(WORK + f"xm{'p' if PH else ''}_{s_}.jpg", quality=85)
         sys.exit()
-    fd = WORK + "fr_xmas/"; os.makedirs(fd, exist_ok=True)
+    fd = WORK + ("fr_xmas_ph/" if PH else "fr_xmas/"); os.makedirs(fd, exist_ok=True)
     for i in range(int(round(TOTAL * FPS))): frame(i / FPS).convert("RGB").save(fd + f"{i:04d}.jpg", quality=93)
     build_audio(WORK + "mix_xmas.wav")
-    out = HERE + "christmas_sample_reel.mp4"
+    out = HERE + ("christmas_reel_TEMPLATE_empty.mp4" if PH else "christmas_reel_sample_filled.mp4")
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", str(FPS), "-i", fd + "%04d.jpg", "-i", WORK + "mix_xmas.wav", "-map", "0:v", "-map", "1:a",
                     "-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p", "-r", str(FPS), "-c:a", "aac", "-b:a", "256k",
                     "-shortest", "-movflags", "+faststart", out], check=True)
