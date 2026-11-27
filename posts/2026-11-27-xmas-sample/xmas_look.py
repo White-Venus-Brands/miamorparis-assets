@@ -108,7 +108,7 @@ def run(files):
         if face is None or top is None: g.append(None); continue
         x0, y0, x1, y1, mx, my, tilt = face; fw = min(x1 - x0, (y1 - y0) * .85)
         a = np.radians(tilt); up = np.array([np.sin(a), -np.cos(a)])        # head's up direction
-        top_pt = np.array([mx, my]) + up * (my - y0 + .05 * fw)
+        top_pt = np.array([mx, my]) + up * (my - y0 + .14 * fw)   # band on the hairline, clear of the glasses
         g.append([top_pt[0], top_pt[1], fw * 1.15, tilt])
     vals = [v for v in g if v]
     if vals:

@@ -21,7 +21,7 @@ for k in ("5213", "5227", "5211", "5212"):
     ws = S.WORDS[k]; LN[k] = (max(0, ws[0][1] - .12), ws[-1][2] + .18, ws)
 ws = S.WORDS["5226"][5:]; LN["5226"] = (ws[0][1] - .12, ws[-1][2] + .18, ws)
 ws = S.WORDS["5222"][7:]; LN["5222"] = (ws[0][1] - .15, ws[-1][2] + .25, ws)
-ORDER = ["5213", "5227", "5211", "5212", "5226", "5222"]
+ORDER = ["5227", "5211", "5212", "5213", "5226", "5222"]   # open on him in the hat; 5213 is gift-box B-roll
 TL = []; t = .5
 for k in ORDER:
     a0, a1, _ = LN[k]; TL.append((k, a0, a1, t)); t += (a1 - a0) + .14
@@ -33,7 +33,7 @@ def at(k, wi):
 T_GIFT = fr(at("5212", 3))
 DROPS = [T_GIFT]; S.DROPS = DROPS
 
-EDL = {"5213": [(0, "face", None, 1.0), (2, "face", None, 1.18)],
+EDL = {"5213": [(0, "face", None, 1.0), (3, "still", "trio", 1)],
        "5227": [(0, "face", None, 1.08), (2, "spray", "moksha_v", 1), (3, "spray", "poem_v", 1)],
        "5211": [(0, "face", None, 1.0), (2, "still", "wash1", 1)],
        "5212": [(0, "face", None, 1.0), (3, "still", "trio", 1), (4, "still", "inbox", 1)],
@@ -49,7 +49,7 @@ for i_, (k, a0, a1, st) in enumerate(TL):
 SH[0][0] = 0.0
 for i in range(1, len(SH)): SH[i - 1][1] = SH[i][0]
 SHOTS = [tuple(s) for s in SH]
-POPS = [("5213", 2, "CHRISTMAS GIFT LIST", 1.1), ("5212", 3, "GIFT SETS", .9), ("5226", 13, "miamorparis.in", 1.0), ("5222", 0, "HAPPY SHOPPING", 1.0)]
+POPS = [("5227", 0, "CHRISTMAS SHOPPING", .9), ("5213", 2, "GIFT LIST: SORTED", 1.1), ("5212", 3, "GIFT SETS", .9), ("5226", 13, "miamorparis.in", 1.0), ("5222", 0, "HAPPY SHOPPING", 1.0)]
 S.POPT = [(at(k, wi), at(k, wi) + hold, txt) for k, wi, txt, hold in POPS]
 S.CAPS = []
 for k, a0, a1, st in TL:
