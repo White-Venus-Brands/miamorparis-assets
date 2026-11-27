@@ -81,6 +81,7 @@ def placeholder(i, lu, dur):
     return im
 POPS = [("5227", 0, "CHRISTMAS SHOPPING", .9), ("5213", 2, "GIFT LIST: SORTED", 1.1), ("5212", 3, "GIFT SETS", .9), ("5226", 13, "miamorparis.in", 1.0), ("5222", 0, "HAPPY SHOPPING", 1.0)]
 S.POPT = [(at(k, wi), at(k, wi) + hold, txt) for k, wi, txt, hold in POPS]
+S.POPT.sort(); S.POPT = [(a_, min(b_, S.POPT[j + 1][0]) if j + 1 < len(S.POPT) else b_, t_) for j, (a_, b_, t_) in enumerate(S.POPT)]   # a new pop ends the last one
 S.CAPS = []
 for k, a0, a1, st in TL:
     ws = [(w_, st + (s_ - a0), st + (e_ - a0)) for w_, s_, e_ in LN[k][2] if w_]

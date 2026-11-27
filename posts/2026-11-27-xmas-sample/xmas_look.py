@@ -76,8 +76,12 @@ def analyse(img, m):
         rows = np.where(pm[:, cx0:cx1].any(1))[0]; top = rows.min() if len(rows) else 0
     white = pm & (Ss < 75) & (Vv > 95)
     if face is not None:
-        x0, y0, x1, y1 = face[:4]; fw = x1 - x0
+        x0, y0, x1, y1, mx, my, tilt = face; fw = x1 - x0
         white[: max(0, y0), :] = False
+        # protect the face: ellipse over the skin blob down to the chin (face height ~1.3x its width), tilted with the head
+        fh = min(y1 - y0, 1.3 * fw); ell = np.zeros((h, w), np.uint8)
+        cv2.ellipse(ell, (int(mx), int(y0 + fh * .5)), (int(fw * .56), int(fh * .56)), float(tilt), 0, 360, 255, -1)
+        white &= ell == 0
     white = cv2.morphologyEx(white.astype(np.uint8) * 255, cv2.MORPH_OPEN, np.ones((5, 5), np.uint8))
     n2, lab2, st2, _ = cv2.connectedComponentsWithStats(white, 8)
     keep = np.zeros_like(white)
