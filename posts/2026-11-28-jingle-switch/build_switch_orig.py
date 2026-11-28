@@ -1,6 +1,7 @@
 """Version 2 of the switch reel (28 Nov): Tannay's own Jingle Bells recording for clip 1.
-Uses only 'Jingle bells, jingle bells, jingle all the way' (source 0.00-5.00 s), synced to his lip-sync
-(bells at 1.1 / 2.2 s, 'all' at 3.25 s in IMG_5374 -> source offset +0.05 s).
+Uses only the SUNG 'Jingle bells, jingle bells, jingle all the way' (first chorus, source 33.83-38.55 s; the song's
+0-5 s opening is the instrumental intro), synced to his lip-sync (bells at 1.1 / 2.2 s, 'all' at 3.25 s in IMG_5374).
+Karaoke words on screen, word by word.
 Under the side-eye: the next line's melody as a muffled instrumental (no lyrics), then scratch -> Punjabi drop.
 Frames are the same as build_switch.py (reuses WORK/fr_switch). Usage: python3 build_switch_orig.py WORKDIR SOURCE.m4a"""
 import os, subprocess, sys, wave
@@ -9,7 +10,9 @@ SRC = sys.argv[2]; sys.argv = sys.argv[:2]
 D = os.path.dirname(os.path.abspath(__file__)) + "/"; sys.path.insert(0, D)
 import build_switch as S
 SR, J = S.SR, S.J
-OFF, CUT = .05, 5.00            # source 0 lands at video 0.05; cut before 'Oh what fun' (5.06)
+CHORUS = 33.58                  # sung chorus = intro timing + 33.58 s (chroma match)
+OFF, A0, CUT = .05, .25, 4.97   # chorus-relative: start just before 'Jin' (.42), cut before 'Oh what fun' (5.06); lands at +0.05 s
+WORDS = [("Jingle", .47), ("bells,", 1.03), ("jingle", 1.62), ("bells,", 2.19), ("jingle", 2.76), ("all", 3.36), ("the", 3.80), ("way", 3.95)]
 Q, KEY = .29, 2 ** (7 / 12)     # song tempo; synth melody moved from C to the recording's G
 
 def load(path):
@@ -33,8 +36,9 @@ def next_line(n, t0):
 
 def build(path):
     n = int(round(S.TOTAL * SR))
-    src = load(SRC); seg = src[:int(CUT * SR)].copy(); fo = int(.06 * SR); seg[-fo:] *= np.linspace(1, 0, fo)[:, None]
-    a = np.zeros((n, 2), np.float32); i0 = int(OFF * SR); a[i0:i0 + len(seg)] = seg
+    src = load(SRC); seg = src[int((CHORUS + A0) * SR):int((CHORUS + CUT) * SR)].copy(); fo = int(.06 * SR); seg[-fo:] *= np.linspace(1, 0, fo)[:, None]
+    fi = int(.04 * SR); seg[:fi] *= np.linspace(0, 1, fi)[:, None]
+    a = np.zeros((n, 2), np.float32); i0 = int((OFF + A0) * SR); a[i0:i0 + len(seg)] = seg
     song = np.zeros((n, 2), np.float32); s0 = int((S.SONG_DROP - .06) * SR); d0 = int((S.DROP - .06) * SR); m = min(len(J.SNG) - s0, n - d0)
     song[d0:d0 + m] = J.SNG[s0:s0 + m]
     r_song = np.sqrt(np.mean(song[d0:] ** 2)); a *= r_song / np.sqrt(np.mean(seg ** 2)) * 10 ** (-2 / 20)
@@ -46,9 +50,26 @@ def build(path):
     with wave.open(path, "wb") as w_:
         w_.setnchannels(2); w_.setsampwidth(2); w_.setframerate(SR); w_.writeframes((mix * 32767).astype(np.int16).tobytes())
 
+from PIL import Image, ImageDraw
+def karaoke(im, t):
+    """two lines, lower third; sung words gold, upcoming words dim ivory"""
+    if t < .3 or t > S.L1 - .05: return im
+    d = ImageDraw.Draw(im); f = J.MS(74); rows = [WORDS[:4], WORDS[4:]]; y = 1440
+    for row in rows:
+        ws = [f.getlength(w + " ") for w, _ in row]; x = (J.W - sum(ws) + f.getlength(" ")) / 2
+        for (w, t0), wl in zip(row, ws):
+            on = t >= t0; col = J.GOLD if on else (250, 245, 236)
+            d.text((x, y), w, font=f, fill=col + (255 if on else 150,), stroke_width=6, stroke_fill=(0, 0, 0, 200)); x += wl
+        y += 100
+    return im
+
 if __name__ == "__main__":
-    fd = S.WORK + "fr_switch/"; build(fd + "a2.wav")
+    fd = S.WORK + "fr_switch/"
+    for i in range(int(S.L1 * S.FPS) + 1):
+        t = i / S.FPS; im = S.frame(t).convert("RGBA"); karaoke(im, t); im.convert("RGB").save(fd + f"{i:04d}.jpg", quality=93)
+    build(fd + "a2.wav")
     enc = ["-c:v", "libx264", "-crf", "18", "-preset", "medium", "-pix_fmt", "yuv420p", "-r", str(S.FPS), "-movflags", "+faststart"]
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-framerate", str(S.FPS), "-i", fd + "%04d.jpg", "-i", fd + "a2.wav", "-map", "0:v", "-map", "1:a"] + enc
                    + ["-c:a", "aac", "-b:a", "256k", "-shortest", D + "jingle_switch_v2.mp4"], check=True)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", D + "jingle_switch_v2.mp4", "-an", "-c:v", "copy", D + "jingle_switch_v2_silent.mp4"], check=True)
     print("done", S.TOTAL)
